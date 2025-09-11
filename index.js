@@ -220,7 +220,9 @@ async function saveAccounts(accounts, sha=null){
 }
 
 // --- auth middleware for player endpoints (checks license + username/password) ---
+// --- auth middleware para player endpoints (checks license + username/password or accounts.json) ---
 async function authGuard(req, res){
+  // 1) validar licencia global
   const lic = await ensureLicense();
   if(lic && lic.expiresAt){
     const now = new Date();
@@ -232,12 +234,42 @@ async function authGuard(req, res){
     res.setHeader("X-License-Expires", lic.expiresAt);
   }
 
+  // 2) obtener credenciales de la request (query params)
   const username = req.query.username || "";
   const password = req.query.password || "";
+
+  // 3) check contra credencial global (CONFIG)
   if(username === CONFIG.username && password === CONFIG.password) return true;
+
+  // 4) check contra accounts.json (puede estar en GH o local)
+  try{
+    const read = await readAccounts(); // readAccounts() ya existe en tu index.js
+    const accounts = read.accounts || [];
+    // buscar cuenta que coincida user+pass
+    const acc = accounts.find(a => (a.username === username && a.password === password));
+    if(acc){
+      // si la cuenta tiene expiresAt, verificar que no haya vencido
+      if(acc.expiresAt){
+        const now = new Date();
+        const expires = new Date(acc.expiresAt);
+        if(now > expires){
+          res.status(403).json({ error: "Account expired", expiresAt: acc.expiresAt });
+          return false;
+        }
+      }
+      // OK: credenciales válidas
+      return true;
+    }
+  }catch(e){
+    console.warn("authGuard: readAccounts failed", e && e.message ? e.message : e);
+    // no abortamos aquí: caemos al 401 si no hay match
+  }
+
+  // 5) fallback: inválido
   res.status(401).json({ error: "Invalid username/password" });
   return false;
 }
+
 
 // --- adminAuth middleware: Basic Auth (ADMIN_USER/ADMIN_PASS) OR adminKey in body/query ---
 const ADMIN_USER = process.env.ADMIN_USER || "admin";
