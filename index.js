@@ -11,13 +11,16 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// --- CONFIG: usuario/clave (cambiá antes de publicar) ---
+
+  // --- CONFIG: usuario/clave y expiración ---
 const CONFIG = {
   username: process.env.XTREAM_USER || "demo",
   password: process.env.XTREAM_PASS || "demo",
-  m3uFile: path.join(__dirname, "canales.m3u"), // tu m3u
-  logosFile: path.join(__dirname, "group_logos.json") // opcional
+  m3uFile: path.join(__dirname, "canales.m3u"),
+  logosFile: path.join(__dirname, "group_logos.json"),
+  expirationDate: new Date("2025-09-20T23:59:59") // AAAA-MM-DDTHH:MM:SS
 };
+
 
 // --- util: parse M3U simple (EXINF -> tvg-logo, group-title, title, url) ---
 function parseAttrs(attrString){
