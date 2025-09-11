@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Xtream-lite</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;max-width:900px;margin:24px auto;padding:12px}
+    .card{border:1px solid #ddd;padding:12px;border-radius:8px;margin-bottom:12px}
+    label{display:block;margin-top:8px}
+    input[type=text], input[type=password], input[type=number]{width:100%;padding:8px;margin-top:4px}
+    button{margin-top:12px;padding:8px 12px;border-radius:6px}
+    pre{background:#f6f6f6;padding:10px;border-radius:6px;overflow:auto}
+  </style>
+</head>
+<body>
+  <h1>Admin - Xtream-lite</h1>
+  <p>Operaciones de administración: crear cuentas y ajustar fechas. La conexión está protegida por autenticación.</p>
+
+  <div class="card">
+    <h2>Añadir cuenta</h2>
+    <form id="addForm">
+      <label>Usuario
+        <input name="username" required type="text" />
+      </label>
+      <label>Clave (password)
+        <input name="password" required type="text" />
+      </label>
+      <label>Días de validez (por defecto 30)
+        <input name="days" type="number" min="1" value="30" />
+      </label>
+      <button type="submit">Añadir cuenta</button>
+    </form>
+    <div id="addResult"></div>
+  </div>
+
+  <div class="card">
+    <h2>Modificar expiración de cuenta</h2>
+    <form id="setForm">
+      <label>Usuario a modificar
+        <input name="username" required type="text" />
+      </label>
+      <label>Nueva expiración (ISO) — o dejar vacío y usar "days"
+        <input name="expiresAt" type="text" placeholder="2025-10-11T00:00:00.000Z" />
+      </label>
+      <label>Días desde ahora (opcional)
+        <input name="days" type="number" min="1" />
+      </label>
+      <button type="submit">Actualizar expiración</button>
+    </form>
+    <div id="setResult"></div>
+  </div>
+
+  <div class="card">
+    <h2>Estado de license.json</h2>
+    <button id="checkLicense">Ver licencia</button>
+    <pre id="licenseOut">—</pre>
+  </div>
+
+  <script>
+    async function postJson(url, body){
+      const res = await fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      try{
+        return { status: res.status, json: await res.json() };
+      }catch(e){
+        return { status: res.status, text: await res.text() };
+      }
+    }
+
+    document.getElementById('addForm').addEventListener('submit', async (ev)=>{
+      ev.preventDefault();
+      const f = ev.target;
+      const data = {
+        username: f.username.value.trim(),
+        password: f.password.value.trim(),
+        days: Number(f.days.value) || 30
+      };
+      const r = await postJson('/admin/add_account', data);
+      document.getElementById('addResult').innerText = JSON.stringify(r, null, 2);
+    });
+
+    document.getElementById('setForm').addEventListener('submit', async (ev)=>{
+      ev.preventDefault();
+      const f = ev.target;
+      const data = {
+        username: f.username.value.trim(),
+      };
+      if(f.expiresAt.value.trim()) data.expiresAt = f.expiresAt.value.trim();
+      if(f.days.value) data.days = Number(f.days.value);
+      const r = await postJson('/admin/set_account_expiry', data);
+      document.getElementById('setResult').innerText = JSON.stringify(r, null, 2);
+    });
+
+    document.getElementById('checkLicense').addEventListener('click', async ()=>{
+      const r = await fetch('/license_status', { credentials: 'same-origin' });
+      const txt = await r.text();
+      document.getElementById('licenseOut').innerText = txt;
+    });
+  </script>
+</body>
+</html>
