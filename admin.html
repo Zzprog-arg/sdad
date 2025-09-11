@@ -5,72 +5,147 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Admin Xtream-lite</title>
   <style>
-    body{font-family:Arial,Helvetica,sans-serif;max-width:900px;margin:24px auto;padding:12px}
-    .card{border:1px solid #ddd;padding:12px;border-radius:8px;margin-bottom:12px}
-    label{display:block;margin-top:8px}
-    input[type=text], input[type=password], input[type=number]{width:100%;padding:8px;margin-top:4px}
-    button{margin-top:12px;padding:8px 12px;border-radius:6px}
-    pre{background:#f6f6f6;padding:10px;border-radius:6px;overflow:auto}
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --muted:#64748b;
+      --accent:#2563eb;
+      --success:#16a34a;
+      --danger:#dc2626;
+      --radius:10px;
+    }
+    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); margin:0; padding:28px; color:#0f172a}
+    .wrap{max-width:980px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    p.lead{color:var(--muted);margin:6px 0 18px;font-size:14px}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+    .card{background:var(--card);padding:18px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type=text], input[type=password], input[type=number], select, textarea{
+      width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8;background:#fff;font-size:14px;box-sizing:border-box
+    }
+    select[multiple]{height:120px}
+    button{background:var(--accent);color:#fff;padding:10px 12px;border:0;border-radius:8px;font-weight:600;cursor:pointer}
+    button.secondary{background:#e6eef8;color:#0f172a}
+    .out{margin-top:12px}
+    .msg{padding:10px;border-radius:8px;font-weight:600}
+    .msg.success{background:rgba(22,163,74,0.12);color:var(--success);border:1px solid rgba(22,163,74,0.18)}
+    .msg.error{background:rgba(220,38,38,0.08);color:var(--danger);border:1px solid rgba(220,38,38,0.12)}
+    pre{background:#0b1220;color:#e6eef8;padding:12px;border-radius:8px;overflow:auto}
+    .small{font-size:12px;color:var(--muted)}
+    .list {margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:#f1f5f9;color:#0f172a;padding:6px 8px;border-radius:999px;font-size:13px;border:1px solid #e2e8f0}
   </style>
 </head>
 <body>
-  <h1>Admin - Xtream-lite</h1>
-  <p>Operaciones de administración: crear cuentas y ajustar fechas. La conexión está protegida por autenticación.</p>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Admin - Xtream-lite</h1>
+        <p class="lead">Crear cuentas, asignar listas (.m3u) y modificar vencimientos.</p>
+      </div>
+      <div class="small">Acceso protegido. Si ves esta pantalla sin login, revisá tu Basic Auth.</div>
+    </header>
 
-  <div class="card">
-    <h2>Añadir cuenta</h2>
-    <form id="addForm">
-      <label>Usuario
-        <input name="username" required type="text" />
-      </label>
-      <label>Clave (password)
-        <input name="password" required type="text" />
-      </label>
-      <label>Días de validez (por defecto 30)
-        <input name="days" type="number" min="1" value="30" />
-      </label>
-      <button type="submit">Añadir cuenta</button>
-    </form>
-    <div id="addResult"></div>
-  </div>
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3>Crear nueva cuenta</h3>
+          <form id="addForm">
+            <label>Usuario</label>
+            <input name="username" required type="text" />
+            <label>Clave (password)</label>
+            <input name="password" required type="text" />
+            <label>Días de validez</label>
+            <input name="days" type="number" min="1" value="30" />
+            <label>Listas asignadas (seleccioná las que corresponden)</label>
+            <select id="listsSelect" name="lists" multiple></select>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button type="submit">Añadir cuenta</button>
+              <button type="button" id="refreshLists" class="secondary">Refrescar listas</button>
+            </div>
+            <div id="addResult" class="out"></div>
+          </form>
+        </div>
 
-  <div class="card">
-    <h2>Modificar expiración de cuenta</h2>
-    <form id="setForm">
-      <label>Usuario a modificar
-        <input name="username" required type="text" />
-      </label>
-      <label>Nueva expiración (ISO) — o dejar vacío y usar "days"
-        <input name="expiresAt" type="text" placeholder="2025-10-11T00:00:00.000Z" />
-      </label>
-      <label>Días desde ahora (opcional)
-        <input name="days" type="number" min="1" />
-      </label>
-      <button type="submit">Actualizar expiración</button>
-    </form>
-    <div id="setResult"></div>
-  </div>
+        <div class="card" style="margin-top:12px">
+          <h3>Modificar expiración / listas</h3>
+          <form id="setForm">
+            <label>Usuario a modificar</label>
+            <input name="username" required type="text" />
+            <label>Nueva expiración (ISO) — o usar días</label>
+            <input name="expiresAt" placeholder="2025-10-11T00:00:00.000Z" />
+            <label>Días desde ahora (opcional)</label>
+            <input name="days" type="number" min="1" />
+            <label>Listas (seleccioná para reemplazar)</label>
+            <select id="listsSelect2" name="lists" multiple></select>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button type="submit">Actualizar</button>
+              <button type="button" id="btnFetchAccounts" class="secondary">Ver cuentas</button>
+            </div>
+            <div id="setResult" class="out"></div>
+          </form>
+        </div>
+      </div>
 
-  <div class="card">
-    <h2>Estado de license.json</h2>
-    <button id="checkLicense">Ver licencia</button>
-    <pre id="licenseOut">—</pre>
+      <aside>
+        <div class="card">
+          <h4>Listas detectadas</h4>
+          <div id="listsBox" class="list"><em>Cargando...</em></div>
+          <hr style="margin:12px 0" />
+          <h4>Estado de licencia</h4>
+          <div style="display:flex;gap:8px">
+            <button id="checkLicense">Ver licencia</button>
+            <button id="downloadAccounts" class="secondary">Descargar accounts.json</button>
+          </div>
+          <pre id="licenseOut">—</pre>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h4>Cuentas</h4>
+          <div id="accountsBox"><em>Presioná "Ver cuentas"</em></div>
+        </div>
+      </aside>
+    </div>
   </div>
 
   <script>
-    async function postJson(url, body){
-      const res = await fetch(url, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      try{
-        return { status: res.status, json: await res.json() };
-      }catch(e){
-        return { status: res.status, text: await res.text() };
+    async function api(path, opts){
+      const res = await fetch(path, opts);
+      const contentType = res.headers.get('content-type') || '';
+      if(contentType.includes('application/json')){
+        return { status: res.status, ok: res.ok, json: await res.json() };
+      } else {
+        return { status: res.status, ok: res.ok, text: await res.text() };
       }
     }
+
+    function showMsg(el, text, type='success'){
+      el.innerHTML = '<div class="msg ' + (type==='success' ? 'success' : 'error') + '">' + text + '</div>';
+    }
+
+    async function loadLists(){
+      const r = await api('/admin/available_lists');
+      const sel = document.getElementById('listsSelect');
+      const sel2 = document.getElementById('listsSelect2');
+      const box = document.getElementById('listsBox');
+      sel.innerHTML = ''; sel2.innerHTML = '';
+      box.innerHTML = '';
+      if(!r.ok){ box.innerHTML = '<div class="small">No se pudieron obtener listas</div>'; return; }
+      const lists = r.json.lists || [];
+      if(lists.length === 0){ box.innerHTML = '<div class="small">No se detectaron .m3u</div>'; return; }
+      for(const l of lists){
+        const opt = document.createElement('option'); opt.value = l; opt.textContent = l;
+        sel.appendChild(opt);
+        const opt2 = opt.cloneNode(true);
+        sel2.appendChild(opt2);
+        const chip = document.createElement('span'); chip.className='chip'; chip.textContent = l;
+        box.appendChild(chip);
+      }
+    }
+
+    document.getElementById('refreshLists').addEventListener('click', loadLists);
 
     document.getElementById('addForm').addEventListener('submit', async (ev)=>{
       ev.preventDefault();
@@ -78,29 +153,75 @@
       const data = {
         username: f.username.value.trim(),
         password: f.password.value.trim(),
-        days: Number(f.days.value) || 30
+        days: Number(f.days.value) || 30,
+        lists: Array.from(document.getElementById('listsSelect').selectedOptions).map(o=>o.value)
       };
-      const r = await postJson('/admin/add_account', data);
-      document.getElementById('addResult').innerText = JSON.stringify(r, null, 2);
+      const res = await api('/admin/add_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+      const out = document.getElementById('addResult');
+      if(res.ok && res.json && res.json.ok){
+        showMsg(out, `Cuenta creada: <strong>${res.json.account.username}</strong> — expira: ${res.json.account.expiresAt}`, 'success');
+        f.reset(); loadAccounts();
+      } else {
+        const err = res.json?.error || res.text || 'Error';
+        showMsg(out, 'Error: ' + err, 'error');
+      }
     });
 
     document.getElementById('setForm').addEventListener('submit', async (ev)=>{
       ev.preventDefault();
       const f = ev.target;
-      const data = {
-        username: f.username.value.trim(),
-      };
-      if(f.expiresAt.value.trim()) data.expiresAt = f.expiresAt.value.trim();
-      if(f.days.value) data.days = Number(f.days.value);
-      const r = await postJson('/admin/set_account_expiry', data);
-      document.getElementById('setResult').innerText = JSON.stringify(r, null, 2);
+      const payload = { username: f.username.value.trim() };
+      if(f.expiresAt.value.trim()) payload.expiresAt = f.expiresAt.value.trim();
+      if(f.days.value) payload.days = Number(f.days.value);
+      const lists = Array.from(document.getElementById('listsSelect2').selectedOptions).map(o=>o.value);
+      if(lists.length) payload.lists = lists;
+      const res = await api('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      const out = document.getElementById('setResult');
+      if(res.ok && res.json && res.json.ok){
+        showMsg(out, `Cuenta actualizada: <strong>${res.json.account.username}</strong> — expira: ${res.json.account.expiresAt}`, 'success');
+        f.reset(); loadAccounts();
+      } else {
+        const err = res.json?.error || res.text || 'Error';
+        showMsg(out, 'Error: ' + err, 'error');
+      }
     });
 
     document.getElementById('checkLicense').addEventListener('click', async ()=>{
-      const r = await fetch('/license_status', { credentials: 'same-origin' });
-      const txt = await r.text();
-      document.getElementById('licenseOut').innerText = txt;
+      const r = await api('/license_status');
+      if(r.ok) document.getElementById('licenseOut').textContent = JSON.stringify(r.json, null, 2);
+      else document.getElementById('licenseOut').textContent = r.text || 'Error';
     });
+
+    async function loadAccounts(){
+      const r = await api('/admin/list_accounts');
+      const box = document.getElementById('accountsBox');
+      if(!r.ok){ box.innerHTML = '<div class="small">No se pueden listar cuentas</div>'; return; }
+      const arr = r.json.accounts || [];
+      if(arr.length === 0){ box.innerHTML = '<div class="small">No hay cuentas</div>'; return; }
+      const html = arr.map(a => {
+        const lists = Array.isArray(a.lists) ? a.lists.join(', ') : '';
+        return `<div style="margin-bottom:10px">
+          <strong>${a.username}</strong> <span class="small">(${a.createdAt.slice(0,10)})</span><br>
+          <span class="small">Expira: ${a.expiresAt} • Listas: ${lists}</span>
+        </div>`;
+      }).join('');
+      box.innerHTML = html;
+    }
+
+    document.getElementById('btnFetchAccounts').addEventListener('click', loadAccounts);
+
+    document.getElementById('downloadAccounts').addEventListener('click', async ()=>{
+      const r = await api('/admin/list_accounts');
+      if(!r.ok) return alert('No se pudo descargar');
+      const blob = new Blob([JSON.stringify(r.json.accounts, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'accounts.json'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // initial load
+    loadLists();
+    loadAccounts();
   </script>
 </body>
 </html>
