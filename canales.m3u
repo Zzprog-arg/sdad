@@ -23,17 +23,17 @@ http://195.66.210.10:80/Bluefox102/XYXNA/612972
 http://195.66.210.10:80/Bluefox102/XYXNA/612973
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", 009 USA: NCAA 02 / Wt Michigan @ Michigan St 5:00PM - Ctl Michigan @ San Jose 7:30PM -Fox Sports 1 H
 http://195.66.210.10:80/Bluefox102/XYXNA/615919
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", 009 USA: NCAA 04 / App State @ Charlotte - 5:00PM - ESPN U
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="EVENTOS", 009 USA: NCAA 04 / App State @ Charlotte - 5:00PM - ESPN U
 http://195.66.210.10:80/Bluefox102/XYXNA/615921
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", 009 USA: NCAA 06 / Georgia Tech @ Colorado - 6:00PM - ESPN HD
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="EVENTOS", 009 USA: NCAA 06 / Georgia Tech @ Colorado - 6:00PM - ESPN HD
 http://195.66.210.10:80/Bluefox102/XYXNA/615923
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/20/DAZN_Logo.png" group-title="DAZN", Formula 1 / Gran Premio Holanda - Carrera - 7:00AM - DAZN F1
 http://195.66.210.10:80/Bluefox102/XYXNA/616025
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", LAT: TENNIS / US OPEN - Dia 8 -9:00AM a 9:00PM - ESPN 2
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="EVENTOS", LAT: TENNIS / US OPEN - Dia 8 -9:00AM a 9:00PM - ESPN 2
 http://195.66.210.10:80/Bluefox102/XYXNA/616098
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", LAT: TENNIS / US OPEN - Dia 8 - 11:00AM a 9:00PM - ESPN 3
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="EVENTOS", LAT: TENNIS / US OPEN - Dia 8 - 11:00AM a 9:00PM - ESPN 3
 http://195.66.210.10:80/Bluefox102/XYXNA/616099
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", 010 LAT: LMB 01 HD / Piratas Campeche en Diablos Rojos - 2:00PM - ESPN HD
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="EVENTOS", 010 LAT: LMB 01 HD / Piratas Campeche en Diablos Rojos - 2:00PM - ESPN HD
 http://195.66.210.10:80/Bluefox102/XYXNA/616122
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", LA LIG4 (ESPN+) Solo Eventos
 http://195.66.210.10:80/Bluefox102/XYXNA/440264
@@ -59,12 +59,8 @@ http://195.66.210.10:80/Bluefox102/XYXNA/415402
 http://195.66.210.10:80/Bluefox102/XYXNA/479220
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", DSTV: ESPN2
 http://195.66.210.10:80/Bluefox102/XYXNA/554688
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", UK: BT SPORT ESPN
-http://195.66.210.10:80/Bluefox102/XYXNA/555109
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", IT
 http://195.66.210.10:80/Bluefox102/XYXNA/554996
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", UK
-http://195.66.210.10:80/Bluefox102/XYXNA/555323
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN
 http://195.66.210.10:80/Bluefox102/XYXNA/37960
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 1
@@ -77,10 +73,6 @@ http://195.66.210.10:80/Bluefox102/XYXNA/170950
 http://195.66.210.10:80/Bluefox102/XYXNA/170951
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN NEWS SD
 http://195.66.210.10:80/Bluefox102/XYXNA/54536
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN U
-http://195.66.210.10:80/Bluefox102/XYXNA/37962
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN U HD
-http://195.66.210.10:80/Bluefox102/XYXNA/54537
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX Sports 1
 http://195.66.210.10:80/Bluefox102/XYXNA/37880
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX Sports 2
@@ -91,6 +83,52 @@ http://195.66.210.10:80/Bluefox102/XYXNA/55553
 http://195.66.210.10:80/Bluefox102/XYXNA/47636
 #EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", CANAL 9 SALTA
 http://195.66.210.10:80/Bluefox102/XYXNA/47017
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", AMÉRICA TV HD
+http://195.66.210.10:80/Bluefox102/XYXNA/209741
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", C5N
+http://195.66.210.10:80/Bluefox102/XYXNA/242080
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", CANAL 26
+http://195.66.210.10:80/Bluefox102/XYXNA/54199
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", CANAL 5 TV CORRIENTES
+http://195.66.210.10:80/Bluefox102/XYXNA/54215
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", CANAL 9 SALTA
+http://195.66.210.10:80/Bluefox102/XYXNA/47017
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", CRÓNICA TV
+http://195.66.210.10:80/Bluefox102/XYXNA/19708
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", DEPORTV HD
+http://195.66.210.10:80/Bluefox102/XYXNA/19709
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", EL NUEVE HD
+http://195.66.210.10:80/Bluefox102/XYXNA/46977
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", EL TRECE HD
+http://195.66.210.10:80/Bluefox102/XYXNA/46976
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", GARAGE TV FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/209745
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", LITUS TV SANTA FÉ
+http://195.66.210.10:80/Bluefox102/XYXNA/54231
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", NET TV
+http://195.66.210.10:80/Bluefox102/XYXNA/54165
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", PAKA PAKA
+http://195.66.210.10:80/Bluefox102/XYXNA/19555
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", TELEFÉ HD
+http://195.66.210.10:80/Bluefox102/XYXNA/12933
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", TELEFÉ INTERNACIONAL HD
+http://195.66.210.10:80/Bluefox102/XYXNA/259317
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", TELEMAX
+http://195.66.210.10:80/Bluefox102/XYXNA/46973
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", TV PÚBLICA HD
+http://195.66.210.10:80/Bluefox102/XYXNA/46972
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", VOLVER
+http://195.66.210.10:80/Bluefox102/XYXNA/19983
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", A24
+http://195.66.210.10:80/Bluefox102/XYXNA/610876
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", TN
+http://195.66.210.10:80/Bluefox102/XYXNA/613255
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ENTRETENIMIENTO",History
+http://195.66.210.10:80/Bluefox102/XYXNA/479240
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ENTRETENIMIENTO",National Geographic HD
+http://195.66.210.10:80/Bluefox102/XYXNA/54520
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ENTRETENIMIENTO",Bein National Geographic HD
+http://195.66.210.10:80/Bluefox102/XYXNA/554831
 #EXTINF:-1 tvg-logo="https://imgs.search.brave.com/S2EPxs-5FrCsSSlq6fo2O_wNHe5P7lQzXUReVhD9jbo/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi84LzhkL0lz/b3RpcG9fZWx0cmVj/ZV8yMDE2LnBuZy81/MTJweC1Jc290aXBv/X2VsdHJlY2VfMjAx/Ni5wbmc" group-title="ARGENTINA", EL TRECE
 http://195.66.210.10:80/Bluefox102/XYXNA/286050
 #EXTINF:-1 tvg-logo="https://imgs.search.brave.com/S2EPxs-5FrCsSSlq6fo2O_wNHe5P7lQzXUReVhD9jbo/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi84LzhkL0lz/b3RpcG9fZWx0cmVj/ZV8yMDE2LnBuZy81/MTJweC1Jc290aXBv/X2VsdHJlY2VfMjAx/Ni5wbmc" group-title="ARGENTINA", EL TRECE HD
@@ -189,6 +227,12 @@ http://195.66.210.10:80/Bluefox102/XYXNA/454717
 http://195.66.210.10:80/Bluefox102/XYXNA/276163
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN PREMIUM HD
 http://195.66.210.10:80/Bluefox102/XYXNA/215252
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="TyC Sport", TYC SPORTS  FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/19461
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="TyC Sport", TyC Sport SD
+http://195.66.210.10:80/Bluefox102/XYXNA/21222
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="TyC Sport", TYC SPORTS INT HD
+http://195.66.210.10:80/Bluefox102/XYXNA/188939
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS  2 SD
 http://195.66.210.10:80/Bluefox102/XYXNA/439803
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 1 ARG
