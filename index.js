@@ -1,5 +1,9 @@
-// index.js - Xtream-lite (Node + Express) with expiry + GitHub-backed admin
-// Requisitos: Node 18+ (fetch nativo), Express
+// index.js - Xtream-lite (Node + Express)
+// Multi-M3U per-account, license, GitHub-backed accounts (optional)
+// Compatible with IPTV Smarters: player_api.php?action=get_user_info
+// Also provides /api.php?action=user&sub=info compatibility.
+//
+// Requirements: Node 18+ (global fetch), Express
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
@@ -12,70 +16,42 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// --- CONFIG: environment-driven ---
+// --- CONFIG (from env) ---
 const CONFIG = {
-  username: process.env.XTREAM_USER || "demo",
-  password: process.env.XTREAM_PASS || "demo",
-  m3uFile: path.join(__dirname, "canales.m3u"),
+  XTREAM_USER: process.env.XTREAM_USER || "demo",
+  XTREAM_PASS: process.env.XTREAM_PASS || "demo",
+  // scan for all *.m3u in project dir
   logosFile: path.join(__dirname, "group_logos.json"),
   localAccountsFile: path.join(__dirname, "accounts.json"),
   localLicenseFile: path.join(__dirname, "license.json"),
-  adminKey: process.env.ADMIN_KEY || "cambia_esto_admin_key",
-  expireDays: Number(process.env.EXPIRE_DAYS || 30),
+  ADMIN_KEY: process.env.ADMIN_KEY || "cambia_esto_admin_key",
+  EXPIRE_DAYS: Number(process.env.EXPIRE_DAYS || 30),
 
-  // GitHub integration (set these in Render env)
+  // GitHub integration (optional)
   GH_TOKEN: process.env.GITHUB_TOKEN || "",
   GH_OWNER: process.env.GITHUB_OWNER || "",
-  GH_REPO: process.env.GITHUB_REPO || "",
+  GH_REPO: process.env.GITHUB_REPO || ""
 };
 
-// --- helper: parse M3U attributes ---
-function parseAttrs(attrString){
-  const attrs = {};
-  const re = /([a-zA-Z0-9\-_]+)\s*=\s*"([^"]*)"/g;
-  let m;
-  while((m = re.exec(attrString)) !== null){
-    attrs[m[1]] = m[2];
-  }
-  return attrs;
-}
-
-async function readM3U(){
+// --- Utility: list all .m3u files in project dir ---
+async function listM3UFiles(){
   try{
-    const text = await fs.readFile(CONFIG.m3uFile, "utf8");
-    const lines = text.replace(/\r/g,"").split("\n").map(l=>l.trim());
-    const items = [];
-    for(let i=0;i<lines.length;i++){
-      const line = lines[i];
-      if(!line) continue;
-      if(line.startsWith("#EXTINF")){
-        const after = line.substring(8).trim();
-        const idx = after.indexOf(",");
-        let metaPart = after, title = "";
-        if(idx >= 0){ metaPart = after.substring(0, idx); title = after.substring(idx+1).trim(); }
-        const attrs = parseAttrs(metaPart);
-        let url = "";
-        for(let j=i+1;j<lines.length;j++){
-          if(lines[j] && !lines[j].startsWith("#")){ url = lines[j]; i = j; break; }
-        }
-        items.push({
-          title: title || attrs["tvg-name"] || attrs["name"] || "Sin nombre",
-          tvgId: attrs["tvg-id"] || "",
-          logo: attrs["tvg-logo"] || attrs["tvg_logo"] || "",
-          group: attrs["group-title"] || attrs["group"] || "Sin grupo",
-          url: url
-        });
-      }
-    }
-    return items;
+    const files = await fs.readdir(__dirname);
+    return files.filter(f => f.toLowerCase().endsWith('.m3u'));
   }catch(e){
     return [];
   }
 }
 
-// --- GitHub file helpers (reads/updates content in the repo) ---
-const GH_API_BASE = "https://api.github.com";
+// --- read raw m3u content ---
+async function readM3UFile(filename){
+  const full = path.join(__dirname, filename);
+  const text = await fs.readFile(full, "utf8");
+  return text.replace(/\r/g, "");
+}
 
+// --- GitHub helpers (GET/PUT file content) ---
+const GH_API_BASE = "https://api.github.com";
 function ghHeaders(){
   return {
     "Authorization": `Bearer ${CONFIG.GH_TOKEN}`,
@@ -86,7 +62,6 @@ function ghHeaders(){
 }
 
 async function githubGetFile(pathInRepo){
-  // returns { sha, contentText } or null if 404
   if(!CONFIG.GH_TOKEN || !CONFIG.GH_OWNER || !CONFIG.GH_REPO) return null;
   const url = `${GH_API_BASE}/repos/${CONFIG.GH_OWNER}/${CONFIG.GH_REPO}/contents/${encodeURIComponent(pathInRepo)}`;
   const resp = await fetch(url, { headers: ghHeaders() });
@@ -106,11 +81,7 @@ async function githubPutFile(pathInRepo, contentText, message, sha = null){
     committer: { name: "xtream-lite", email: "noreply@example.com" }
   };
   if(sha) body.sha = sha;
-  const resp = await fetch(url, {
-    method: "PUT",
-    headers: ghHeaders(),
-    body: JSON.stringify(body)
-  });
+  const resp = await fetch(url, { method: "PUT", headers: ghHeaders(), body: JSON.stringify(body) });
   if(!resp.ok){
     const t = await resp.text();
     throw new Error(`GitHub PUT failed: ${resp.status} ${t}`);
@@ -118,7 +89,7 @@ async function githubPutFile(pathInRepo, contentText, message, sha = null){
   return await resp.json();
 }
 
-// --- local file helpers as fallback (if GH not configured) ---
+// --- local JSON helpers ---
 async function readLocalJson(filePath, fallback = null){
   try{
     const text = await fs.readFile(filePath, "utf8");
@@ -127,85 +98,66 @@ async function readLocalJson(filePath, fallback = null){
     return fallback;
   }
 }
-
 async function writeLocalJson(filePath, obj){
   await fs.writeFile(filePath, JSON.stringify(obj, null, 2), "utf8");
 }
 
-// --- license file helpers (prefers local file; GH license.json optional) ---
-async function readLicenseFileLocal(){
-  return await readLocalJson(CONFIG.localLicenseFile, null);
-}
-
-async function writeLicenseFileLocal(obj){
-  return await writeLocalJson(CONFIG.localLicenseFile, obj);
-}
-
-function addDaysToNow(days){
-  const ms = days * 24 * 60 * 60 * 1000;
-  return new Date(Date.now() + ms).toISOString();
-}
+// --- license helpers ---
+function addDaysToNow(days){ const ms = days * 24 * 60 * 60 * 1000; return new Date(Date.now() + ms).toISOString(); }
+async function readLicenseLocal(){ return await readLocalJson(CONFIG.localLicenseFile, null); }
+async function writeLicenseLocal(obj){ return await writeLocalJson(CONFIG.localLicenseFile, obj); }
 
 async function ensureLicense(){
-  // 1) try local file
-  let lic = await readLicenseFileLocal();
+  // try local first
+  let lic = await readLicenseLocal();
   if(lic) return lic;
 
-  // 2) if not, try GH repo license.json
+  // try GH
   try{
     const gh = await githubGetFile("license.json");
     if(gh && gh.contentText){
       lic = JSON.parse(gh.contentText);
-      // save locally as well
-      await writeLicenseFileLocal(lic);
+      await writeLicenseLocal(lic);
       return lic;
     }
-  }catch(e){
-    // ignore
-  }
+  }catch(e){ /* ignore */ }
 
-  // 3) create new license locally (use EXPIRES_AT env if present)
+  // create new
   const now = new Date().toISOString();
   let expiresAt = null;
   if(process.env.EXPIRES_AT){
     const d = new Date(process.env.EXPIRES_AT);
     if(!isNaN(d.getTime())) expiresAt = d.toISOString();
   }
-  if(!expiresAt) expiresAt = addDaysToNow(CONFIG.expireDays);
-
+  if(!expiresAt) expiresAt = addDaysToNow(CONFIG.EXPIRE_DAYS);
   lic = { createdAt: now, expiresAt };
-  await writeLicenseFileLocal(lic);
-  // optionally push to GH if configured
+  await writeLicenseLocal(lic);
+  // try push to GH
   try{
     if(CONFIG.GH_TOKEN && CONFIG.GH_OWNER && CONFIG.GH_REPO){
       const existing = await githubGetFile("license.json");
       const sha = existing ? existing.sha : null;
       await githubPutFile("license.json", JSON.stringify(lic, null, 2), "Create license.json (xtream-lite)", sha);
     }
-  }catch(e){
-    console.warn("Could not push license.json to GH:", e.message || e);
-  }
+  }catch(e){ console.warn("Could not push license.json to GH:", e.message || e); }
   return lic;
 }
 
-// --- accounts helpers (store in repo accounts.json or local accounts.json) ---
+// --- accounts helpers: schema includes lists: ["canales.m3u","peliculas.m3u"] ---
 async function readAccounts(){
-  // try GH first
+  // try GH
   try{
     const gh = await githubGetFile("accounts.json");
     if(gh && gh.contentText){
       return { accounts: JSON.parse(gh.contentText || "[]"), sha: gh.sha, source: "github" };
     }
-  }catch(e){
-    // ignore
-  }
-  // fallback to local
+  }catch(e){ /* ignore */ }
+  // fallback local
   const local = await readLocalJson(CONFIG.localAccountsFile, []);
   return { accounts: local || [], sha: null, source: "local" };
 }
 
 async function saveAccounts(accounts, sha=null){
-  // try GH if configured
   if(CONFIG.GH_TOKEN && CONFIG.GH_OWNER && CONFIG.GH_REPO){
     try{
       await githubPutFile("accounts.json", JSON.stringify(accounts, null, 2), `Update accounts.json (xtream-lite-admin)`, sha || undefined);
@@ -214,15 +166,12 @@ async function saveAccounts(accounts, sha=null){
       console.warn("GH save failed, writing local:", e.message || e);
     }
   }
-  // fallback local
   await writeLocalJson(CONFIG.localAccountsFile, accounts);
   return { ok: true, source: "local" };
 }
 
-// --- auth middleware for player endpoints (checks license + username/password) ---
-// --- auth middleware para player endpoints (checks license + username/password or accounts.json) ---
+// --- auth for player endpoints: license + global creds OR per-account creds (with expiry) ---
 async function authGuard(req, res){
-  // 1) validar licencia global
   const lic = await ensureLicense();
   if(lic && lic.expiresAt){
     const now = new Date();
@@ -234,21 +183,18 @@ async function authGuard(req, res){
     res.setHeader("X-License-Expires", lic.expiresAt);
   }
 
-  // 2) obtener credenciales de la request (query params)
   const username = req.query.username || "";
   const password = req.query.password || "";
 
-  // 3) check contra credencial global (CONFIG)
-  if(username === CONFIG.username && password === CONFIG.password) return true;
+  // global server credentials allowed
+  if(username === CONFIG.XTREAM_USER && password === CONFIG.XTREAM_PASS) return true;
 
-  // 4) check contra accounts.json (puede estar en GH o local)
+  // check accounts list
   try{
-    const read = await readAccounts(); // readAccounts() ya existe en tu index.js
+    const read = await readAccounts();
     const accounts = read.accounts || [];
-    // buscar cuenta que coincida user+pass
-    const acc = accounts.find(a => (a.username === username && a.password === password));
+    const acc = accounts.find(a => a.username === username && a.password === password);
     if(acc){
-      // si la cuenta tiene expiresAt, verificar que no haya vencido
       if(acc.expiresAt){
         const now = new Date();
         const expires = new Date(acc.expiresAt);
@@ -257,21 +203,17 @@ async function authGuard(req, res){
           return false;
         }
       }
-      // OK: credenciales válidas
       return true;
     }
   }catch(e){
     console.warn("authGuard: readAccounts failed", e && e.message ? e.message : e);
-    // no abortamos aquí: caemos al 401 si no hay match
   }
 
-  // 5) fallback: inválido
   res.status(401).json({ error: "Invalid username/password" });
   return false;
 }
 
-
-// --- adminAuth middleware: Basic Auth (ADMIN_USER/ADMIN_PASS) OR adminKey in body/query ---
+// --- adminAuth (Basic Auth or admin_key) ---
 const ADMIN_USER = process.env.ADMIN_USER || "admin";
 const ADMIN_PASS = process.env.ADMIN_PASS || "adminpass";
 
@@ -287,7 +229,7 @@ function adminAuth(req, res, next){
       }
     }
     const key = req.query.admin_key || (req.body && req.body.admin_key);
-    if(key && key === CONFIG.adminKey){
+    if(key && key === CONFIG.ADMIN_KEY){
       req.isAdmin = true;
       return next();
     }
@@ -298,95 +240,65 @@ function adminAuth(req, res, next){
   }
 }
 
-// --- endpoints ---
-// serve admin UI (protected)
+// --- Helper: build user_info object for apps (exp_date seconds + ms + ISO) ---
+function makeUserInfoFromAccount(acc){
+  const nowS = Math.floor(Date.now()/1000);
+  const expS = acc && acc.expiresAt ? Math.floor(new Date(acc.expiresAt).getTime()/1000) : null;
+  const createdS = acc && acc.createdAt ? Math.floor(new Date(acc.createdAt).getTime()/1000) : nowS;
+  return {
+    username: acc.username || "",
+    password: acc.password || "",
+    message: "Welcome",
+    auth: 1,
+    status: (expS && nowS > expS) ? "Expired" : "Active",
+    exp_date: expS ? String(expS) : "",
+    exp_date_ms: acc.expiresAt ? String(new Date(acc.expiresAt).getTime()) : "",
+    exp_date_iso: acc.expiresAt ? new Date(acc.expiresAt).toISOString() : "",
+    is_trial: acc.is_trial ? String(acc.is_trial) : "0",
+    active_cons: "0",
+    created_at: String(createdS),
+    max_connections: acc.max_connections ? String(acc.max_connections) : "1",
+    allowed_output_formats: ["m3u8","ts","rtmp"]
+  };
+}
+
+// --- Routes ---
+// Serve admin UI
 app.get('/admin', adminAuth, (req,res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-// license status (for debug)
-app.get('/license_status', adminAuth, async (req, res) => {
-  const lic = await ensureLicense();
-  res.json(lic);
+// List available m3u files
+app.get('/admin/available_lists', adminAuth, async (req,res) => {
+  const list = await listM3UFiles();
+  res.json({ lists: list });
 });
 
-// get.php -> serve M3U content (protected by authGuard)
-app.get("/get.php", async (req, res) => {
-  if(!(await authGuard(req,res))) return;
+// List accounts
+app.get('/admin/list_accounts', adminAuth, async (req,res) => {
   try{
-    const content = await fs.readFile(CONFIG.m3uFile, "utf8");
-    res.setHeader("Content-Type", "application/x-mpegurl; charset=utf-8");
-    res.send(content);
+    const read = await readAccounts();
+    res.json({ source: read.source, accounts: read.accounts || [] });
   }catch(e){
-    res.status(500).send("Error leyendo M3U: " + (e && e.message));
+    res.status(500).json({ error: e.message || String(e) });
   }
 });
 
-// player_api.php (get_live_categories, get_live_streams)
-app.get("/player_api.php", async (req, res) => {
-  if(!(await authGuard(req,res))) return;
-  const action = req.query.action || "";
-  const groupId = req.query.category_id || null;
-  try{
-    const channels = await readM3U();
-    const groups = Array.from(new Set(channels.map(c=>c.group || "Sin grupo")));
-    const groupsMeta = groups.map((g,i)=>({ category_id: i+1, category_name: g }));
-    const groupIndex = new Map(groupsMeta.map(g => [g.category_name, g.category_id]));
-
-    if(action === "get_live_categories"){
-      res.json(groupsMeta);
-      return;
-    }
-
-    if(action === "get_live_streams"){
-      let filtered = channels;
-      if(groupId){
-        const gid = Number(groupId);
-        if(!Number.isNaN(gid)){
-          const name = groupsMeta.find(g=>g.category_id===gid)?.category_name;
-          filtered = channels.filter(c => c.group === name);
-        }else{
-          filtered = channels.filter(c => c.group === groupId);
-        }
-      }
-
-      const streams = filtered.map((c, idx) => {
-        const catId = groupIndex.get(c.group) || 0;
-        return {
-          stream_id: 100000 + idx + 1,
-          name: c.title,
-          stream_icon: c.logo || "",
-          category_id: catId,
-          stream_type: "live",
-          direct_source: c.url,
-          num: idx + 1
-        };
-      });
-
-      res.json(streams);
-      return;
-    }
-
-    res.status(400).json({ error: "Unsupported action: " + action });
-  }catch(e){
-    res.status(500).json({ error: e && e.message });
-  }
-});
-
-// --- admin endpoints to manage accounts (read from GH or local) ---
-// Add account: expects JSON { username, password, days }
+// Add account
 app.post('/admin/add_account', adminAuth, async (req, res) => {
   try{
-    const { username, password, days } = req.body || {};
+    const { username, password, days, lists } = req.body || {};
     if(!username || !password) return res.status(400).json({ error: "Provide username and password" });
 
     const read = await readAccounts();
     const accounts = read.accounts || [];
     const sha = read.sha || null;
 
-    // build account
+    const available = await listM3UFiles();
+    const finalLists = Array.isArray(lists) ? lists.filter(l => available.includes(l)) : [];
+
     const expiresAt = new Date(Date.now() + ((Number(days || 30)) * 24*60*60*1000)).toISOString();
-    const newAccount = { username, password, createdAt: new Date().toISOString(), expiresAt };
+    const newAccount = { username, password, createdAt: new Date().toISOString(), expiresAt, lists: finalLists };
     accounts.push(newAccount);
 
     await saveAccounts(accounts, sha);
@@ -397,10 +309,10 @@ app.post('/admin/add_account', adminAuth, async (req, res) => {
   }
 });
 
-// Update account expiry: expects JSON { username, days } or { username, expiresAt }
+// Update account expiry / lists
 app.post('/admin/set_account_expiry', adminAuth, async (req, res) => {
   try{
-    const { username, days, expiresAt } = req.body || {};
+    const { username, days, expiresAt, lists } = req.body || {};
     if(!username) return res.status(400).json({ error: "Provide username" });
 
     const read = await readAccounts();
@@ -416,8 +328,11 @@ app.post('/admin/set_account_expiry', adminAuth, async (req, res) => {
       const d = new Date(expiresAt);
       if(isNaN(d.getTime())) return res.status(400).json({ error: "Invalid expiresAt" });
       acc.expiresAt = d.toISOString();
-    }else{
-      return res.status(400).json({ error: "Provide days or expiresAt" });
+    }
+
+    if(Array.isArray(lists)){
+      const available = await listM3UFiles();
+      acc.lists = lists.filter(l => available.includes(l));
     }
 
     await saveAccounts(accounts, sha);
@@ -428,17 +343,208 @@ app.post('/admin/set_account_expiry', adminAuth, async (req, res) => {
   }
 });
 
-// Optional: list accounts (admin)
-app.get('/admin/list_accounts', adminAuth, async (req,res) => {
+// license status (admin)
+app.get('/license_status', adminAuth, async (req, res) => {
+  const lic = await ensureLicense();
+  res.json(lic);
+});
+
+// get.php -> return combined M3U for the authenticated account
+app.get("/get.php", async (req, res) => {
+  if(!(await authGuard(req,res))) return;
+
+  const username = req.query.username || "";
+  let listsToSend = [];
+
   try{
-    const read = await readAccounts();
-    res.json({ source: read.source, accounts: read.accounts || [] });
+    if(username === CONFIG.XTREAM_USER){
+      listsToSend = await listM3UFiles();
+    }else{
+      const read = await readAccounts();
+      const accounts = read.accounts || [];
+      const acc = accounts.find(a => a.username === username && a.password === req.query.password);
+      if(acc && Array.isArray(acc.lists) && acc.lists.length) listsToSend = acc.lists;
+      else listsToSend = [];
+    }
+
+    if(listsToSend.length === 0){
+      return res.status(403).json({ error: "No lists assigned to this account" });
+    }
+
+    let combined = "#EXTM3U\n";
+    for(const lf of listsToSend){
+      try{
+        const raw = await readM3UFile(lf);
+        const lines = raw.split("\n").map(l => l.trim());
+        for(const ln of lines){
+          if(!ln) continue;
+          if(ln.startsWith("#EXTM3U")) continue;
+          combined += ln + "\n";
+        }
+      }catch(e){
+        console.warn("Skipping missing m3u:", lf);
+      }
+    }
+    res.setHeader("Content-Type", "application/x-mpegurl; charset=utf-8");
+    res.send(combined);
   }catch(e){
-    res.status(500).json({ error: e.message || String(e) });
+    res.status(500).send("Error creando M3U: " + (e && e.message));
   }
 });
 
-// --- simple CORS preflight / health ---
+// player_api.php -> categories & streams + get_user_info implementation
+app.get("/player_api.php", async (req, res) => {
+  // allow get_user_info without authGuard? We'll require username/password (we will check accounts)
+  const action = req.query.action || "";
+  const groupId = req.query.category_id || null;
+
+  // ---- get_user_info support (Xtream-compatible) ----
+  if(action === "get_user_info" || action === "get_simple_data_array"){
+    const reqUser = req.query.username || "";
+    const reqPass = req.query.password || "";
+
+    // global server account returns license info
+    try{
+      if(reqUser === CONFIG.XTREAM_USER && reqPass === CONFIG.XTREAM_PASS){
+        const lic = await ensureLicense();
+        const li = {
+          username: CONFIG.XTREAM_USER,
+          password: CONFIG.XTREAM_PASS,
+          message: "Server account",
+          auth: 1,
+          status: "Active",
+          exp_date: lic && lic.expiresAt ? String(Math.floor(new Date(lic.expiresAt).getTime()/1000)) : "",
+          exp_date_ms: lic && lic.expiresAt ? String(new Date(lic.expiresAt).getTime()) : "",
+          exp_date_iso: lic && lic.expiresAt ? new Date(lic.expiresAt).toISOString() : "",
+          is_trial: "0",
+          active_cons: "0",
+          created_at: lic && lic.createdAt ? String(Math.floor(new Date(lic.createdAt).getTime()/1000)) : String(Math.floor(Date.now()/1000)),
+          max_connections: "999",
+          allowed_output_formats: ["m3u8","ts","rtmp"]
+        };
+        const serverInfo = { url: req.protocol + '://' + req.get('host'), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '' };
+        res.json({ user_info: li, server_info: serverInfo });
+        return;
+      }
+
+      // find account
+      const read = await readAccounts();
+      const accounts = read.accounts || [];
+      const acc = accounts.find(a => a.username === reqUser && a.password === reqPass);
+
+      if(!acc){
+        res.status(401).json({ user_info: { auth: 0, message: "Invalid username/password" }});
+        return;
+      }
+
+      // expired?
+      if(acc.expiresAt && new Date(acc.expiresAt).getTime() < Date.now()){
+        res.status(403).json({ user_info: { auth: 0, message: "Account expired", exp_date: String(Math.floor(new Date(acc.expiresAt).getTime()/1000)) }});
+        return;
+      }
+
+      const userInfo = makeUserInfoFromAccount(acc);
+      const serverInfo = { url: req.protocol + '://' + req.get('host'), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '' };
+      res.json({ user_info: userInfo, server_info: serverInfo });
+      return;
+    }catch(err){
+      console.error("get_user_info error:", err && err.message ? err.message : err);
+      res.status(500).json({ error: "internal" });
+      return;
+    }
+  }
+
+  // ---- get_live_categories & get_live_streams (fallback uses canales.m3u or first m3u) ----
+  try{
+    // require username/pass check
+    if(!(await authGuard(req,res))) return;
+
+    const available = await listM3UFiles();
+    const base = available.includes("canales.m3u") ? "canales.m3u" : (available[0] || null);
+
+    const channels = base ? (await (async () => {
+      const text = await readM3UFile(base);
+      const lines = text.replace(/\r/g,"").split("\n").map(l=>l.trim());
+      const items = [];
+      for(let i=0;i<lines.length;i++){
+        const line = lines[i];
+        if(!line) continue;
+        if(line.startsWith("#EXTINF")){
+          const after = line.substring(8).trim();
+          const idx = after.indexOf(",");
+          let metaPart = after, title = "";
+          if(idx >= 0){ metaPart = after.substring(0, idx); title = after.substring(idx+1).trim(); }
+          const attrs = {};
+          const re = /([a-zA-Z0-9\-_]+)\s*=\s*"([^"]*)"/g;
+          let m;
+          while((m = re.exec(metaPart)) !== null){ attrs[m[1]] = m[2]; }
+          let url = "";
+          for(let j=i+1;j<lines.length;j++){
+            if(lines[j] && !lines[j].startsWith("#")){ url = lines[j]; i = j; break; }
+          }
+          items.push({
+            title: title || attrs["tvg-name"] || attrs["name"] || "Sin nombre",
+            tvgId: attrs["tvg-id"] || "",
+            logo: attrs["tvg-logo"] || attrs["tvg_logo"] || "",
+            group: attrs["group-title"] || attrs["group"] || "Sin grupo",
+            url: url
+          });
+        }
+      }
+      return items;
+    })() ) : [];
+
+    const groups = Array.from(new Set(channels.map(c=>c.group || "Sin grupo")));
+    const groupsMeta = groups.map((g,i)=>({ category_id: i+1, category_name: g }));
+    const groupIndex = new Map(groupsMeta.map(g => [g.category_name, g.category_id]));
+
+    if(action === "get_live_categories"){
+      res.json(groupsMeta); return;
+    }
+
+    if(action === "get_live_streams"){
+      let filtered = channels;
+      if(groupId){
+        const gid = Number(groupId);
+        if(!Number.isNaN(gid)){
+          const name = groupsMeta.find(g=>g.category_id===gid)?.category_name;
+          filtered = channels.filter(c => c.group === name);
+        }else filtered = channels.filter(c => c.group === groupId);
+      }
+      const streams = filtered.map((c, idx) => {
+        const catId = groupIndex.get(c.group) || 0;
+        return {
+          stream_id: 100000 + idx + 1,
+          name: c.title,
+          stream_icon: c.logo || "",
+          category_id: catId,
+          stream_type: "live",
+          direct_source: c.url,
+          num: idx + 1
+        };
+      });
+      res.json(streams); return;
+    }
+
+    res.status(400).json({ error: "Unsupported action: " + action });
+  }catch(e){
+    res.status(500).json({ error: e && e.message });
+  }
+});
+
+// Compatibility: /api.php?action=user&sub=info  -> delegate to player_api.php get_user_info
+app.get("/api.php", async (req, res) => {
+  const action = req.query.action || "";
+  const sub = req.query.sub || "";
+  if(action === "user" && sub === "info"){
+    // simply call the same logic as player_api.php?action=get_user_info
+    req.query.action = "get_user_info";
+    return app._router.handle(req, res);
+  }
+  res.status(400).json({ error: "Unsupported api.php action" });
+});
+
+// CORS preflight
 app.options("/*", (req,res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
@@ -446,11 +552,12 @@ app.options("/*", (req,res) => {
   res.sendStatus(200);
 });
 
-app.get("/", (req,res) => res.send("Xtream-lite server. Use /player_api.php and /get.php with username/password"));
+// Redirect root to admin
+app.get("/", (req,res) => res.redirect("/admin"));
 
-// --- start server ---
+// Start
 (async () => {
-  await ensureLicense(); // will create license.json if missing (and push to GH if configured)
+  await ensureLicense();
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, ()=> console.log("Xtream-lite listening on port", PORT));
 })();
