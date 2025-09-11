@@ -1,0 +1,359 @@
+#EXTM3U
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS", WIN SPORTS
+http://195.66.210.10:80/Bluefox102/XYXNA/516932
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS | F", WIN SPORTS +
+http://195.66.210.10:80/Bluefox102/XYXNA/516931
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS | F", WIN SPORTS + FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/516934
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS | F", WIN SPORTS + HD
+http://195.66.210.10:80/Bluefox102/XYXNA/516935
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS | F", WIN SPORTS + HD OP 1
+http://195.66.210.10:80/Bluefox102/XYXNA/516929
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS | F", WIN SPORTS + VIP 1
+http://195.66.210.10:80/Bluefox102/XYXNA/516921
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS | F", WIN SPORTS OP 1
+http://195.66.210.10:80/Bluefox102/XYXNA/485515
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 9
+http://195.66.210.10:80/Bluefox102/XYXNA/612970
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 11
+http://195.66.210.10:80/Bluefox102/XYXNA/612971
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 12
+http://195.66.210.10:80/Bluefox102/XYXNA/612972
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 1
+http://195.66.210.10:80/Bluefox102/XYXNA/612973
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", 009 USA: NCAA 02 / Wt Michigan @ Michigan St 5:00PM - Ctl Michigan @ San Jose 7:30PM -Fox Sports 1 H
+http://195.66.210.10:80/Bluefox102/XYXNA/615919
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", 009 USA: NCAA 04 / App State @ Charlotte - 5:00PM - ESPN U
+http://195.66.210.10:80/Bluefox102/XYXNA/615921
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", 009 USA: NCAA 06 / Georgia Tech @ Colorado - 6:00PM - ESPN HD
+http://195.66.210.10:80/Bluefox102/XYXNA/615923
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/20/DAZN_Logo.png" group-title="DAZN", Formula 1 / Gran Premio Holanda - Carrera - 7:00AM - DAZN F1
+http://195.66.210.10:80/Bluefox102/XYXNA/616025
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", LAT: TENNIS / US OPEN - Dia 8 -9:00AM a 9:00PM - ESPN 2
+http://195.66.210.10:80/Bluefox102/XYXNA/616098
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", LAT: TENNIS / US OPEN - Dia 8 - 11:00AM a 9:00PM - ESPN 3
+http://195.66.210.10:80/Bluefox102/XYXNA/616099
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", 010 LAT: LMB 01 HD / Piratas Campeche en Diablos Rojos - 2:00PM - ESPN HD
+http://195.66.210.10:80/Bluefox102/XYXNA/616122
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", LA LIG4 (ESPN+) Solo Eventos
+http://195.66.210.10:80/Bluefox102/XYXNA/440264
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 1 EREDIVISIE
+http://195.66.210.10:80/Bluefox102/XYXNA/216454
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | NL", FOX Sports 1 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/55742
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | NL", FOX Sports 3 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/55744
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | NL", FOX Sports 4 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/55745
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | NL", FOX Sports 6 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/55747
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 2
+http://195.66.210.10:80/Bluefox102/XYXNA/415399
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 3
+http://195.66.210.10:80/Bluefox102/XYXNA/415400
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 4
+http://195.66.210.10:80/Bluefox102/XYXNA/415401
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 5
+http://195.66.210.10:80/Bluefox102/XYXNA/415402
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", CA: Fox Sports Racing HD
+http://195.66.210.10:80/Bluefox102/XYXNA/479220
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", DSTV: ESPN2
+http://195.66.210.10:80/Bluefox102/XYXNA/554688
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", UK: BT SPORT ESPN
+http://195.66.210.10:80/Bluefox102/XYXNA/555109
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", IT
+http://195.66.210.10:80/Bluefox102/XYXNA/554996
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", UK
+http://195.66.210.10:80/Bluefox102/XYXNA/555323
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN
+http://195.66.210.10:80/Bluefox102/XYXNA/37960
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 1
+http://195.66.210.10:80/Bluefox102/XYXNA/218736
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 2 HD.
+http://195.66.210.10:80/Bluefox102/XYXNA/54531
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 2 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/170950
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN Deportes
+http://195.66.210.10:80/Bluefox102/XYXNA/170951
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN NEWS SD
+http://195.66.210.10:80/Bluefox102/XYXNA/54536
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN U
+http://195.66.210.10:80/Bluefox102/XYXNA/37962
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN U HD
+http://195.66.210.10:80/Bluefox102/XYXNA/54537
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX Sports 1
+http://195.66.210.10:80/Bluefox102/XYXNA/37880
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX Sports 2
+http://195.66.210.10:80/Bluefox102/XYXNA/37956
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX Sports 2
+http://195.66.210.10:80/Bluefox102/XYXNA/55553
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX Sports Prime Ticket
+http://195.66.210.10:80/Bluefox102/XYXNA/47636
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", CANAL 9 SALTA
+http://195.66.210.10:80/Bluefox102/XYXNA/47017
+#EXTINF:-1 tvg-logo="https://imgs.search.brave.com/S2EPxs-5FrCsSSlq6fo2O_wNHe5P7lQzXUReVhD9jbo/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi84LzhkL0lz/b3RpcG9fZWx0cmVj/ZV8yMDE2LnBuZy81/MTJweC1Jc290aXBv/X2VsdHJlY2VfMjAx/Ni5wbmc" group-title="ARGENTINA", EL TRECE
+http://195.66.210.10:80/Bluefox102/XYXNA/286050
+#EXTINF:-1 tvg-logo="https://imgs.search.brave.com/S2EPxs-5FrCsSSlq6fo2O_wNHe5P7lQzXUReVhD9jbo/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi84LzhkL0lz/b3RpcG9fZWx0cmVj/ZV8yMDE2LnBuZy81/MTJweC1Jc290aXBv/X2VsdHJlY2VfMjAx/Ni5wbmc" group-title="ARGENTINA", EL TRECE HD
+http://195.66.210.10:80/Bluefox102/XYXNA/46976
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/1/1e/El_Trece_Logo.png" group-title="PY", El Trece HD
+http://195.66.210.10:80/Bluefox102/XYXNA/56711
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS", WIN SPORTS +.
+http://195.66.210.10:80/Bluefox102/XYXNA/516933
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS", WIN SPORTS HD
+http://195.66.210.10:80/Bluefox102/XYXNA/395945
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS", WIN SPORTS SD
+http://195.66.210.10:80/Bluefox102/XYXNA/12851
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS", WIN SPORTS+ FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/12840
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS", WIN SPORTS+ HD
+http://195.66.210.10:80/Bluefox102/XYXNA/395946
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS", WIN SPORTS+ HD OP2
+http://195.66.210.10:80/Bluefox102/XYXNA/479415
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS", WIN SPORTS+ SD OP2
+http://195.66.210.10:80/Bluefox102/XYXNA/505449
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/49/Win_Sports_logo.png" group-title="WIN SPORTS", WIN SPORTS+ SD ⭐️
+http://195.66.210.10:80/Bluefox102/XYXNA/12759
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 SD
+http://195.66.210.10:80/Bluefox102/XYXNA/219173
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 ARG FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/439754
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 ARG HD
+http://195.66.210.10:80/Bluefox102/XYXNA/454719
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 CHI SD
+http://195.66.210.10:80/Bluefox102/XYXNA/439775
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 COL HD
+http://195.66.210.10:80/Bluefox102/XYXNA/519821
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 COL SD
+http://195.66.210.10:80/Bluefox102/XYXNA/439774
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/439752
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/219171
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 MEX HD
+http://195.66.210.10:80/Bluefox102/XYXNA/9380
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 MEX SD
+http://195.66.210.10:80/Bluefox102/XYXNA/185154
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 PER
+http://195.66.210.10:80/Bluefox102/XYXNA/220727
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 1 PER HD
+http://195.66.210.10:80/Bluefox102/XYXNA/219172
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 2
+http://195.66.210.10:80/Bluefox102/XYXNA/439772
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 2 ARG
+http://195.66.210.10:80/Bluefox102/XYXNA/185666
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 2 ARG SD
+http://195.66.210.10:80/Bluefox102/XYXNA/518964
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 2 BRA
+http://195.66.210.10:80/Bluefox102/XYXNA/456549
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 2 FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/439757
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 2 MEX
+http://195.66.210.10:80/Bluefox102/XYXNA/518965
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 2 MEX FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/185149
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 2 MEX HD
+http://195.66.210.10:80/Bluefox102/XYXNA/36391
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 2 PER HD
+http://195.66.210.10:80/Bluefox102/XYXNA/518967
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 3 ARG
+http://195.66.210.10:80/Bluefox102/XYXNA/518963
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 3 ARG HD
+http://195.66.210.10:80/Bluefox102/XYXNA/21220
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 3 FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/518962
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 3 MEX
+http://195.66.210.10:80/Bluefox102/XYXNA/9530
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 3 MEX FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/40735
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 3 MEX HD
+http://195.66.210.10:80/Bluefox102/XYXNA/186774
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 4 FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/224430
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 4 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/19485
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 4 MEX HD
+http://195.66.210.10:80/Bluefox102/XYXNA/439801
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 4 MEX SD
+http://195.66.210.10:80/Bluefox102/XYXNA/21229
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 4 SD
+http://195.66.210.10:80/Bluefox102/XYXNA/439770
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 5
+http://195.66.210.10:80/Bluefox102/XYXNA/272499
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN DEPORTES HD
+http://195.66.210.10:80/Bluefox102/XYXNA/54533
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN EXTRA BRA
+http://195.66.210.10:80/Bluefox102/XYXNA/168997
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN EXTRA HD
+http://195.66.210.10:80/Bluefox102/XYXNA/454717
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN PREMIUM FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/276163
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN PREMIUM HD
+http://195.66.210.10:80/Bluefox102/XYXNA/215252
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS  2 SD
+http://195.66.210.10:80/Bluefox102/XYXNA/439803
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 1 ARG
+http://195.66.210.10:80/Bluefox102/XYXNA/158518
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 1 COL HD
+http://195.66.210.10:80/Bluefox102/XYXNA/518960
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 1 FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/36387
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 1 MEX
+http://195.66.210.10:80/Bluefox102/XYXNA/19632
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 1 MEX HD
+http://195.66.210.10:80/Bluefox102/XYXNA/198785
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 1 SD
+http://195.66.210.10:80/Bluefox102/XYXNA/518961
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 2 ARG HD
+http://195.66.210.10:80/Bluefox102/XYXNA/19652
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 2 BRA HD
+http://195.66.210.10:80/Bluefox102/XYXNA/48540
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 2 FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/186606
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 2 MEX FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/186573
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 2 MEX HD
+http://195.66.210.10:80/Bluefox102/XYXNA/19495
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 2 SD
+http://195.66.210.10:80/Bluefox102/XYXNA/185155
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 3 FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/36389
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 3 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/19496
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 3 MEX FHD
+http://195.66.210.10:80/Bluefox102/XYXNA/93563
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS 3 MEX HD
+http://195.66.210.10:80/Bluefox102/XYXNA/9538
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS PREMIUM
+http://195.66.210.10:80/Bluefox102/XYXNA/21298
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | DEP", FOX SPORTS PREMIUM HD
+http://195.66.210.10:80/Bluefox102/XYXNA/158454
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | USA", ESPN
+http://195.66.210.10:80/Bluefox102/XYXNA/218143
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | USA", ESPN
+http://195.66.210.10:80/Bluefox102/XYXNA/218457
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | USA", ESPN 2
+http://195.66.210.10:80/Bluefox102/XYXNA/218458
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | USA", ESPN Goal Line
+http://195.66.210.10:80/Bluefox102/XYXNA/218460
+#EXTINF:-1 tvg-logo="https://i.ibb.co/ds7B28Sq/download.jpg" group-title="ARGENTINA", CANAL 9
+http://195.66.210.10:80/Bluefox102/XYXNA/576513
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS
+http://195.66.210.10:80/Bluefox102/XYXNA/576528
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 10
+http://195.66.210.10:80/Bluefox102/XYXNA/576596
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 13
+http://195.66.210.10:80/Bluefox102/XYXNA/576598
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 14
+http://195.66.210.10:80/Bluefox102/XYXNA/576599
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 6
+http://195.66.210.10:80/Bluefox102/XYXNA/576588
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 7
+http://195.66.210.10:80/Bluefox102/XYXNA/576591
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/96/Vix_logo.png" group-title="VIX SPORTS", VIX SPORTS 8
+http://195.66.210.10:80/Bluefox102/XYXNA/576593
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN DEPORTES SD
+http://195.66.210.10:80/Bluefox102/XYXNA/54094
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | MEX", ESPN 3
+http://195.66.210.10:80/Bluefox102/XYXNA/588124
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | MEX", ESPN
+http://195.66.210.10:80/Bluefox102/XYXNA/588125
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | USA", ESPN DEPORTES
+http://195.66.210.10:80/Bluefox102/XYXNA/588126
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 4
+http://195.66.210.10:80/Bluefox102/XYXNA/588128
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | MEX", ESPN 2 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/588130
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN
+http://195.66.210.10:80/Bluefox102/XYXNA/588132
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | MEX", ESPN 2
+http://195.66.210.10:80/Bluefox102/XYXNA/588134
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | MEX", ESPN 3 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/588135
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN HD
+http://195.66.210.10:80/Bluefox102/XYXNA/588137
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 2
+http://195.66.210.10:80/Bluefox102/XYXNA/588138
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 3
+http://195.66.210.10:80/Bluefox102/XYXNA/588139
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | COL", ESPN
+http://195.66.210.10:80/Bluefox102/XYXNA/588140
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | COL", ESPN 2
+http://195.66.210.10:80/Bluefox102/XYXNA/588141
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | COL", ESPN 3
+http://195.66.210.10:80/Bluefox102/XYXNA/588142
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN PREMIUM
+http://195.66.210.10:80/Bluefox102/XYXNA/588143
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | MEX", ESPN 4
+http://195.66.210.10:80/Bluefox102/XYXNA/588144
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | CHI", ESPN
+http://195.66.210.10:80/Bluefox102/XYXNA/588145
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | CHI", ESPN 2
+http://195.66.210.10:80/Bluefox102/XYXNA/588146
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | CHI", ESPN 3
+http://195.66.210.10:80/Bluefox102/XYXNA/588147
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | CHI", ESPN 4
+http://195.66.210.10:80/Bluefox102/XYXNA/588148
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | CHI", ESPN 5
+http://195.66.210.10:80/Bluefox102/XYXNA/588149
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | CHI", ESPN 6
+http://195.66.210.10:80/Bluefox102/XYXNA/588150
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | CHI", ESPN 7
+http://195.66.210.10:80/Bluefox102/XYXNA/588151
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | CHI", ESPN PREMIUM
+http://195.66.210.10:80/Bluefox102/XYXNA/588152
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS
+http://195.66.210.10:80/Bluefox102/XYXNA/588154
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS 2
+http://195.66.210.10:80/Bluefox102/XYXNA/588155
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS 3
+http://195.66.210.10:80/Bluefox102/XYXNA/588156
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS PREMIUM
+http://195.66.210.10:80/Bluefox102/XYXNA/588157
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", Fox Sports 3
+http://195.66.210.10:80/Bluefox102/XYXNA/588158
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS 1
+http://195.66.210.10:80/Bluefox102/XYXNA/588159
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS 2
+http://195.66.210.10:80/Bluefox102/XYXNA/588160
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | CL", FOX SPORTS 1
+http://195.66.210.10:80/Bluefox102/XYXNA/588161
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | CL", FOX SPORTS 2 HD
+http://195.66.210.10:80/Bluefox102/XYXNA/588162
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS  2
+http://195.66.210.10:80/Bluefox102/XYXNA/588163
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS 3
+http://195.66.210.10:80/Bluefox102/XYXNA/588164
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | MX", FOX SPORTS 1
+http://195.66.210.10:80/Bluefox102/XYXNA/588165
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | MX", FOX SPORTS 3
+http://195.66.210.10:80/Bluefox102/XYXNA/588166
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS  1 SD
+http://195.66.210.10:80/Bluefox102/XYXNA/588167
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS  2
+http://195.66.210.10:80/Bluefox102/XYXNA/588168
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS 3
+http://195.66.210.10:80/Bluefox102/XYXNA/588169
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT | MX", FOX SPORTS PREMIUM
+http://195.66.210.10:80/Bluefox102/XYXNA/588170
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS
+http://195.66.210.10:80/Bluefox102/XYXNA/588171
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | DEP", ESPN 2 SD
+http://195.66.210.10:80/Bluefox102/XYXNA/439802
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | COL", ESPN 5
+http://195.66.210.10:80/Bluefox102/XYXNA/610858
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | COL", ESPN 6
+http://195.66.210.10:80/Bluefox102/XYXNA/610859
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | COL", ESPN 7
+http://195.66.210.10:80/Bluefox102/XYXNA/610860
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | PER", ESPN 2
+http://195.66.210.10:80/Bluefox102/XYXNA/610861
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | PER", ESPN 3
+http://195.66.210.10:80/Bluefox102/XYXNA/610862
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | PER", ESPN 4
+http://195.66.210.10:80/Bluefox102/XYXNA/610863
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | PER", ESPN 5
+http://195.66.210.10:80/Bluefox102/XYXNA/610864
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | PER", ESPN 6
+http://195.66.210.10:80/Bluefox102/XYXNA/610865
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN | PER", ESPN 7
+http://195.66.210.10:80/Bluefox102/XYXNA/610866
