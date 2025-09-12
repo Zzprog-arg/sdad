@@ -319,8 +319,20 @@
             return;
           }
           if(act === 'copy-pass'){
-            await navigator.clipboard.writeText(account.password);
-            showToast('Contraseña copiada');
+            // copy full xtream URL (get.php) to clipboard
+            const link = `${location.origin}/get.php?username=${encodeURIComponent(account.username)}&password=${encodeURIComponent(account.password)}`;
+            try{
+              await navigator.clipboard.writeText(link);
+              showToast('Enlace copiado al portapapeles');
+            }catch(e){
+              // fallback for older browsers: create textarea and execCommand
+              const ta = document.createElement('textarea');
+              ta.value = link;
+              document.body.appendChild(ta);
+              ta.select();
+              try{ document.execCommand('copy'); showToast('Enlace copiado al portapapeles'); }catch(e2){ alert('Copia manual: ' + link); }
+              ta.remove();
+            }
             return;
           }
           if(act === 'edit'){
