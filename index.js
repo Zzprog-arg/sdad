@@ -24,10 +24,8 @@ const CONFIG = {
   localSettingsFile: path.join(__dirname, "settings.json"),
   ADMIN_KEY: process.env.ADMIN_KEY || "cambia_esto_admin_key",
   EXPIRE_DAYS: Number(process.env.EXPIRE_DAYS || 30),
-  // super-admin env creds (opcional, master)
   ADMIN_USER: process.env.ADMIN_USER || "admin",
   ADMIN_PASS: process.env.ADMIN_PASS || "adminpass",
-  // GitHub optional
   GH_TOKEN: process.env.GITHUB_TOKEN || "",
   GH_OWNER: process.env.GITHUB_OWNER || "",
   GH_REPO: process.env.GITHUB_REPO || ""
@@ -55,18 +53,15 @@ async function ensureFile(pathFile, defaultValue){
   await writeLocalJson(pathFile, defaultValue);
 }
 
-// ---------- ensure settings/admins/accounts exist ----------
+// ---------- ensure basics ----------
 async function ensureBasics(){
   await ensureFile(CONFIG.localSettingsFile, { globalAccountLimit: 1000, allowAdminSignup: false });
-  await ensureFile(CONFIG.localAdminsFile, [
-    // note: we don't put super-admin here; create initial admin via env or UI
-    // example: { username: "reseller", password: "secret", createdAt: "...", credits: 100 }
-  ]);
+  await ensureFile(CONFIG.localAdminsFile, []);
   await ensureFile(CONFIG.localAccountsFile, []);
   await ensureFile(CONFIG.localLicenseFile, null);
 }
 
-// ---------- license helpers (unchanged) ----------
+// ---------- license helpers ----------
 function addDaysToNow(days){ const ms = days * 24 * 60 * 60 * 1000; return new Date(Date.now() + ms).toISOString(); }
 async function readLicenseLocal(){ return await readLocalJson(CONFIG.localLicenseFile, null); }
 async function writeLicenseLocal(obj){ return await writeLocalJson(CONFIG.localLicenseFile, obj); }
@@ -80,11 +75,10 @@ async function ensureLicense(){
   return lic;
 }
 
-// ---------- accounts logic (local-first) ----------
+// ---------- accounts logic ----------
 async function readAccounts(){
   const local = await readLocalJson(CONFIG.localAccountsFile, null);
   if(Array.isArray(local)) return { accounts: local, sha: null, source: "local" };
-  // fallback create
   await writeLocalJson(CONFIG.localAccountsFile, []);
   return { accounts: [], sha: null, source: "created_local" };
 }
@@ -121,31 +115,27 @@ async function saveSettings(obj){
 // ---------- utility ----------
 function nowISO(){ return new Date().toISOString(); }
 
-// ---------- adminAuth (Basic against admins.json OR master env) ----------
+// ---------- adminAuth ----------
 async function adminAuth(req, res, next){
   try{
-    // parse Basic header
     const auth = req.headers['authorization'];
     if(auth && auth.startsWith('Basic ')){
       const creds = Buffer.from(auth.split(' ')[1], 'base64').toString();
       const [user, pass] = creds.split(':');
-      // first check env MASTER
       if(user === CONFIG.ADMIN_USER && pass === CONFIG.ADMIN_PASS){
         req.isAdmin = true; req.isMaster = true; req.adminUser = user; return next();
       }
-      // check admins.json
       const admins = await readAdmins();
       const adm = admins.find(a => a.username === user && a.password === pass);
       if(adm){
         req.isAdmin = true; req.isMaster = false; req.adminUser = adm.username; return next();
       }
     }
-    // check admin_key (master)
     const key = req.query.admin_key || (req.body && req.body.admin_key);
     if(key && key === CONFIG.ADMIN_KEY){
       req.isAdmin = true; req.isMaster = true; req.adminUser = CONFIG.ADMIN_USER; return next();
     }
-    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+    res.setHeader('WWW-Authenticate', 'Basic realm=\"Admin Area\"');
     return res.status(401).send('Authentication required');
   }catch(e){
     console.error('adminAuth error', e && e.message ? e.message : e);
@@ -153,7 +143,7 @@ async function adminAuth(req, res, next){
   }
 }
 
-// ---------- authGuard for players (unchanged logic extended) ----------
+// ---------- authGuard ----------
 async function authGuard(req, res){
   const lic = await ensureLicense();
   if(lic && lic.expiresAt){
@@ -190,19 +180,16 @@ async function authGuard(req, res){
   return false;
 }
 
-// ---------- helper: count accounts ----------
+// ---------- helper ----------
 async function totalAccountCount(){
   const read = await readAccounts();
   return (read.accounts || []).length;
 }
 
 // ---------- ADMIN ROUTES ----------
-// serve admin UI
 app.get('/admin', adminAuth, (req,res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
-
-// list available lists (.m3u)
 app.get('/admin/available_lists', adminAuth, async (req,res) => {
   try{
     const files = await fs.readdir(__dirname);
@@ -212,8 +199,6 @@ app.get('/admin/available_lists', adminAuth, async (req,res) => {
     res.json({ lists: [] });
   }
 });
-
-// list accounts
 app.get('/admin/list_accounts', adminAuth, async (req,res) => {
   try{
     const read = await readAccounts();
@@ -222,8 +207,6 @@ app.get('/admin/list_accounts', adminAuth, async (req,res) => {
     res.status(500).json({ error: e.message || String(e) });
   }
 });
-
-// list admins
 app.get('/admin/list_admins', adminAuth, async (req,res) => {
   try{
     const admins = await readAdmins();
@@ -232,8 +215,6 @@ app.get('/admin/list_admins', adminAuth, async (req,res) => {
     res.status(500).json({ error: e.message || String(e) });
   }
 });
-
-// add admin (only master)
 app.post('/admin/add_admin', adminAuth, async (req,res) => {
   try{
     if(!req.isMaster) return res.status(403).json({ error: "Only master can create admins" });
@@ -249,8 +230,6 @@ app.post('/admin/add_admin', adminAuth, async (req,res) => {
     res.status(500).json({ error: e.message || String(e) });
   }
 });
-
-// set admin credits (master)
 app.post('/admin/set_admin_credits', adminAuth, async (req,res) => {
   try{
     if(!req.isMaster) return res.status(403).json({ error: "Only master can set credits" });
@@ -266,8 +245,6 @@ app.post('/admin/set_admin_credits', adminAuth, async (req,res) => {
     res.status(500).json({ error: e.message || String(e) });
   }
 });
-
-// delete admin (master)
 app.post('/admin/delete_admin', adminAuth, async (req,res) => {
   try{
     if(!req.isMaster) return res.status(403).json({ error: "Only master can delete admins" });
@@ -283,8 +260,6 @@ app.post('/admin/delete_admin', adminAuth, async (req,res) => {
     res.status(500).json({ error: e.message || String(e) });
   }
 });
-
-// settings: get
 app.get('/admin/settings', adminAuth, async (req,res) => {
   try{
     const s = await readSettings();
@@ -293,8 +268,6 @@ app.get('/admin/settings', adminAuth, async (req,res) => {
     res.status(500).json({ error: e.message || String(e) });
   }
 });
-
-// settings: set (only master)
 app.post('/admin/settings', adminAuth, async (req,res) => {
   try{
     if(!req.isMaster) return res.status(403).json({ error: "Only master can change settings" });
@@ -308,24 +281,19 @@ app.post('/admin/settings', adminAuth, async (req,res) => {
     res.status(500).json({ error: e.message || String(e) });
   }
 });
-
-// add account (checks limits + admin credits)
 app.post('/admin/add_account', adminAuth, async (req, res) => {
   try{
     const { username, password, days, lists } = req.body || {};
     if(!username || !password) return res.status(400).json({ error: "Provide username and password" });
 
-    // load settings & admins
     const settings = await readSettings();
     const admins = await readAdmins();
 
-    // total limit check
     const count = await totalAccountCount();
     if(typeof settings.globalAccountLimit === 'number' && count >= settings.globalAccountLimit){
       return res.status(403).json({ error: "Global account limit reached" });
     }
 
-    // if creator not master, check credits
     const creator = req.adminUser || CONFIG.ADMIN_USER;
     let isMaster = !!req.isMaster;
     if(!isMaster){
@@ -334,25 +302,20 @@ app.post('/admin/add_account', adminAuth, async (req, res) => {
       if((creatorAdmin.credits || 0) <= 0) return res.status(403).json({ error: "Creator has no credits left" });
     }
 
-    // prepare account
     const read = await readAccounts();
     const accounts = read.accounts || [];
     if(accounts.find(a=>a.username === username)) return res.status(400).json({ error: "Account already exists" });
 
-    const available = await (async()=>{
-      const files = await fs.readdir(__dirname);
-      return files.filter(f => f.toLowerCase().endsWith('.m3u'));
-    })();
+    const files = await fs.readdir(__dirname);
+    const available = files.filter(f => f.toLowerCase().endsWith('.m3u'));
     const finalLists = Array.isArray(lists) ? lists.filter(l => available.includes(l)) : [];
 
     const expiresAt = new Date(Date.now() + ((Number(days || 30)) * 24*60*60*1000)).toISOString();
     const newAccount = { username, password, createdAt: nowISO(), expiresAt, lists: finalLists, createdBy: creator };
     accounts.push(newAccount);
 
-    // persist accounts
     await saveAccounts(accounts);
 
-    // decrement credits if non-master
     if(!isMaster){
       const admins2 = await readAdmins();
       const creatorAdmin = admins2.find(a => a.username === creator);
@@ -368,8 +331,6 @@ app.post('/admin/add_account', adminAuth, async (req, res) => {
     res.status(500).json({ error: e.message || String(e) });
   }
 });
-
-// set account expiry/lists (existing)
 app.post('/admin/set_account_expiry', adminAuth, async (req, res) => {
   try{
     const { username, days, expiresAt, lists } = req.body || {};
@@ -396,8 +357,6 @@ app.post('/admin/set_account_expiry', adminAuth, async (req, res) => {
     console.error(e); res.status(500).json({ error: e.message || String(e) });
   }
 });
-
-// delete account
 app.post('/admin/delete_account', adminAuth, async (req, res) => {
   try{
     const { username } = req.body || {};
@@ -415,7 +374,17 @@ app.post('/admin/delete_account', adminAuth, async (req, res) => {
   }
 });
 
-// get.php -> combined M3U per-account (unchanged)
+// license status endpoint (for admin panel)
+app.get('/license_status', adminAuth, async (req,res) => {
+  try{
+    const lic = await ensureLicense();
+    res.json(lic);
+  }catch(e){
+    res.status(500).json({ error: e.message || String(e) });
+  }
+});
+
+// get.php -> combined M3U per-account
 app.get("/get.php", async (req, res) => {
   if(!(await authGuard(req,res))) return;
   const username = req.query.username || "";
@@ -524,6 +493,17 @@ app.get("/player_api.php", async (req, res) => {
   res.status(400).json({ error: "Unsupported action" });
 });
 
+// api.php compatibility
+app.get("/api.php", async (req, res) => {
+  const action = req.query.action || "";
+  const sub = req.query.sub || "";
+  if(action === "user" && sub === "info"){
+    req.query.action = "get_user_info";
+    return app._router.handle(req, res);
+  }
+  res.status(400).json({ error: "Unsupported api.php action" });
+});
+
 // CORS preflight
 app.options("/*", (req,res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -532,15 +512,13 @@ app.options("/*", (req,res) => {
   res.sendStatus(200);
 });
 
-// root
+// root -> admin
 app.get("/", (req,res) => res.redirect("/admin"));
 
 // START
 (async () => {
   await ensureBasics();
   await ensureLicense();
-  await ensureFile(CONFIG.localAdminsFile, []); // ensure admins file
-  await ensureFile(CONFIG.localSettingsFile, { globalAccountLimit: 1000, allowAdminSignup: false });
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, ()=> console.log("Xtream-lite listening on port", PORT));
 })();
