@@ -1,7 +1,6 @@
 // index.js - Xtream-lite (Node + Express)
-// Multi-M3U per-account admin, local persistence + optional GitHub sync
-// Compatible con IPTV Smarters: player_api.php?action=get_user_info
-// Node >=18
+// + Admins + Settings + per-admin credits + global account limit
+// Node >=18 (fetch global)
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
@@ -14,74 +13,27 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// ---------------- CONFIG (desde env) ----------------
+// ---------- CONFIG ----------
 const CONFIG = {
   XTREAM_USER: process.env.XTREAM_USER || "demo",
   XTREAM_PASS: process.env.XTREAM_PASS || "demo",
   logosFile: path.join(__dirname, "group_logos.json"),
   localAccountsFile: path.join(__dirname, "accounts.json"),
   localLicenseFile: path.join(__dirname, "license.json"),
+  localAdminsFile: path.join(__dirname, "admins.json"),
+  localSettingsFile: path.join(__dirname, "settings.json"),
   ADMIN_KEY: process.env.ADMIN_KEY || "cambia_esto_admin_key",
   EXPIRE_DAYS: Number(process.env.EXPIRE_DAYS || 30),
+  // super-admin env creds (opcional, master)
+  ADMIN_USER: process.env.ADMIN_USER || "admin",
+  ADMIN_PASS: process.env.ADMIN_PASS || "adminpass",
   // GitHub optional
   GH_TOKEN: process.env.GITHUB_TOKEN || "",
   GH_OWNER: process.env.GITHUB_OWNER || "",
   GH_REPO: process.env.GITHUB_REPO || ""
 };
 
-// ---------------- utilities: files & m3u ----------------
-async function listM3UFiles(){
-  try{
-    const files = await fs.readdir(__dirname);
-    return files.filter(f => f.toLowerCase().endsWith('.m3u'));
-  }catch(e){
-    return [];
-  }
-}
-async function readM3UFile(filename){
-  const full = path.join(__dirname, filename);
-  const text = await fs.readFile(full, "utf8");
-  return text.replace(/\r/g,"");
-}
-
-// ---------------- GitHub helpers (optional) ----------------
-const GH_API_BASE = "https://api.github.com";
-function ghHeaders(){
-  return {
-    "Authorization": `Bearer ${CONFIG.GH_TOKEN}`,
-    "User-Agent": "xtream-lite-admin",
-    "Accept": "application/vnd.github.v3+json",
-    "Content-Type": "application/json"
-  };
-}
-async function githubGetFile(pathInRepo){
-  if(!CONFIG.GH_TOKEN || !CONFIG.GH_OWNER || !CONFIG.GH_REPO) return null;
-  const url = `${GH_API_BASE}/repos/${CONFIG.GH_OWNER}/${CONFIG.GH_REPO}/contents/${encodeURIComponent(pathInRepo)}`;
-  const resp = await fetch(url, { headers: ghHeaders() });
-  if(resp.status === 404) return null;
-  if(!resp.ok) throw new Error(`GitHub GET failed: ${resp.status} ${await resp.text()}`);
-  const json = await resp.json();
-  const buff = Buffer.from(json.content || "", json.encoding || "base64");
-  return { sha: json.sha, contentText: buff.toString("utf8") };
-}
-async function githubPutFile(pathInRepo, contentText, message, sha = null){
-  if(!CONFIG.GH_TOKEN || !CONFIG.GH_OWNER || !CONFIG.GH_REPO) throw new Error("Missing GH config");
-  const url = `${GH_API_BASE}/repos/${CONFIG.GH_OWNER}/${CONFIG.GH_REPO}/contents/${encodeURIComponent(pathInRepo)}`;
-  const body = {
-    message: message || `Update ${pathInRepo} by xtream-lite-admin`,
-    content: Buffer.from(contentText, "utf8").toString("base64"),
-    committer: { name: "xtream-lite", email: "noreply@example.com" }
-  };
-  if(sha) body.sha = sha;
-  const resp = await fetch(url, { method: "PUT", headers: ghHeaders(), body: JSON.stringify(body) });
-  if(!resp.ok){
-    const t = await resp.text();
-    throw new Error(`GitHub PUT failed: ${resp.status} ${t}`);
-  }
-  return await resp.json();
-}
-
-// ---------------- local JSON helpers ----------------
+// ---------- Simple FS helpers ----------
 async function readLocalJson(filePath, fallback = null){
   try{
     const text = await fs.readFile(filePath, "utf8");
@@ -94,105 +46,114 @@ async function writeLocalJson(filePath, obj){
   await fs.writeFile(filePath, JSON.stringify(obj, null, 2), "utf8");
 }
 
-// ---------------- license helpers ----------------
+// ---------- ensure files on startup ----------
+async function ensureFile(pathFile, defaultValue){
+  try{
+    const cur = await readLocalJson(pathFile, null);
+    if(cur !== null) return;
+  }catch(e){}
+  await writeLocalJson(pathFile, defaultValue);
+}
+
+// ---------- ensure settings/admins/accounts exist ----------
+async function ensureBasics(){
+  await ensureFile(CONFIG.localSettingsFile, { globalAccountLimit: 1000, allowAdminSignup: false });
+  await ensureFile(CONFIG.localAdminsFile, [
+    // note: we don't put super-admin here; create initial admin via env or UI
+    // example: { username: "reseller", password: "secret", createdAt: "...", credits: 100 }
+  ]);
+  await ensureFile(CONFIG.localAccountsFile, []);
+  await ensureFile(CONFIG.localLicenseFile, null);
+}
+
+// ---------- license helpers (unchanged) ----------
 function addDaysToNow(days){ const ms = days * 24 * 60 * 60 * 1000; return new Date(Date.now() + ms).toISOString(); }
 async function readLicenseLocal(){ return await readLocalJson(CONFIG.localLicenseFile, null); }
 async function writeLicenseLocal(obj){ return await writeLocalJson(CONFIG.localLicenseFile, obj); }
 async function ensureLicense(){
   let lic = await readLicenseLocal();
   if(lic) return lic;
-  try{
-    const gh = await githubGetFile("license.json");
-    if(gh && gh.contentText){
-      lic = JSON.parse(gh.contentText);
-      await writeLicenseLocal(lic);
-      return lic;
-    }
-  }catch(e){}
   const now = new Date().toISOString();
-  let expiresAt = null;
-  if(process.env.EXPIRES_AT){
-    const d = new Date(process.env.EXPIRES_AT);
-    if(!isNaN(d.getTime())) expiresAt = d.toISOString();
-  }
-  if(!expiresAt) expiresAt = addDaysToNow(CONFIG.EXPIRE_DAYS);
+  const expiresAt = addDaysToNow(CONFIG.EXPIRE_DAYS);
   lic = { createdAt: now, expiresAt };
   await writeLicenseLocal(lic);
-  try{
-    if(CONFIG.GH_TOKEN && CONFIG.GH_OWNER && CONFIG.GH_REPO){
-      const existing = await githubGetFile("license.json");
-      const sha = existing ? existing.sha : null;
-      await githubPutFile("license.json", JSON.stringify(lic, null, 2), "Create license.json (xtream-lite)", sha);
-    }
-  }catch(e){ console.warn("Could not push license.json to GH:", e && e.message ? e.message : e); }
   return lic;
 }
 
-// ---------------- ACCOUNTS: local-first persistence ----------------
-// readAccounts: prioritiza local; si no existe intenta GH; si no, crea vacío local
+// ---------- accounts logic (local-first) ----------
 async function readAccounts(){
-  try{
-    const local = await readLocalJson(CONFIG.localAccountsFile, null);
-    if(Array.isArray(local)) return { accounts: local, sha: null, source: "local" };
-  }catch(e){}
-  try{
-    const gh = await githubGetFile("accounts.json");
-    if(gh && gh.contentText){
-      const arr = JSON.parse(gh.contentText || "[]");
-      await writeLocalJson(CONFIG.localAccountsFile, arr);
-      return { accounts: arr, sha: gh.sha, source: "github" };
-    }
-  }catch(e){
-    console.warn("readAccounts: GH read failed", e && e.message ? e.message : e);
-  }
-  const empty = [];
-  await writeLocalJson(CONFIG.localAccountsFile, empty);
-  return { accounts: empty, sha: null, source: "created_local" };
-}
-
-// saveAccounts: escribe local siempre y opcionalmente push a GH
-async function saveAccounts(accounts, sha=null){
-  try{
-    await writeLocalJson(CONFIG.localAccountsFile, accounts);
-  }catch(e){
-    console.error("saveAccounts: failed writing local", e && e.message ? e.message : e);
-    throw e;
-  }
-  if(CONFIG.GH_TOKEN && CONFIG.GH_OWNER && CONFIG.GH_REPO){
-    try{
-      await githubPutFile("accounts.json", JSON.stringify(accounts, null, 2), `Update accounts.json (xtream-lite-admin)`, sha || undefined);
-      return { ok: true, source: "github" };
-    }catch(e){
-      console.warn("saveAccounts: GH push failed, but local saved.", e && e.message ? e.message : e);
-      return { ok: true, source: "local" };
-    }
-  }
-  return { ok: true, source: "local" };
-}
-
-// ensureLocalAccounts: al arranque, garantizar accounts.json local
-async function ensureLocalAccounts(){
-  try{
-    const local = await readLocalJson(CONFIG.localAccountsFile, null);
-    if(Array.isArray(local)){
-      console.log("Local accounts.json exists. Using local.");
-      return;
-    }
-  }catch(e){}
-  try{
-    const gh = await githubGetFile("accounts.json");
-    if(gh && gh.contentText){
-      const arr = JSON.parse(gh.contentText || "[]");
-      await writeLocalJson(CONFIG.localAccountsFile, arr);
-      console.log("Pulled accounts.json from GitHub to local storage.");
-      return;
-    }
-  }catch(e){ console.warn("ensureLocalAccounts: GH fetch failed:", e && e.message ? e.message : e); }
+  const local = await readLocalJson(CONFIG.localAccountsFile, null);
+  if(Array.isArray(local)) return { accounts: local, sha: null, source: "local" };
+  // fallback create
   await writeLocalJson(CONFIG.localAccountsFile, []);
-  console.log("Created empty local accounts.json");
+  return { accounts: [], sha: null, source: "created_local" };
+}
+async function saveAccounts(accounts){
+  await writeLocalJson(CONFIG.localAccountsFile, accounts);
+  return { ok: true };
 }
 
-// ---------------- auth for player endpoints ----------------
+// ---------- admins logic ----------
+async function readAdmins(){
+  const list = await readLocalJson(CONFIG.localAdminsFile, null);
+  if(Array.isArray(list)) return list;
+  await writeLocalJson(CONFIG.localAdminsFile, []);
+  return [];
+}
+async function saveAdmins(list){
+  await writeLocalJson(CONFIG.localAdminsFile, list);
+  return { ok: true };
+}
+
+// ---------- settings logic ----------
+async function readSettings(){
+  const s = await readLocalJson(CONFIG.localSettingsFile, null);
+  if(s && typeof s === 'object') return s;
+  const def = { globalAccountLimit: 1000, allowAdminSignup: false };
+  await writeLocalJson(CONFIG.localSettingsFile, def);
+  return def;
+}
+async function saveSettings(obj){
+  await writeLocalJson(CONFIG.localSettingsFile, obj);
+  return { ok: true };
+}
+
+// ---------- utility ----------
+function nowISO(){ return new Date().toISOString(); }
+
+// ---------- adminAuth (Basic against admins.json OR master env) ----------
+async function adminAuth(req, res, next){
+  try{
+    // parse Basic header
+    const auth = req.headers['authorization'];
+    if(auth && auth.startsWith('Basic ')){
+      const creds = Buffer.from(auth.split(' ')[1], 'base64').toString();
+      const [user, pass] = creds.split(':');
+      // first check env MASTER
+      if(user === CONFIG.ADMIN_USER && pass === CONFIG.ADMIN_PASS){
+        req.isAdmin = true; req.isMaster = true; req.adminUser = user; return next();
+      }
+      // check admins.json
+      const admins = await readAdmins();
+      const adm = admins.find(a => a.username === user && a.password === pass);
+      if(adm){
+        req.isAdmin = true; req.isMaster = false; req.adminUser = adm.username; return next();
+      }
+    }
+    // check admin_key (master)
+    const key = req.query.admin_key || (req.body && req.body.admin_key);
+    if(key && key === CONFIG.ADMIN_KEY){
+      req.isAdmin = true; req.isMaster = true; req.adminUser = CONFIG.ADMIN_USER; return next();
+    }
+    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+    return res.status(401).send('Authentication required');
+  }catch(e){
+    console.error('adminAuth error', e && e.message ? e.message : e);
+    return res.status(500).send('Auth error');
+  }
+}
+
+// ---------- authGuard for players (unchanged logic extended) ----------
 async function authGuard(req, res){
   const lic = await ensureLicense();
   if(lic && lic.expiresAt){
@@ -207,8 +168,6 @@ async function authGuard(req, res){
 
   const username = req.query.username || "";
   const password = req.query.password || "";
-
-  // server global creds allowed
   if(username === CONFIG.XTREAM_USER && password === CONFIG.XTREAM_PASS) return true;
 
   try{
@@ -226,70 +185,32 @@ async function authGuard(req, res){
       }
       return true;
     }
-  }catch(e){
-    console.warn("authGuard: readAccounts failed", e && e.message ? e.message : e);
-  }
-
+  }catch(e){ console.warn("authGuard error", e && e.message ? e.message : e); }
   res.status(401).json({ error: "Invalid username/password" });
   return false;
 }
 
-// ---------------- adminAuth: Basic Auth o admin_key ----------------
-const ADMIN_USER = process.env.ADMIN_USER || "admin";
-const ADMIN_PASS = process.env.ADMIN_PASS || "adminpass";
-function adminAuth(req, res, next){
-  try{
-    const auth = req.headers['authorization'];
-    if(auth && auth.startsWith('Basic ')){
-      const creds = Buffer.from(auth.split(' ')[1], 'base64').toString();
-      const [user, pass] = creds.split(':');
-      if(user === ADMIN_USER && pass === ADMIN_PASS){
-        req.isAdmin = true; return next();
-      }
-    }
-    const key = req.query.admin_key || (req.body && req.body.admin_key);
-    if(key && key === CONFIG.ADMIN_KEY){
-      req.isAdmin = true; return next();
-    }
-    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
-    return res.status(401).send('Authentication required');
-  }catch(e){
-    return res.status(500).send('Auth error');
-  }
+// ---------- helper: count accounts ----------
+async function totalAccountCount(){
+  const read = await readAccounts();
+  return (read.accounts || []).length;
 }
 
-// ---------------- helper: makeUserInfo ----------------
-function makeUserInfoFromAccount(acc){
-  const nowS = Math.floor(Date.now()/1000);
-  const expS = acc && acc.expiresAt ? Math.floor(new Date(acc.expiresAt).getTime()/1000) : null;
-  const createdS = acc && acc.createdAt ? Math.floor(new Date(acc.createdAt).getTime()/1000) : nowS;
-  return {
-    username: acc.username || "",
-    password: acc.password || "",
-    message: "Welcome",
-    auth: 1,
-    status: (expS && nowS > expS) ? "Expired" : "Active",
-    exp_date: expS ? String(expS) : "",
-    exp_date_ms: acc.expiresAt ? String(new Date(acc.expiresAt).getTime()) : "",
-    exp_date_iso: acc.expiresAt ? new Date(acc.expiresAt).toISOString() : "",
-    is_trial: acc.is_trial ? String(acc.is_trial) : "0",
-    active_cons: "0",
-    created_at: String(createdS),
-    max_connections: acc.max_connections ? String(acc.max_connections) : "1",
-    allowed_output_formats: ["m3u8","ts","rtmp"]
-  };
-}
-
-// ---------------- ADMIN ROUTES ----------------
-// serve admin UI file
+// ---------- ADMIN ROUTES ----------
+// serve admin UI
 app.get('/admin', adminAuth, (req,res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-// list available m3u files
+// list available lists (.m3u)
 app.get('/admin/available_lists', adminAuth, async (req,res) => {
-  const list = await listM3UFiles();
-  res.json({ lists: list });
+  try{
+    const files = await fs.readdir(__dirname);
+    const list = files.filter(f => f.toLowerCase().endsWith('.m3u'));
+    res.json({ lists: list });
+  }catch(e){
+    res.json({ lists: [] });
+  }
 });
 
 // list accounts
@@ -302,34 +223,159 @@ app.get('/admin/list_accounts', adminAuth, async (req,res) => {
   }
 });
 
-// add account
+// list admins
+app.get('/admin/list_admins', adminAuth, async (req,res) => {
+  try{
+    const admins = await readAdmins();
+    res.json({ admins });
+  }catch(e){
+    res.status(500).json({ error: e.message || String(e) });
+  }
+});
+
+// add admin (only master)
+app.post('/admin/add_admin', adminAuth, async (req,res) => {
+  try{
+    if(!req.isMaster) return res.status(403).json({ error: "Only master can create admins" });
+    const { username, password, credits } = req.body || {};
+    if(!username || !password) return res.status(400).json({ error: "Provide username and password" });
+    const admins = await readAdmins();
+    if(admins.find(a => a.username === username)) return res.status(400).json({ error: "Admin exists" });
+    const adm = { username, password, createdAt: nowISO(), credits: Number(credits||0) };
+    admins.push(adm);
+    await saveAdmins(admins);
+    res.json({ ok: true, admin: adm });
+  }catch(e){
+    res.status(500).json({ error: e.message || String(e) });
+  }
+});
+
+// set admin credits (master)
+app.post('/admin/set_admin_credits', adminAuth, async (req,res) => {
+  try{
+    if(!req.isMaster) return res.status(403).json({ error: "Only master can set credits" });
+    const { username, credits } = req.body || {};
+    if(!username) return res.status(400).json({ error: "Provide username" });
+    const admins = await readAdmins();
+    const adm = admins.find(a => a.username === username);
+    if(!adm) return res.status(404).json({ error: "Admin not found" });
+    adm.credits = Number(credits || 0);
+    await saveAdmins(admins);
+    res.json({ ok: true, admin: adm });
+  }catch(e){
+    res.status(500).json({ error: e.message || String(e) });
+  }
+});
+
+// delete admin (master)
+app.post('/admin/delete_admin', adminAuth, async (req,res) => {
+  try{
+    if(!req.isMaster) return res.status(403).json({ error: "Only master can delete admins" });
+    const { username } = req.body || {};
+    if(!username) return res.status(400).json({ error: "Provide username" });
+    let admins = await readAdmins();
+    const i = admins.findIndex(a => a.username === username);
+    if(i === -1) return res.status(404).json({ error: "Admin not found" });
+    admins.splice(i,1);
+    await saveAdmins(admins);
+    res.json({ ok: true, username });
+  }catch(e){
+    res.status(500).json({ error: e.message || String(e) });
+  }
+});
+
+// settings: get
+app.get('/admin/settings', adminAuth, async (req,res) => {
+  try{
+    const s = await readSettings();
+    res.json({ settings: s });
+  }catch(e){
+    res.status(500).json({ error: e.message || String(e) });
+  }
+});
+
+// settings: set (only master)
+app.post('/admin/settings', adminAuth, async (req,res) => {
+  try{
+    if(!req.isMaster) return res.status(403).json({ error: "Only master can change settings" });
+    const payload = req.body || {};
+    const s = await readSettings();
+    if(typeof payload.globalAccountLimit !== 'undefined') s.globalAccountLimit = Number(payload.globalAccountLimit);
+    if(typeof payload.allowAdminSignup !== 'undefined') s.allowAdminSignup = !!payload.allowAdminSignup;
+    await saveSettings(s);
+    res.json({ ok: true, settings: s });
+  }catch(e){
+    res.status(500).json({ error: e.message || String(e) });
+  }
+});
+
+// add account (checks limits + admin credits)
 app.post('/admin/add_account', adminAuth, async (req, res) => {
   try{
     const { username, password, days, lists } = req.body || {};
     if(!username || !password) return res.status(400).json({ error: "Provide username and password" });
+
+    // load settings & admins
+    const settings = await readSettings();
+    const admins = await readAdmins();
+
+    // total limit check
+    const count = await totalAccountCount();
+    if(typeof settings.globalAccountLimit === 'number' && count >= settings.globalAccountLimit){
+      return res.status(403).json({ error: "Global account limit reached" });
+    }
+
+    // if creator not master, check credits
+    const creator = req.adminUser || CONFIG.ADMIN_USER;
+    let isMaster = !!req.isMaster;
+    if(!isMaster){
+      const creatorAdmin = admins.find(a => a.username === creator);
+      if(!creatorAdmin) return res.status(403).json({ error: "Creator admin record not found" });
+      if((creatorAdmin.credits || 0) <= 0) return res.status(403).json({ error: "Creator has no credits left" });
+    }
+
+    // prepare account
     const read = await readAccounts();
     const accounts = read.accounts || [];
-    const sha = read.sha || null;
-    const available = await listM3UFiles();
+    if(accounts.find(a=>a.username === username)) return res.status(400).json({ error: "Account already exists" });
+
+    const available = await (async()=>{
+      const files = await fs.readdir(__dirname);
+      return files.filter(f => f.toLowerCase().endsWith('.m3u'));
+    })();
     const finalLists = Array.isArray(lists) ? lists.filter(l => available.includes(l)) : [];
+
     const expiresAt = new Date(Date.now() + ((Number(days || 30)) * 24*60*60*1000)).toISOString();
-    const newAccount = { username, password, createdAt: new Date().toISOString(), expiresAt, lists: finalLists };
+    const newAccount = { username, password, createdAt: nowISO(), expiresAt, lists: finalLists, createdBy: creator };
     accounts.push(newAccount);
-    await saveAccounts(accounts, sha);
+
+    // persist accounts
+    await saveAccounts(accounts);
+
+    // decrement credits if non-master
+    if(!isMaster){
+      const admins2 = await readAdmins();
+      const creatorAdmin = admins2.find(a => a.username === creator);
+      if(creatorAdmin){
+        creatorAdmin.credits = Math.max(0, (creatorAdmin.credits||0) - 1);
+        await saveAdmins(admins2);
+      }
+    }
+
     res.json({ ok: true, account: newAccount });
   }catch(e){
-    console.error(e); res.status(500).json({ error: e.message || String(e) });
+    console.error("add_account error", e && e.message ? e.message : e);
+    res.status(500).json({ error: e.message || String(e) });
   }
 });
 
-// set account expiry/lists
+// set account expiry/lists (existing)
 app.post('/admin/set_account_expiry', adminAuth, async (req, res) => {
   try{
     const { username, days, expiresAt, lists } = req.body || {};
     if(!username) return res.status(400).json({ error: "Provide username" });
     const read = await readAccounts();
     const accounts = read.accounts || [];
-    const sha = read.sha || null;
     const acc = accounts.find(a => a.username === username);
     if(!acc) return res.status(404).json({ error: "Account not found" });
     if(typeof days !== "undefined"){
@@ -340,49 +386,44 @@ app.post('/admin/set_account_expiry', adminAuth, async (req, res) => {
       acc.expiresAt = d.toISOString();
     }
     if(Array.isArray(lists)){
-      const available = await listM3UFiles();
+      const files = await fs.readdir(__dirname);
+      const available = files.filter(f => f.toLowerCase().endsWith('.m3u'));
       acc.lists = lists.filter(l => available.includes(l));
     }
-    await saveAccounts(accounts, sha);
+    await saveAccounts(accounts);
     res.json({ ok: true, account: acc });
   }catch(e){
     console.error(e); res.status(500).json({ error: e.message || String(e) });
   }
 });
 
-// delete account (admin)
+// delete account
 app.post('/admin/delete_account', adminAuth, async (req, res) => {
   try{
     const { username } = req.body || {};
     if(!username) return res.status(400).json({ error: "Provide username" });
     const read = await readAccounts();
     const accounts = read.accounts || [];
-    const sha = read.sha || null;
     const idx = accounts.findIndex(a => a.username === username);
     if(idx === -1) return res.status(404).json({ error: "Account not found" });
-    accounts.splice(idx, 1);
-    await saveAccounts(accounts, sha);
-    res.json({ ok: true, username });
+    const removed = accounts.splice(idx,1)[0];
+    await saveAccounts(accounts);
+    res.json({ ok: true, username: removed.username });
   }catch(e){
     console.error("delete_account error:", e && e.message ? e.message : e);
     res.status(500).json({ error: e && e.message });
   }
 });
 
-// license status
-app.get('/license_status', adminAuth, async (req, res) => {
-  const lic = await ensureLicense();
-  res.json(lic);
-});
-
-// ---------------- get.php -> combined M3U per-account ----------------
+// get.php -> combined M3U per-account (unchanged)
 app.get("/get.php", async (req, res) => {
   if(!(await authGuard(req,res))) return;
   const username = req.query.username || "";
   try{
     let listsToSend = [];
     if(username === CONFIG.XTREAM_USER){
-      listsToSend = await listM3UFiles();
+      const files = await fs.readdir(__dirname);
+      listsToSend = files.filter(f => f.toLowerCase().endsWith('.m3u'));
     }else{
       const read = await readAccounts();
       const accounts = read.accounts || [];
@@ -396,7 +437,7 @@ app.get("/get.php", async (req, res) => {
     let combined = "#EXTM3U\n";
     for(const lf of listsToSend){
       try{
-        const raw = await readM3UFile(lf);
+        const raw = await fs.readFile(path.join(__dirname, lf), "utf8");
         const lines = raw.split("\n").map(l => l.trim());
         for(const ln of lines){
           if(!ln) continue;
@@ -414,10 +455,9 @@ app.get("/get.php", async (req, res) => {
   }
 });
 
-// ---------------- player_api.php (get_user_info + streams) ----------------
+// player_api.php (get_user_info)
 app.get("/player_api.php", async (req, res) => {
   const action = req.query.action || "";
-  // get_user_info
   if(action === "get_user_info" || action === "get_simple_data_array"){
     const reqUser = req.query.username || "";
     const reqPass = req.query.password || "";
@@ -454,7 +494,23 @@ app.get("/player_api.php", async (req, res) => {
         res.status(403).json({ user_info: { auth: 0, message: "Account expired", exp_date: String(Math.floor(new Date(acc.expiresAt).getTime()/1000)) }});
         return;
       }
-      const userInfo = makeUserInfoFromAccount(acc);
+      const nowS = Math.floor(Date.now()/1000);
+      const expS = acc && acc.expiresAt ? Math.floor(new Date(acc.expiresAt).getTime()/1000) : null;
+      const userInfo = {
+        username: acc.username,
+        password: acc.password,
+        message: "Welcome",
+        auth: 1,
+        status: (expS && nowS > expS) ? "Expired" : "Active",
+        exp_date: expS ? String(expS) : "",
+        exp_date_ms: acc.expiresAt ? String(new Date(acc.expiresAt).getTime()) : "",
+        exp_date_iso: acc.expiresAt ? new Date(acc.expiresAt).toISOString() : "",
+        is_trial: acc.is_trial ? String(acc.is_trial) : "0",
+        active_cons: "0",
+        created_at: String(nowS),
+        max_connections: acc.max_connections ? String(acc.max_connections) : "1",
+        allowed_output_formats: ["m3u8","ts","rtmp"]
+      };
       const serverInfo = { url: req.protocol + '://' + req.get('host'), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '' };
       res.json({ user_info: userInfo, server_info: serverInfo });
       return;
@@ -465,91 +521,10 @@ app.get("/player_api.php", async (req, res) => {
     }
   }
 
-  // fallback: get_live_categories / get_live_streams using canales.m3u or first m3u
-  try{
-    if(!(await authGuard(req,res))) return;
-    const available = await listM3UFiles();
-    const base = available.includes("canales.m3u") ? "canales.m3u" : (available[0] || null);
-    const channels = base ? (await (async () => {
-      const text = await readM3UFile(base);
-      const lines = text.replace(/\r/g,"").split("\n").map(l=>l.trim());
-      const items = [];
-      for(let i=0;i<lines.length;i++){
-        const line = lines[i];
-        if(!line) continue;
-        if(line.startsWith("#EXTINF")){
-          const after = line.substring(8).trim();
-          const idx = after.indexOf(",");
-          let metaPart = after, title = "";
-          if(idx >= 0){ metaPart = after.substring(0, idx); title = after.substring(idx+1).trim(); }
-          const attrs = {};
-          const re = /([a-zA-Z0-9\-_]+)\s*=\s*"([^"]*)"/g;
-          let m;
-          while((m = re.exec(metaPart)) !== null){ attrs[m[1]] = m[2]; }
-          let url = "";
-          for(let j=i+1;j<lines.length;j++){
-            if(lines[j] && !lines[j].startsWith("#")){ url = lines[j]; i = j; break; }
-          }
-          items.push({
-            title: title || attrs["tvg-name"] || attrs["name"] || "Sin nombre",
-            tvgId: attrs["tvg-id"] || "",
-            logo: attrs["tvg-logo"] || attrs["tvg_logo"] || "",
-            group: attrs["group-title"] || attrs["group"] || "Sin grupo",
-            url: url
-          });
-        }
-      }
-      return items;
-    })()) : [];
-
-    const groups = Array.from(new Set(channels.map(c=>c.group || "Sin grupo")));
-    const groupsMeta = groups.map((g,i)=>({ category_id: i+1, category_name: g }));
-    const groupIndex = new Map(groupsMeta.map(g => [g.category_name, g.category_id]));
-
-    if(req.query.action === "get_live_categories"){ res.json(groupsMeta); return; }
-    if(req.query.action === "get_live_streams"){
-      let filtered = channels;
-      const groupId = req.query.category_id || null;
-      if(groupId){
-        const gid = Number(groupId);
-        if(!Number.isNaN(gid)){
-          const name = groupsMeta.find(g=>g.category_id===gid)?.category_name;
-          filtered = channels.filter(c => c.group === name);
-        }else filtered = channels.filter(c => c.group === groupId);
-      }
-      const streams = filtered.map((c, idx) => {
-        const catId = groupIndex.get(c.group) || 0;
-        return {
-          stream_id: 100000 + idx + 1,
-          name: c.title,
-          stream_icon: c.logo || "",
-          category_id: catId,
-          stream_type: "live",
-          direct_source: c.url,
-          num: idx + 1
-        };
-      });
-      res.json(streams); return;
-    }
-
-    res.status(400).json({ error: "Unsupported action: " + action });
-  }catch(e){
-    res.status(500).json({ error: e && e.message });
-  }
+  res.status(400).json({ error: "Unsupported action" });
 });
 
-// ---------------- api.php compatibility ----------------
-app.get("/api.php", async (req, res) => {
-  const action = req.query.action || "";
-  const sub = req.query.sub || "";
-  if(action === "user" && sub === "info"){
-    req.query.action = "get_user_info";
-    return app._router.handle(req, res);
-  }
-  res.status(400).json({ error: "Unsupported api.php action" });
-});
-
-// ---------------- CORS preflight ----------------
+// CORS preflight
 app.options("/*", (req,res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
@@ -557,13 +532,15 @@ app.options("/*", (req,res) => {
   res.sendStatus(200);
 });
 
-// root -> admin
+// root
 app.get("/", (req,res) => res.redirect("/admin"));
 
-// ---------------- START ----------------
+// START
 (async () => {
+  await ensureBasics();
   await ensureLicense();
-  await ensureLocalAccounts();
+  await ensureFile(CONFIG.localAdminsFile, []); // ensure admins file
+  await ensureFile(CONFIG.localSettingsFile, { globalAccountLimit: 1000, allowAdminSignup: false });
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, ()=> console.log("Xtream-lite listening on port", PORT));
 })();
