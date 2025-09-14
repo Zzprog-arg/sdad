@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>PanelReseller — Admin Xtream-lite</title>
   <style>
-    /* Reset-ish */
+   
+    
+    css
+    
+    
+     /* Reset-ish */
     *{box-sizing:border-box}
     html,body{height:100%;margin:0}
 
@@ -101,6 +106,7 @@
     }
 
     .toast{position:fixed;right:20px;bottom:20px;background:#041226;padding:12px 16px;border-radius:12px;border:1px solid var(--glass-border);box-shadow:0 8px 30px rgba(6,11,23,0.6)}
+    
   </style>
 </head>
 <body>
@@ -118,93 +124,23 @@
 
       <div class="actions">
         <button id="btnAdd" class="btn">+ Añadir cuenta</button>
+        <button id="btnAdmins" class="btn ghost">Administradores</button>
+        <button id="btnSettings" class="btn ghost">Ajustes</button>
         <button id="btnRefresh" class="btn ghost">Actualizar</button>
         <button id="btnLicense" class="btn ghost">Ver licencia</button>
       </div>
     </header>
 
-    <div class="panel">
-      <aside class="sidebar">
-        <div class="side-section">
-          <h3>Información</h3>
-          <p class="small">Aquí podés crear cuentas, asignarles listas (.m3u) y renovar vencimientos. Usá el botón "Actualizar" después de cambios manuales.</p>
-        </div>
+    <!-- panel + main (igual que antes) -->
+    <!-- ...(mantén el HTML del panel y la tabla tal como en la versión previa)... -->
 
-        <div class="side-section">
-          <h3>Filtrar</h3>
-          <div style="display:flex;gap:10px;margin-top:10px">
-            <select id="filterStatus" class="select">
-              <option value="all">Todos</option>
-              <option value="active">Activas</option>
-              <option value="soon">Por vencer</option>
-              <option value="expired">Vencidas</option>
-            </select>
-            <select id="filterList" class="select"><option value="all">Todas las listas</option></select>
-          </div>
-        </div>
-
-        <div class="side-section">
-          <h3>Stats</h3>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-            <div class="chip" id="totalCount">Cuentas: —</div>
-            <div class="chip" id="activeCount">Activas: —</div>
-            <div class="chip" id="soonCount">Por vencer: —</div>
-            <div class="chip" id="expCount">Vencidas: —</div>
-          </div>
-        </div>
-
-        <div class="side-section">
-          <h3>Acciones</h3>
-          <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
-            <button id="btnExport" class="btn ghost">Exportar CSV</button>
-            <button id="btnDownload" class="btn ghost">Descargar accounts.json</button>
-          </div>
-        </div>
-      </aside>
-
-      <main class="main">
-        <div class="controls">
-          <div class="search">
-            <input id="q" placeholder="Buscar usuario o lista..." />
-            <select id="sortBy" class="select">
-              <option value="createdDesc">Reciente</option>
-              <option value="createdAsc">Antiguo</option>
-              <option value="expiresAsc">Vence pronto</option>
-              <option value="expiresDesc">Vence tarde</option>
-            </select>
-          </div>
-          <div style="display:flex;gap:10px;align-items:center">
-            <button id="btnShowAll" class="btn ghost">Mostrar todo</button>
-          </div>
-        </div>
-
-        <div style="overflow:auto;max-height:660px">
-          <table class="accounts" id="tblAccounts">
-            <thead>
-              <tr>
-                <th>Usuario</th>
-                <th>Contraseña</th>
-                <th>Listas</th>
-                <th>Creada</th>
-                <th>Vence</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-
-      </main>
-    </div>
   </div>
 
-  <!-- modal root -->
   <div id="modalRoot" style="display:none"></div>
   <div id="toast" style="display:none" class="toast">Copiado</div>
 
   <script>
-    // small util wrappers
+   // small util wrappers
     async function fetchJson(url, opts){
       const res = await fetch(url, { credentials: 'same-origin', ...opts });
       const ct = res.headers.get('content-type') || '';
@@ -514,7 +450,118 @@
     // init
     (async ()=>{ await loadLists(); await loadAccounts(); })();
 
-    window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase() === 'n') openAddModal(); });
+    window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase() === 'n') openAddModal(); }); 
+    async function openAdminsModal(){
+      // fetch admins
+      const r = await fetchJson('/admin/list_admins');
+      if(!r.ok) return alert('No se pueden obtener admins');
+      const admins = r.json.admins || [];
+
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      const h = document.createElement('h3'); h.textContent = 'Administradores'; modal.appendChild(h);
+
+      const tbl = document.createElement('div'); tbl.style.marginTop = '12px';
+      admins.forEach(a => {
+        const row = document.createElement('div');
+        row.style.display = 'flex'; row.style.alignItems = 'center'; row.style.justifyContent = 'space-between';
+        row.style.padding = '8px 0'; row.style.borderBottom = '1px dashed rgba(255,255,255,0.03)';
+
+        const left = document.createElement('div');
+        left.innerHTML = `<strong style="display:block">${a.username}</strong><small style="color:var(--muted)">${a.createdAt || ''}</small>`;
+        const right = document.createElement('div');
+        right.style.display = 'flex'; right.style.gap = '8px'; right.style.alignItems='center';
+
+        const creditsBadge = document.createElement('span');
+        creditsBadge.className = 'chip';
+        creditsBadge.textContent = `Créditos: ${a.credits||0}`;
+        right.appendChild(creditsBadge);
+
+        const btnSet = document.createElement('button');
+        btnSet.className = 'btn ghost'; btnSet.textContent = 'Set credits';
+        btnSet.onclick = async () => {
+          const val = prompt('Créditos para ' + a.username, String(a.credits||0));
+          if(val === null) return;
+          const r2 = await fetchJson('/admin/set_admin_credits', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: a.username, credits: Number(val) }) });
+          if(r2.ok && r2.json && r2.json.ok){ showToast('Créditos actualizados'); openAdminsModal(); }
+          else alert('Error: ' + (r2.json?.error || r2.text || ''));
+        };
+        right.appendChild(btnSet);
+
+        const btnDel = document.createElement('button');
+        btnDel.className = 'btn ghost'; btnDel.textContent = 'Borrar';
+        btnDel.onclick = async () => {
+          if(!confirm('Borrar admin ' + a.username + '?')) return;
+          const r3 = await fetchJson('/admin/delete_admin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: a.username }) });
+          if(r3.ok && r3.json && r3.json.ok){ showToast('Admin borrado'); openAdminsModal(); }
+          else alert('Error borrando: ' + (r3.json?.error || r3.text || ''));
+        };
+        right.appendChild(btnDel);
+
+        row.appendChild(left); row.appendChild(right);
+        tbl.appendChild(row);
+      });
+
+      const foot = document.createElement('div'); foot.style.marginTop='12px'; foot.style.display='flex'; foot.style.justifyContent='flex-end'; foot.style.gap='8px';
+      const btnNew = document.createElement('button'); btnNew.className='btn'; btnNew.textContent='Crear admin';
+      const btnClose = document.createElement('button'); btnClose.className='btn ghost'; btnClose.textContent='Cerrar';
+      foot.appendChild(btnClose); foot.appendChild(btnNew);
+
+      btnClose.onclick = closeModal;
+      btnNew.onclick = () => {
+        const name = prompt('Nuevo admin - username');
+        if(!name) return;
+        const pass = prompt('Password para ' + name);
+        if(!pass) return;
+        const credits = Number(prompt('Créditos iniciales (número)', '10') || 0);
+        (async ()=>{
+          const r4 = await fetchJson('/admin/add_admin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: name, password: pass, credits }) });
+          if(r4.ok && r4.json && r4.json.ok){ showToast('Admin creado'); openAdminsModal(); }
+          else alert('Error creando admin: ' + (r4.json?.error || r4.text || ''));
+        })();
+      };
+
+      modal.appendChild(tbl); modal.appendChild(foot);
+      showModalElement(modal);
+    }
+
+    async function openSettingsModal(){
+      const r = await fetchJson('/admin/settings');
+      if(!r.ok) return alert('No se pueden obtener settings');
+      const s = r.json.settings || { globalAccountLimit:1000, allowAdminSignup:false };
+      const modal = document.createElement('div'); modal.className='modal';
+      const h = document.createElement('h3'); h.textContent='Ajustes'; modal.appendChild(h);
+
+      const lblLimit = document.createElement('label'); lblLimit.textContent='Límite global de cuentas'; modal.appendChild(lblLimit);
+      const inLimit = document.createElement('input'); inLimit.type='number'; inLimit.value = s.globalAccountLimit || 1000; modal.appendChild(inLimit);
+
+      const lblSignup = document.createElement('label'); lblSignup.textContent='Permitir registro de admins (signup)'; modal.appendChild(lblSignup);
+      const chk = document.createElement('input'); chk.type='checkbox'; chk.checked = !!s.allowAdminSignup; modal.appendChild(chk);
+
+      const foot = document.createElement('div'); foot.className='foot';
+      const btnCancel = document.createElement('button'); btnCancel.className='btn ghost'; btnCancel.textContent='Cancelar';
+      const btnSave = document.createElement('button'); btnSave.className='btn'; btnSave.textContent='Guardar';
+      foot.appendChild(btnCancel); foot.appendChild(btnSave);
+      modal.appendChild(foot);
+
+      btnCancel.onclick = closeModal;
+      btnSave.onclick = async () => {
+        const payload = { globalAccountLimit: Number(inLimit.value||0), allowAdminSignup: !!chk.checked };
+        const r2 = await fetchJson('/admin/settings', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        if(r2.ok && r2.json && r2.json.ok){ showToast('Ajustes guardados'); closeModal(); }
+        else alert('Error guardando: ' + (r2.json?.error || r2.text || ''));
+      };
+
+      showModalElement(modal);
+    }
+
+    // Wire admin buttons
+    document.getElementById('btnAdmins').onclick = openAdminsModal;
+    document.getElementById('btnSettings').onclick = openSettingsModal;
+
+    // NOTE: asegúrate de copiar el resto del JS que ya funciona desde la versión DOM-based anterior:
+    // - showModalElement, closeModal, openAddModal, openEditModal, updateAccountExpiry, renderAccounts, attachRowEvents, etc.
+    // Para no duplicar aquí todo, pega el JS completo previo y luego añade estas funciones.
   </script>
 </body>
 </html>
