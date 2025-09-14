@@ -11,11 +11,9 @@
 
     :root{
       --bg:#0f1724;
-      --panel:#071022;
       --card:#0b1320;
       --muted:#9aa8bf;
       --accent:#4f46e5;
-      --accent-2:#06b6d4;
       --success:#16a34a;
       --warn:#f59e0b;
       --danger:#ef4444;
@@ -201,18 +199,18 @@
     </div>
   </div>
 
-  <!-- modal (hidden) -->
+  <!-- modal root -->
   <div id="modalRoot" style="display:none"></div>
   <div id="toast" style="display:none" class="toast">Copiado</div>
 
   <script>
+    // small util wrappers
     async function fetchJson(url, opts){
       const res = await fetch(url, { credentials: 'same-origin', ...opts });
       const ct = res.headers.get('content-type') || '';
       if(ct.includes('application/json')) return { ok: res.ok, json: await res.json(), status: res.status };
       return { ok: res.ok, text: await res.text(), status: res.status };
     }
-
     const byId = id => document.getElementById(id);
     const isoDate = s => s ? new Date(s).toLocaleString() : '-';
     const daysLeft = s => { if(!s) return null; const d = Math.ceil((new Date(s) - Date.now())/(24*60*60*1000)); return d; };
@@ -341,7 +339,10 @@
 
           if(act === 'renew'){
             const days = prompt('Cuántos días añadir (ej: 30)?', '30');
-            if(!days) return; await updateAccountExpiry(username, Number(days)); await loadAccounts(); return;
+            if(!days) return;
+            await updateAccountExpiry(username, Number(days));
+            await loadAccounts();
+            return;
           }
 
           if(act === 'delete'){
@@ -356,58 +357,94 @@
       });
     }
 
-    // modal helpers
-    function showModal(html){ const root = byId('modalRoot'); root.innerHTML = `<div class="modal-backdrop">${html}</div>`; root.style.display = 'block'; }
-    function closeModal(){ byId('modalRoot').style.display = 'none'; byId('modalRoot').innerHTML = ''; }
+    // Modal helpers using DOM instead of big template literals
+    function showModalElement(elem){
+      const root = byId('modalRoot');
+      root.innerHTML = '';
+      const backdrop = document.createElement('div');
+      backdrop.className = 'modal-backdrop';
+      backdrop.appendChild(elem);
+      root.appendChild(backdrop);
+      root.style.display = 'block';
+    }
+    function closeModal(){ const root = byId('modalRoot'); root.style.display = 'none'; root.innerHTML = ''; }
 
+    // Build Add modal with DOM nodes
     function openAddModal(){
-      const listsOptions = LISTS.map(l => `<option value="${l}">${l}</option>`).join('');
-      const html = `
-        <div class="modal" role="dialog">
-          <h3>Crear nueva cuenta</h3>
-          <label>Usuario</label><input id="m_username" />
-          <label>Contraseña</label><input id="m_password" />
-          <label>Días de validez</label><input id="m_days" type="number" value="30" />
-          <label>Listas asignadas (multi-select)</label><select id="m_lists" multiple style="height:120px">${listsOptions}</select>
-          <div class="foot">
-            <button class="btn ghost" id="m_cancel">Cancelar</button>
-            <button class="btn" id="m_create">Crear cuenta</button>
-          </div>
-        </div>`;
-      showModal(html);
-      byId('m_cancel').onclick = closeModal;
-      byId('m_create').onclick = async () => {
-        const username = byId('m_username').value.trim();
-        const password = byId('m_password').value.trim();
-        const days = Number(byId('m_days').value) || 30;
-        const lists = Array.from(byId('m_lists').selectedOptions).map(o=>o.value);
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      const h = document.createElement('h3'); h.textContent = 'Crear nueva cuenta'; modal.appendChild(h);
+
+      const labelUser = document.createElement('label'); labelUser.textContent = 'Usuario'; modal.appendChild(labelUser);
+      const inUser = document.createElement('input'); inUser.id = 'm_username'; modal.appendChild(inUser);
+
+      const labelPass = document.createElement('label'); labelPass.textContent = 'Contraseña'; modal.appendChild(labelPass);
+      const inPass = document.createElement('input'); inPass.id = 'm_password'; modal.appendChild(inPass);
+
+      const labelDays = document.createElement('label'); labelDays.textContent = 'Días de validez'; modal.appendChild(labelDays);
+      const inDays = document.createElement('input'); inDays.type = 'number'; inDays.value = '30'; inDays.id = 'm_days'; modal.appendChild(inDays);
+
+      const labelLists = document.createElement('label'); labelLists.textContent = 'Listas asignadas (multi-select)'; modal.appendChild(labelLists);
+      const selLists = document.createElement('select'); selLists.id = 'm_lists'; selLists.multiple = true; selLists.style.height = '120px';
+      LISTS.forEach(l => { const o = document.createElement('option'); o.value = l; o.textContent = l; selLists.appendChild(o); });
+      modal.appendChild(selLists);
+
+      const foot = document.createElement('div'); foot.className = 'foot';
+      const btnCancel = document.createElement('button'); btnCancel.className = 'btn ghost'; btnCancel.textContent = 'Cancelar';
+      const btnCreate = document.createElement('button'); btnCreate.className = 'btn'; btnCreate.textContent = 'Crear cuenta';
+      foot.appendChild(btnCancel); foot.appendChild(btnCreate);
+      modal.appendChild(foot);
+
+      btnCancel.onclick = closeModal;
+      btnCreate.onclick = async () => {
+        const username = inUser.value.trim();
+        const password = inPass.value.trim();
+        const days = Number(inDays.value) || 30;
+        const lists = Array.from(selLists.selectedOptions).map(o=>o.value);
         if(!username || !password){ alert('Usuario y contraseña requeridos'); return; }
         const r = await fetchJson('/admin/add_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username, password, days, lists }) });
-        if(r.ok && r.json && r.json.ok){ closeModal(); loadAccounts(); showToast('Cuenta creada'); } else { alert('Error: ' + (r.json?.error || r.text || 'unknown')); }
+        if(r.ok && r.json && r.json.ok){ closeModal(); loadAccounts(); showToast('Cuenta creada'); }
+        else { alert('Error: ' + (r.json?.error || r.text || 'unknown')); }
       };
+
+      showModalElement(modal);
     }
 
     function openEditModal(account){
-      const listsOptions = LISTS.map(l => `<option value="${l}" ${ (account.lists||[]).includes(l) ? 'selected' : '' }>${l}</option>`).join('');
-      const html = `
-        <div class="modal" role="dialog">
-          <h3>Editar cuenta — ${account.username}</h3>
-          <label>Contraseña</label><input id="e_password" value="${account.password}" />
-          <label>Vence (ISO) — o usar días</label><input id="e_expiresAt" value="${account.expiresAt || ''}" />
-          <label>Días desde ahora (opcional)</label><input id="e_days" type="number" placeholder="ej: 30" />
-          <label>Listas (seleccionar para reemplazar)</label><select id="e_lists" multiple style="height:120px">${listsOptions}</select>
-          <div class="foot">
-            <button class="btn ghost" id="e_cancel">Cancelar</button>
-            <button class="btn" id="e_save">Guardar</button>
-          </div>
-        </div>`;
-      showModal(html);
-      byId('e_cancel').onclick = closeModal;
-      byId('e_save').onclick = async () => {
-        const newPass = byId('e_password').value.trim();
-        const expiresAt = byId('e_expiresAt').value.trim();
-        const days = byId('e_days').value ? Number(byId('e_days').value) : undefined;
-        const lists = Array.from(byId('e_lists').selectedOptions).map(o=>o.value);
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      const h = document.createElement('h3'); h.textContent = 'Editar cuenta — ' + account.username; modal.appendChild(h);
+
+      const labelPass = document.createElement('label'); labelPass.textContent = 'Contraseña'; modal.appendChild(labelPass);
+      const inPass = document.createElement('input'); inPass.value = account.password; modal.appendChild(inPass);
+
+      const labelExpires = document.createElement('label'); labelExpires.textContent = 'Vence (ISO) — o usar días'; modal.appendChild(labelExpires);
+      const inExpires = document.createElement('input'); inExpires.value = account.expiresAt || ''; modal.appendChild(inExpires);
+
+      const labelDays = document.createElement('label'); labelDays.textContent = 'Días desde ahora (opcional)'; modal.appendChild(labelDays);
+      const inDays = document.createElement('input'); inDays.type = 'number'; modal.appendChild(inDays);
+
+      const labelLists = document.createElement('label'); labelLists.textContent = 'Listas (seleccionar para reemplazar)'; modal.appendChild(labelLists);
+      const selLists = document.createElement('select'); selLists.multiple = true; selLists.style.height = '120px';
+      LISTS.forEach(l => {
+        const o = document.createElement('option'); o.value = l; o.textContent = l;
+        if((account.lists||[]).includes(l)) o.selected = true;
+        selLists.appendChild(o);
+      });
+      modal.appendChild(selLists);
+
+      const foot = document.createElement('div'); foot.className = 'foot';
+      const btnCancel = document.createElement('button'); btnCancel.className = 'btn ghost'; btnCancel.textContent = 'Cancelar';
+      const btnSave = document.createElement('button'); btnSave.className = 'btn'; btnSave.textContent = 'Guardar';
+      foot.appendChild(btnCancel); foot.appendChild(btnSave);
+      modal.appendChild(foot);
+
+      btnCancel.onclick = closeModal;
+      btnSave.onclick = async () => {
+        const newPass = inPass.value.trim();
+        const expiresAt = inExpires.value.trim();
+        const days = inDays.value ? Number(inDays.value) : undefined;
+        const lists = Array.from(selLists.selectedOptions).map(o=>o.value);
 
         const payload = { username: account.username };
         if(days) payload.days = days;
@@ -416,11 +453,30 @@
 
         const r = await fetchJson('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
         if(r.ok && r.json && r.json.ok){
-          // update password locally via a quick flow: fetch accounts, modify, and save via admin API (we'll use add_account/delete pair)
-          // Simpler: call delete + re-add with new password (preserves createdAt?) We'll just show message and refresh.
-          closeModal(); loadAccounts(); showToast('Cuenta actualizada (expiry/listas). Para cambiar password contacte el servidor si es necesario.');
-        }else{ alert('Error actualizando: ' + (r.json?.error || r.text || 'unknown')); }
+          // update password by deleting + re-adding (simple approach)
+          if(newPass !== account.password){
+            // We will remove the old account and re-add with same createdAt but new password
+            try{
+              // delete
+              await fetchJson('/admin/delete_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: account.username }) });
+              // add new with same createdAt
+              const createdAt = account.createdAt || new Date().toISOString();
+              const expires = payload.expiresAt || account.expiresAt || new Date(Date.now() + 30*24*60*60*1000).toISOString();
+              const newAccount = { username: account.username, password: newPass, createdAt, expiresAt: expires, lists };
+              // add via add_account endpoint
+              await fetchJson('/admin/add_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: newAccount.username, password: newAccount.password, days: Math.ceil((new Date(newAccount.expiresAt)-Date.now())/(24*60*60*1000)), lists: newAccount.lists }) });
+            }catch(e){
+              console.warn('Password change fallback failed', e);
+            }
+          }
+
+          closeModal(); await loadAccounts(); showToast('Cuenta actualizada');
+        }else{
+          alert('Error actualizando: ' + (r.json?.error || r.text || 'unknown'));
+        }
       };
+
+      showModalElement(modal);
     }
 
     async function updateAccountExpiry(username, days){
@@ -433,8 +489,7 @@
     function exportCSV(){
       const rows = [['username','password','createdAt','expiresAt','lists']];
       for(const a of ACCOUNTS){ rows.push([a.username||'', a.password||'', a.createdAt||'', a.expiresAt||'', (a.lists||[]).join(';')]); }
-      const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('
-');
+      const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'accounts.csv'; a.click(); URL.revokeObjectURL(url);
     }
