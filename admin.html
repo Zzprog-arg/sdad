@@ -31,23 +31,23 @@
 
     header.app-header{display:flex;align-items:center;gap:18px;margin-bottom:20px}
     .logo{display:flex;align-items:center;gap:12px}
-    .logo .badge{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(79,70,229,0.2)}
-    .logo .badge svg{width:30px;height:30px;fill:white}
-    .logo h1{margin:0;font-size:18px;letter-spacing:0.2px}
+    .logo .badge{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(79,70,229,0.22)}
+    .logo .badge svg{width:34px;height:34px;fill:white}
+    .logo h1{margin:0;font-size:20px;letter-spacing:0.2px}
     .logo p{margin:0;font-size:12px;color:var(--muted)}
 
-    .actions{margin-left:auto;display:flex;gap:8px;align-items:center}
-    .btn{background:var(--accent);border:0;padding:10px 12px;border-radius:10px;color:white;font-weight:600;cursor:pointer}
+    .actions{margin-left:auto;display:flex;gap:10px;align-items:center}
+    .btn{background:var(--accent);border:0;padding:10px 12px;border-radius:12px;color:white;font-weight:600;cursor:pointer}
     .btn.ghost{background:transparent;border:1px solid var(--glass-border);color:var(--text)}
     .btn.icon{display:inline-flex;align-items:center;gap:8px}
 
-    .panel{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
+    .panel{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start}
 
     /* Sidebar sticky */
     .sidebar{
-      background: linear-gradient(180deg,var(--card), rgba(11,19,32,0.8));
+      background: linear-gradient(180deg,var(--card), rgba(11,19,32,0.85));
       border-radius:var(--radius);
-      padding:16px;
+      padding:20px;
       border:1px solid var(--glass-border);
       position:sticky;
       top:20px;
@@ -57,48 +57,52 @@
 
     .sidebar h3{margin:0 0 12px 0;font-size:14px}
     .small{font-size:13px;color:var(--muted)}
-    .side-section{margin-bottom:16px}
+    .side-section{margin-bottom:18px}
     .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--glass);font-size:13px;color:var(--muted);border:1px solid var(--glass-border)}
 
-    .main{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--radius);border:1px solid var(--glass-border);overflow:auto}
+    .main{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:var(--radius);border:1px solid var(--glass-border);overflow:auto}
 
-    .controls{display:flex;gap:12px;align-items:center;margin-bottom:12px}
-    .search{flex:1;display:flex;gap:8px}
-    .search input{flex:1;padding:10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text)}
-    .select{padding:10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text)}
+    .controls{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+    .search{flex:1;display:flex;gap:10px}
+    .search input{flex:1;padding:12px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text)}
+    .select{padding:10px 12px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text)}
 
     /* Tabla: más espacio y scrollable */
-    table.accounts{ width:100%; border-collapse:separate; border-spacing:0 8px; }
-    table.accounts thead th{ font-size:13px; color:var(--muted); text-align:left; padding:12px 12px; border-bottom: none; }
-    table.accounts tbody tr{ background: rgba(255,255,255,0.01); border-radius:10px; }
-    table.accounts tbody td{ padding:14px 12px; vertical-align:middle; white-space:normal; word-break:break-word; }
+    table.accounts{ width:100%; border-collapse:separate; border-spacing:0 12px; }
+    table.accounts thead th{ font-size:13px; color:var(--muted); text-align:left; padding:14px 16px; border-bottom: none; }
+    table.accounts tbody tr{ background: rgba(255,255,255,0.01); border-radius:12px; }
+    table.accounts tbody td{ padding:16px 16px; vertical-align:middle; white-space:normal; word-break:break-word; }
 
     .username{font-weight:700}
-    .pass{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; background:rgba(255,255,255,0.02); padding:6px 10px; border-radius:8px; display:inline-block; margin-right:8px; }
+    .pass{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:10px; display:inline-block; margin-right:10px; }
 
-    td .chip{ display:inline-block; margin:4px 6px 4px 0; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+    td .chip{ display:inline-block; margin:6px 8px 6px 0; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
 
-    .badge-status{padding:6px 8px;border-radius:999px;font-weight:700;font-size:12px}
+    .badge-status{padding:8px 10px;border-radius:999px;font-weight:700;font-size:13px}
     .badge-active{background:rgba(22,163,74,0.12);color:var(--success);border:1px solid rgba(22,163,74,0.14)}
     .badge-soon{background:rgba(245,158,11,0.08);color:var(--warn);border:1px solid rgba(245,158,11,0.12)}
     .badge-exp{background:rgba(239,68,68,0.08);color:var(--danger);border:1px solid rgba(239,68,68,0.12)}
 
-    .actions-col{ white-space:nowrap; }
+    .actions-col{ white-space:nowrap; display:flex; gap:8px; align-items:center }
+    .actions-col .btn{padding:8px 10px;border-radius:10px}
 
     /* modal */
     .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center}
-    .modal{background:linear-gradient(180deg,#0b1220,#07101a);padding:18px;border-radius:12px;width:520px;border:1px solid var(--glass-border)}
+    .modal{background:linear-gradient(180deg,#0b1220,#07101a);padding:20px;border-radius:14px;width:560px;border:1px solid var(--glass-border)}
     .modal h3{margin:0 0 10px}
-    .modal label{font-size:13px;color:var(--muted);display:block;margin-top:8px}
-    .modal input, .modal select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--glass-border);background:transparent;color:var(--text)}
-    .modal .foot{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+    .modal label{font-size:13px;color:var(--muted);display:block;margin-top:10px}
+    .modal input, .modal select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;color:var(--text)}
+    .modal .foot{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
 
+    @media (max-width:1080px){
+      .panel{grid-template-columns:320px 1fr}
+    }
     @media (max-width:880px){
       .panel{ grid-template-columns:1fr; }
       .sidebar{ position:relative; height:auto; top:auto; }
     }
 
-    .toast{position:fixed;right:20px;bottom:20px;background:#041226;padding:10px 14px;border-radius:10px;border:1px solid var(--glass-border);box-shadow:0 8px 30px rgba(6,11,23,0.6)}
+    .toast{position:fixed;right:20px;bottom:20px;background:#041226;padding:12px 16px;border-radius:12px;border:1px solid var(--glass-border);box-shadow:0 8px 30px rgba(6,11,23,0.6)}
   </style>
 </head>
 <body>
@@ -130,7 +134,7 @@
 
         <div class="side-section">
           <h3>Filtrar</h3>
-          <div style="display:flex;gap:8px;margin-top:8px">
+          <div style="display:flex;gap:10px;margin-top:10px">
             <select id="filterStatus" class="select">
               <option value="all">Todos</option>
               <option value="active">Activas</option>
@@ -143,7 +147,7 @@
 
         <div class="side-section">
           <h3>Stats</h3>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
             <div class="chip" id="totalCount">Cuentas: —</div>
             <div class="chip" id="activeCount">Activas: —</div>
             <div class="chip" id="soonCount">Por vencer: —</div>
@@ -153,7 +157,7 @@
 
         <div class="side-section">
           <h3>Acciones</h3>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
             <button id="btnExport" class="btn ghost">Exportar CSV</button>
             <button id="btnDownload" class="btn ghost">Descargar accounts.json</button>
           </div>
@@ -171,12 +175,12 @@
               <option value="expiresDesc">Vence tarde</option>
             </select>
           </div>
-          <div style="display:flex;gap:8px;align-items:center">
+          <div style="display:flex;gap:10px;align-items:center">
             <button id="btnShowAll" class="btn ghost">Mostrar todo</button>
           </div>
         </div>
 
-        <div style="overflow:auto;max-height:640px">
+        <div style="overflow:auto;max-height:660px">
           <table class="accounts" id="tblAccounts">
             <thead>
               <tr>
@@ -295,6 +299,7 @@
                 <button class="btn" data-action="copy-pass">Copiar</button>
                 <button class="btn ghost" data-action="edit">Editar</button>
                 <button class="btn ghost" data-action="renew">Renovar</button>
+                <button class="btn ghost" data-action="delete">Borrar</button>
               </td>
             </tr>
           `;
@@ -326,28 +331,25 @@
           }
 
           if(act === 'copy-pass'){
-            // copia el link completo get.php?username=...&password=...
             const link = `${location.origin}/get.php?username=${encodeURIComponent(account.username)}&password=${encodeURIComponent(account.password)}`;
-            try{
-              await navigator.clipboard.writeText(link);
-              showToast('Enlace copiado al portapapeles');
-            }catch(e){
-              const ta = document.createElement('textarea'); ta.value = link; document.body.appendChild(ta); ta.select();
-              try{ document.execCommand('copy'); showToast('Enlace copiado al portapapeles'); }catch(e2){ alert('Copia manual: ' + link); }
-              ta.remove();
-            }
+            try{ await navigator.clipboard.writeText(link); showToast('Enlace copiado al portapapeles'); }
+            catch(e){ const ta = document.createElement('textarea'); ta.value = link; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); showToast('Enlace copiado al portapapeles'); }catch(e2){ alert('Copia manual: ' + link); } ta.remove(); }
             return;
           }
 
-          if(act === 'edit'){
-            openEditModal(account); return;
-          }
+          if(act === 'edit'){ openEditModal(account); return; }
 
           if(act === 'renew'){
             const days = prompt('Cuántos días añadir (ej: 30)?', '30');
-            if(!days) return;
-            await updateAccountExpiry(username, Number(days));
-            await loadAccounts();
+            if(!days) return; await updateAccountExpiry(username, Number(days)); await loadAccounts(); return;
+          }
+
+          if(act === 'delete'){
+            if(!confirm(`Borrar la cuenta "${username}"? Esta acción es irreversible.`)) return;
+            try{
+              const r = await fetchJson('/admin/delete_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username }) });
+              if(r.ok && r.json && r.json.ok){ showToast('Cuenta borrada'); await loadAccounts(); } else { alert('Error borrando: ' + (r.json?.error || r.text || '')); }
+            }catch(e){ alert('Error borrando cuenta.'); }
             return;
           }
         };
@@ -355,11 +357,7 @@
     }
 
     // modal helpers
-    function showModal(html){
-      const root = byId('modalRoot');
-      root.innerHTML = `<div class="modal-backdrop">${html}</div>`;
-      root.style.display = 'block';
-    }
+    function showModal(html){ const root = byId('modalRoot'); root.innerHTML = `<div class="modal-backdrop">${html}</div>`; root.style.display = 'block'; }
     function closeModal(){ byId('modalRoot').style.display = 'none'; byId('modalRoot').innerHTML = ''; }
 
     function openAddModal(){
@@ -385,8 +383,7 @@
         const lists = Array.from(byId('m_lists').selectedOptions).map(o=>o.value);
         if(!username || !password){ alert('Usuario y contraseña requeridos'); return; }
         const r = await fetchJson('/admin/add_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username, password, days, lists }) });
-        if(r.ok && r.json && r.json.ok){ closeModal(); loadAccounts(); showToast('Cuenta creada'); }
-        else { alert('Error: ' + (r.json?.error || r.text || 'unknown')); }
+        if(r.ok && r.json && r.json.ok){ closeModal(); loadAccounts(); showToast('Cuenta creada'); } else { alert('Error: ' + (r.json?.error || r.text || 'unknown')); }
       };
     }
 
@@ -417,19 +414,12 @@
         if(expiresAt) payload.expiresAt = new Date(expiresAt).toISOString();
         if(lists) payload.lists = lists;
 
-        // If password changed: we update local by re-saving accounts (simpler to call admin/set_account_expiry and then edit password locally)
-        // First update expiry/lists via endpoint:
         const r = await fetchJson('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
         if(r.ok && r.json && r.json.ok){
-          // update password: fetch list_accounts, modify account, then save via admin.add_account flow (we will replace full accounts)
-          // Simpler approach: fetch accounts, modify and call a helper endpoint -> but we don't have one.
-          // So we modify client-side and perform a manual save via set_account_expiry for lists/expiry; password update will be applied by editing accounts.json via GitHub/local on server in a later release.
-          // For now show success and reload.
-          // If you need password-change API, dime y la agrego.
-          closeModal(); loadAccounts(); showToast('Cuenta actualizada (expiry/listas). Para cambiar password contacta al servidor)');
-        }else{
-          alert('Error actualizando: ' + (r.json?.error || r.text || 'unknown'));
-        }
+          // update password locally via a quick flow: fetch accounts, modify, and save via admin API (we'll use add_account/delete pair)
+          // Simpler: call delete + re-add with new password (preserves createdAt?) We'll just show message and refresh.
+          closeModal(); loadAccounts(); showToast('Cuenta actualizada (expiry/listas). Para cambiar password contacte el servidor si es necesario.');
+        }else{ alert('Error actualizando: ' + (r.json?.error || r.text || 'unknown')); }
       };
     }
 
@@ -438,14 +428,13 @@
       if(!r.ok) alert('Error al renovar: ' + (r.json?.error || r.text || '')); else showToast('Cuenta renovada');
     }
 
-    function showToast(text){
-      const t = byId('toast'); t.textContent = text; t.style.display = 'block'; setTimeout(()=> t.style.display='none', 2000);
-    }
+    function showToast(text){ const t = byId('toast'); t.textContent = text; t.style.display = 'block'; setTimeout(()=> t.style.display='none', 2000); }
 
     function exportCSV(){
       const rows = [['username','password','createdAt','expiresAt','lists']];
       for(const a of ACCOUNTS){ rows.push([a.username||'', a.password||'', a.createdAt||'', a.expiresAt||'', (a.lists||[]).join(';')]); }
-      const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+      const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('
+');
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'accounts.csv'; a.click(); URL.revokeObjectURL(url);
     }
@@ -468,10 +457,7 @@
     filterList.onchange = renderAccounts;
 
     // init
-    (async ()=>{
-      await loadLists();
-      await loadAccounts();
-    })();
+    (async ()=>{ await loadLists(); await loadAccounts(); })();
 
     window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase() === 'n') openAddModal(); });
   </script>
