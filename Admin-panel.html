@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PanelReseller — Admin Xtream-lite</title>
+  <style>
+    /* Reset-ish */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+
+    :root{
+      --bg:#0f1724;
+      --panel:#071022;
+      --card:#0b1320;
+      --muted:#9aa8bf;
+      --accent:#4f46e5;
+      --accent-2:#06b6d4;
+      --success:#16a34a;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --glass: rgba(255,255,255,0.04);
+      --radius:12px;
+      --text:#e6eef8;
+      --glass-border: rgba(255,255,255,0.05);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    body{background:linear-gradient(180deg,#031029 0%, #071226 100%);color:var(--text);padding:20px}
+    .app{max-width:1200px;margin:0 auto}
+
+    header.app-header{display:flex;align-items:center;gap:18px;margin-bottom:20px}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo .badge{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(79,70,229,0.22)}
+    .logo .badge svg{width:34px;height:34px;fill:white}
+    .logo h1{margin:0;font-size:20px;letter-spacing:0.2px}
+    .logo p{margin:0;font-size:12px;color:var(--muted)}
+
+    .actions{margin-left:auto;display:flex;gap:10px;align-items:center}
+    .btn{background:var(--accent);border:0;padding:10px 12px;border-radius:12px;color:white;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid var(--glass-border);color:var(--text)}
+    .btn.icon{display:inline-flex;align-items:center;gap:8px}
+
+    .panel{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start}
+
+    /* Sidebar sticky */
+    .sidebar{
+      background: linear-gradient(180deg,var(--card), rgba(11,19,32,0.85));
+      border-radius:var(--radius);
+      padding:20px;
+      border:1px solid var(--glass-border);
+      position:sticky;
+      top:20px;
+      height: calc(100vh - 40px);
+      overflow:auto;
+    }
+
+    .sidebar h3{margin:0 0 12px 0;font-size:14px}
+    .small{font-size:13px;color:var(--muted)}
+    .side-section{margin-bottom:18px}
+    .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--glass);font-size:13px;color:var(--muted);border:1px solid var(--glass-border)}
+
+    .main{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:var(--radius);border:1px solid var(--glass-border);overflow:auto}
+
+    .controls{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+    .search{flex:1;display:flex;gap:10px}
+    .search input{flex:1;padding:12px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text)}
+    .select{padding:10px 12px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text)}
+
+    /* Tabla: más espacio y scrollable */
+    table.accounts{ width:100%; border-collapse:separate; border-spacing:0 12px; }
+    table.accounts thead th{ font-size:13px; color:var(--muted); text-align:left; padding:14px 16px; border-bottom: none; }
+    table.accounts tbody tr{ background: rgba(255,255,255,0.01); border-radius:12px; }
+    table.accounts tbody td{ padding:16px 16px; vertical-align:middle; white-space:normal; word-break:break-word; }
+
+    .username{font-weight:700}
+    .pass{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:10px; display:inline-block; margin-right:10px; }
+
+    td .chip{ display:inline-block; margin:6px 8px 6px 0; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+
+    .badge-status{padding:8px 10px;border-radius:999px;font-weight:700;font-size:13px}
+    .badge-active{background:rgba(22,163,74,0.12);color:var(--success);border:1px solid rgba(22,163,74,0.14)}
+    .badge-soon{background:rgba(245,158,11,0.08);color:var(--warn);border:1px solid rgba(245,158,11,0.12)}
+    .badge-exp{background:rgba(239,68,68,0.08);color:var(--danger);border:1px solid rgba(239,68,68,0.12)}
+
+    .actions-col{ white-space:nowrap; display:flex; gap:8px; align-items:center }
+    .actions-col .btn{padding:8px 10px;border-radius:10px}
+
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center}
+    .modal{background:linear-gradient(180deg,#0b1220,#07101a);padding:20px;border-radius:14px;width:560px;border:1px solid var(--glass-border)}
+    .modal h3{margin:0 0 10px}
+    .modal label{font-size:13px;color:var(--muted);display:block;margin-top:10px}
+    .modal input, .modal select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;color:var(--text)}
+    .modal .foot{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+
+    @media (max-width:1080px){
+      .panel{grid-template-columns:320px 1fr}
+    }
+    @media (max-width:880px){
+      .panel{ grid-template-columns:1fr; }
+      .sidebar{ position:relative; height:auto; top:auto; }
+    }
+
+    .toast{position:fixed;right:20px;bottom:20px;background:#041226;padding:12px 16px;border-radius:12px;border:1px solid var(--glass-border);box-shadow:0 8px 30px rgba(6,11,23,0.6)}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="logo">
+        <div class="badge" aria-hidden>
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-6l1.5 2H15l-1.5-2H10.5L12 20h-1.5L9 18H5a2 2 0 0 1-2-2V5z"/></svg>
+        </div>
+        <div>
+          <h1>PanelReseller</h1>
+          <p class="small">Administración — cuentas, listas y vencimientos</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="btnAdd" class="btn">+ Añadir cuenta</button>
+        <button id="btnRefresh" class="btn ghost">Actualizar</button>
+        <button id="btnLicense" class="btn ghost">Ver licencia</button>
+      </div>
+    </header>
+
+    <div class="panel">
+      <aside class="sidebar">
+        <div class="side-section">
+          <h3>Información</h3>
+          <p class="small">Aquí podés crear cuentas, asignarles listas (.m3u) y renovar vencimientos. Usá el botón "Actualizar" después de cambios manuales.</p>
+        </div>
+
+        <div class="side-section">
+          <h3>Filtrar</h3>
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <select id="filterStatus" class="select">
+              <option value="all">Todos</option>
+              <option value="active">Activas</option>
+              <option value="soon">Por vencer</option>
+              <option value="expired">Vencidas</option>
+            </select>
+            <select id="filterList" class="select"><option value="all">Todas las listas</option></select>
+          </div>
+        </div>
+
+        <div class="side-section">
+          <h3>Stats</h3>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+            <div class="chip" id="totalCount">Cuentas: —</div>
+            <div class="chip" id="activeCount">Activas: —</div>
+            <div class="chip" id="soonCount">Por vencer: —</div>
+            <div class="chip" id="expCount">Vencidas: —</div>
+          </div>
+        </div>
+
+        <div class="side-section">
+          <h3>Acciones</h3>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
+            <button id="btnExport" class="btn ghost">Exportar CSV</button>
+            <button id="btnDownload" class="btn ghost">Descargar accounts.json</button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="controls">
+          <div class="search">
+            <input id="q" placeholder="Buscar usuario o lista..." />
+            <select id="sortBy" class="select">
+              <option value="createdDesc">Reciente</option>
+              <option value="createdAsc">Antiguo</option>
+              <option value="expiresAsc">Vence pronto</option>
+              <option value="expiresDesc">Vence tarde</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <button id="btnShowAll" class="btn ghost">Mostrar todo</button>
+          </div>
+        </div>
+
+        <div style="overflow:auto;max-height:660px">
+          <table class="accounts" id="tblAccounts">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Contraseña</th>
+                <th>Listas</th>
+                <th>Creada</th>
+                <th>Vence</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- modal (hidden) -->
+  <div id="modalRoot" style="display:none"></div>
+  <div id="toast" style="display:none" class="toast">Copiado</div>
+
+  <script>
+    async function fetchJson(url, opts){
+      const res = await fetch(url, { credentials: 'same-origin', ...opts });
+      const ct = res.headers.get('content-type') || '';
+      if(ct.includes('application/json')) return { ok: res.ok, json: await res.json(), status: res.status };
+      return { ok: res.ok, text: await res.text(), status: res.status };
+    }
+
+    const byId = id => document.getElementById(id);
+    const isoDate = s => s ? new Date(s).toLocaleString() : '-';
+    const daysLeft = s => { if(!s) return null; const d = Math.ceil((new Date(s) - Date.now())/(24*60*60*1000)); return d; };
+
+    let ACCOUNTS = [], LISTS = [];
+
+    const tbody = document.querySelector('#tblAccounts tbody');
+    const q = byId('q');
+    const filterStatus = byId('filterStatus');
+    const filterList = byId('filterList');
+    const totalCount = byId('totalCount');
+    const activeCount = byId('activeCount');
+    const soonCount = byId('soonCount');
+    const expCount = byId('expCount');
+
+    async function loadLists(){
+      const r = await fetchJson('/admin/available_lists');
+      if(r.ok && r.json && Array.isArray(r.json.lists)){
+        LISTS = r.json.lists;
+        filterList.innerHTML = '<option value="all">Todas las listas</option>' + LISTS.map(l => `<option value="${l}">${l}</option>`).join('');
+      } else { LISTS = []; }
+    }
+
+    async function loadAccounts(){
+      const r = await fetchJson('/admin/list_accounts');
+      if(!r.ok){ alert('No se pueden cargar cuentas — revisá permisos'); return; }
+      ACCOUNTS = r.json.accounts || [];
+      renderAccounts();
+    }
+
+    function renderAccounts(){
+      const qv = q.value.trim().toLowerCase();
+      const statusFilter = filterStatus.value;
+      const listFilter = filterList.value;
+
+      let total = ACCOUNTS.length, active=0, soon=0, exp=0;
+      const rows = ACCOUNTS
+        .filter(a => {
+          if(qv){
+            if((a.username||'').toLowerCase().includes(qv)) return true;
+            if((a.lists||[]).join(',').toLowerCase().includes(qv)) return true;
+            return false;
+          }
+          return true;
+        })
+        .filter(a => {
+          if(listFilter && listFilter !== 'all') return (a.lists||[]).includes(listFilter);
+          return true;
+        })
+        .filter(a => {
+          if(statusFilter === 'all') return true;
+          const dl = daysLeft(a.expiresAt);
+          if(statusFilter === 'active') return dl === null || dl > 7;
+          if(statusFilter === 'soon') return dl !== null && dl > 0 && dl <= 7;
+          if(statusFilter === 'expired') return dl !== null && dl <= 0;
+          return true;
+        })
+        .map(a => {
+          const dl = daysLeft(a.expiresAt);
+          let cls='badge-active', label='Activa';
+          if(dl === null) { cls='badge-active'; label='Activa'; }
+          else if(dl <= 0){ cls='badge-exp'; label='Vencida'; }
+          else if(dl <= 7){ cls='badge-soon'; label=`${dl} días`; }
+          else { cls='badge-active'; label=`${dl} días`; }
+
+          if(dl !== null){
+            if(dl>7) active++;
+            else if(dl>0) soon++;
+            else exp++;
+          }
+
+          const lists = (a.lists||[]).map(x=>`<span class="chip">${x}</span>`).join('');
+
+          return `
+            <tr data-username="${encodeURIComponent(a.username)}">
+              <td><div class="username">${a.username}</div></td>
+              <td><div class="pass" data-pass="${a.password}">••••••••</div></td>
+              <td>${lists}</td>
+              <td>${isoDate(a.createdAt)}</td>
+              <td>${isoDate(a.expiresAt)}</td>
+              <td><span class="badge-status ${cls}">${label}</span></td>
+              <td class="actions-col">
+                <button class="btn ghost" data-action="toggle-pass">Ver</button>
+                <button class="btn" data-action="copy-pass">Copiar</button>
+                <button class="btn ghost" data-action="edit">Editar</button>
+                <button class="btn ghost" data-action="renew">Renovar</button>
+                <button class="btn ghost" data-action="delete">Borrar</button>
+              </td>
+            </tr>
+          `;
+        });
+
+      tbody.innerHTML = rows.join('') || '<tr><td colspan="7" style="padding:18px;color:var(--muted)">No hay cuentas que coincidan</td></tr>';
+
+      totalCount.textContent = `Cuentas: ${total}`;
+      activeCount.textContent = `Activas: ${active}`;
+      soonCount.textContent = `Por vencer: ${soon}`;
+      expCount.textContent = `Vencidas: ${exp}`;
+
+      attachRowEvents();
+    }
+
+    function attachRowEvents(){
+      tbody.querySelectorAll('button[data-action]').forEach(btn => {
+        btn.onclick = async (ev) => {
+          const tr = ev.target.closest('tr');
+          const username = decodeURIComponent(tr.getAttribute('data-username'));
+          const account = ACCOUNTS.find(a => a.username === username);
+          const act = btn.getAttribute('data-action');
+
+          if(act === 'toggle-pass'){
+            const passEl = tr.querySelector('.pass');
+            if(passEl.textContent.includes('•')) passEl.textContent = account.password;
+            else passEl.textContent = '••••••••';
+            return;
+          }
+
+          if(act === 'copy-pass'){
+            const link = `${location.origin}/get.php?username=${encodeURIComponent(account.username)}&password=${encodeURIComponent(account.password)}`;
+            try{ await navigator.clipboard.writeText(link); showToast('Enlace copiado al portapapeles'); }
+            catch(e){ const ta = document.createElement('textarea'); ta.value = link; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); showToast('Enlace copiado al portapapeles'); }catch(e2){ alert('Copia manual: ' + link); } ta.remove(); }
+            return;
+          }
+
+          if(act === 'edit'){ openEditModal(account); return; }
+
+          if(act === 'renew'){
+            const days = prompt('Cuántos días añadir (ej: 30)?', '30');
+            if(!days) return; await updateAccountExpiry(username, Number(days)); await loadAccounts(); return;
+          }
+
+          if(act === 'delete'){
+            if(!confirm(`Borrar la cuenta "${username}"? Esta acción es irreversible.`)) return;
+            try{
+              const r = await fetchJson('/admin/delete_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username }) });
+              if(r.ok && r.json && r.json.ok){ showToast('Cuenta borrada'); await loadAccounts(); } else { alert('Error borrando: ' + (r.json?.error || r.text || '')); }
+            }catch(e){ alert('Error borrando cuenta.'); }
+            return;
+          }
+        };
+      });
+    }
+
+    // modal helpers
+    function showModal(html){ const root = byId('modalRoot'); root.innerHTML = `<div class="modal-backdrop">${html}</div>`; root.style.display = 'block'; }
+    function closeModal(){ byId('modalRoot').style.display = 'none'; byId('modalRoot').innerHTML = ''; }
+
+    function openAddModal(){
+      const listsOptions = LISTS.map(l => `<option value="${l}">${l}</option>`).join('');
+      const html = `
+        <div class="modal" role="dialog">
+          <h3>Crear nueva cuenta</h3>
+          <label>Usuario</label><input id="m_username" />
+          <label>Contraseña</label><input id="m_password" />
+          <label>Días de validez</label><input id="m_days" type="number" value="30" />
+          <label>Listas asignadas (multi-select)</label><select id="m_lists" multiple style="height:120px">${listsOptions}</select>
+          <div class="foot">
+            <button class="btn ghost" id="m_cancel">Cancelar</button>
+            <button class="btn" id="m_create">Crear cuenta</button>
+          </div>
+        </div>`;
+      showModal(html);
+      byId('m_cancel').onclick = closeModal;
+      byId('m_create').onclick = async () => {
+        const username = byId('m_username').value.trim();
+        const password = byId('m_password').value.trim();
+        const days = Number(byId('m_days').value) || 30;
+        const lists = Array.from(byId('m_lists').selectedOptions).map(o=>o.value);
+        if(!username || !password){ alert('Usuario y contraseña requeridos'); return; }
+        const r = await fetchJson('/admin/add_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username, password, days, lists }) });
+        if(r.ok && r.json && r.json.ok){ closeModal(); loadAccounts(); showToast('Cuenta creada'); } else { alert('Error: ' + (r.json?.error || r.text || 'unknown')); }
+      };
+    }
+
+    function openEditModal(account){
+      const listsOptions = LISTS.map(l => `<option value="${l}" ${ (account.lists||[]).includes(l) ? 'selected' : '' }>${l}</option>`).join('');
+      const html = `
+        <div class="modal" role="dialog">
+          <h3>Editar cuenta — ${account.username}</h3>
+          <label>Contraseña</label><input id="e_password" value="${account.password}" />
+          <label>Vence (ISO) — o usar días</label><input id="e_expiresAt" value="${account.expiresAt || ''}" />
+          <label>Días desde ahora (opcional)</label><input id="e_days" type="number" placeholder="ej: 30" />
+          <label>Listas (seleccionar para reemplazar)</label><select id="e_lists" multiple style="height:120px">${listsOptions}</select>
+          <div class="foot">
+            <button class="btn ghost" id="e_cancel">Cancelar</button>
+            <button class="btn" id="e_save">Guardar</button>
+          </div>
+        </div>`;
+      showModal(html);
+      byId('e_cancel').onclick = closeModal;
+      byId('e_save').onclick = async () => {
+        const newPass = byId('e_password').value.trim();
+        const expiresAt = byId('e_expiresAt').value.trim();
+        const days = byId('e_days').value ? Number(byId('e_days').value) : undefined;
+        const lists = Array.from(byId('e_lists').selectedOptions).map(o=>o.value);
+
+        const payload = { username: account.username };
+        if(days) payload.days = days;
+        if(expiresAt) payload.expiresAt = new Date(expiresAt).toISOString();
+        if(lists) payload.lists = lists;
+
+        const r = await fetchJson('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        if(r.ok && r.json && r.json.ok){
+          // update password locally via a quick flow: fetch accounts, modify, and save via admin API (we'll use add_account/delete pair)
+          // Simpler: call delete + re-add with new password (preserves createdAt?) We'll just show message and refresh.
+          closeModal(); loadAccounts(); showToast('Cuenta actualizada (expiry/listas). Para cambiar password contacte el servidor si es necesario.');
+        }else{ alert('Error actualizando: ' + (r.json?.error || r.text || 'unknown')); }
+      };
+    }
+
+    async function updateAccountExpiry(username, days){
+      const r = await fetchJson('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username, days }) });
+      if(!r.ok) alert('Error al renovar: ' + (r.json?.error || r.text || '')); else showToast('Cuenta renovada');
+    }
+
+    function showToast(text){ const t = byId('toast'); t.textContent = text; t.style.display = 'block'; setTimeout(()=> t.style.display='none', 2000); }
+
+    function exportCSV(){
+      const rows = [['username','password','createdAt','expiresAt','lists']];
+      for(const a of ACCOUNTS){ rows.push([a.username||'', a.password||'', a.createdAt||'', a.expiresAt||'', (a.lists||[]).join(';')]); }
+      const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'accounts.csv'; a.click(); URL.revokeObjectURL(url);
+    }
+
+    async function downloadAccounts(){
+      const r = await fetchJson('/admin/list_accounts');
+      if(!r.ok) return alert('No se pudo descargar');
+      const blob = new Blob([JSON.stringify(r.json.accounts, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'accounts.json'; a.click(); URL.revokeObjectURL(url);
+    }
+
+    // UI wiring
+    byId('btnAdd').onclick = openAddModal;
+    byId('btnRefresh').onclick = async () => { await loadLists(); await loadAccounts(); showToast('Actualizado'); };
+    byId('btnLicense').onclick = async () => { const r = await fetchJson('/license_status'); if(r.ok) alert(JSON.stringify(r.json, null, 2)); else alert('Error'); };
+    byId('btnExport').onclick = exportCSV;
+    byId('btnDownload').onclick = downloadAccounts;
+    byId('q').oninput = renderAccounts;
+    filterStatus.onchange = renderAccounts;
+    filterList.onchange = renderAccounts;
+
+    // init
+    (async ()=>{ await loadLists(); await loadAccounts(); })();
+
+    window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase() === 'n') openAddModal(); });
+  </script>
+</body>
+</html>
