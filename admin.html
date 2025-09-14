@@ -10,21 +10,20 @@
     html,body{height:100%;margin:0}
 
     :root{
-      --bg:#0f1724; /* dark navy */
+      --bg:#0f1724;
       --panel:#071022;
       --card:#0b1320;
       --muted:#9aa8bf;
-      --accent:#4f46e5; /* indigo */
-      --accent-2:#06b6d4; /* teal */
+      --accent:#4f46e5;
+      --accent-2:#06b6d4;
       --success:#16a34a;
       --warn:#f59e0b;
       --danger:#ef4444;
       --glass: rgba(255,255,255,0.04);
       --radius:12px;
-      --glass-2: rgba(255,255,255,0.03);
       --text:#e6eef8;
       --glass-border: rgba(255,255,255,0.05);
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, 'Helvetica Neue', Arial;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
 
     body{background:linear-gradient(180deg,#031029 0%, #071226 100%);color:var(--text);padding:20px}
@@ -42,35 +41,49 @@
     .btn.ghost{background:transparent;border:1px solid var(--glass-border);color:var(--text)}
     .btn.icon{display:inline-flex;align-items:center;gap:8px}
 
-    .panel{display:grid;grid-template-columns:320px 1fr;gap:20px}
+    .panel{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
 
-    /* Sidebar */
-    .sidebar{background: linear-gradient(180deg,var(--card), rgba(11,19,32,0.8));border-radius:var(--radius);padding:16px;border:1px solid var(--glass-border)}
+    /* Sidebar sticky */
+    .sidebar{
+      background: linear-gradient(180deg,var(--card), rgba(11,19,32,0.8));
+      border-radius:var(--radius);
+      padding:16px;
+      border:1px solid var(--glass-border);
+      position:sticky;
+      top:20px;
+      height: calc(100vh - 40px);
+      overflow:auto;
+    }
+
     .sidebar h3{margin:0 0 12px 0;font-size:14px}
     .small{font-size:13px;color:var(--muted)}
     .side-section{margin-bottom:16px}
     .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--glass);font-size:13px;color:var(--muted);border:1px solid var(--glass-border)}
 
-    /* Main card */
-    .main{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--radius);border:1px solid var(--glass-border)}
+    .main{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--radius);border:1px solid var(--glass-border);overflow:auto}
 
     .controls{display:flex;gap:12px;align-items:center;margin-bottom:12px}
     .search{flex:1;display:flex;gap:8px}
     .search input{flex:1;padding:10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text)}
     .select{padding:10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text)}
 
-    table.accounts{width:100%;border-collapse:collapse}
-    table.accounts thead th{font-size:13px;color:var(--muted);text-align:left;padding:12px 8px;border-bottom:1px dashed rgba(255,255,255,0.03)}
-    table.accounts tbody td{padding:12px 8px;border-bottom:1px dashed rgba(255,255,255,0.02);vertical-align:middle}
+    /* Tabla: más espacio y scrollable */
+    table.accounts{ width:100%; border-collapse:separate; border-spacing:0 8px; }
+    table.accounts thead th{ font-size:13px; color:var(--muted); text-align:left; padding:12px 12px; border-bottom: none; }
+    table.accounts tbody tr{ background: rgba(255,255,255,0.01); border-radius:10px; }
+    table.accounts tbody td{ padding:14px 12px; vertical-align:middle; white-space:normal; word-break:break-word; }
+
     .username{font-weight:700}
-    .pass{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:8px;display:inline-block}
+    .pass{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; background:rgba(255,255,255,0.02); padding:6px 10px; border-radius:8px; display:inline-block; margin-right:8px; }
+
+    td .chip{ display:inline-block; margin:4px 6px 4px 0; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
 
     .badge-status{padding:6px 8px;border-radius:999px;font-weight:700;font-size:12px}
     .badge-active{background:rgba(22,163,74,0.12);color:var(--success);border:1px solid rgba(22,163,74,0.14)}
     .badge-soon{background:rgba(245,158,11,0.08);color:var(--warn);border:1px solid rgba(245,158,11,0.12)}
     .badge-exp{background:rgba(239,68,68,0.08);color:var(--danger);border:1px solid rgba(239,68,68,0.12)}
 
-    .actions-col button{margin-right:6px}
+    .actions-col{ white-space:nowrap; }
 
     /* modal */
     .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center}
@@ -80,13 +93,11 @@
     .modal input, .modal select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--glass-border);background:transparent;color:var(--text)}
     .modal .foot{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
 
-    /* responsive */
     @media (max-width:880px){
-      .panel{grid-template-columns:1fr}
-      .sidebar{order:2}
+      .panel{ grid-template-columns:1fr; }
+      .sidebar{ position:relative; height:auto; top:auto; }
     }
 
-    /* tiny copy toast */
     .toast{position:fixed;right:20px;bottom:20px;background:#041226;padding:10px 14px;border-radius:10px;border:1px solid var(--glass-border);box-shadow:0 8px 30px rgba(6,11,23,0.6)}
   </style>
 </head>
@@ -95,7 +106,6 @@
     <header class="app-header">
       <div class="logo">
         <div class="badge" aria-hidden>
-          <!-- simple TV/reseller icon -->
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-6l1.5 2H15l-1.5-2H10.5L12 20h-1.5L9 18H5a2 2 0 0 1-2-2V5z"/></svg>
         </div>
         <div>
@@ -166,7 +176,7 @@
           </div>
         </div>
 
-        <div style="overflow:auto;max-height:600px">
+        <div style="overflow:auto;max-height:640px">
           <table class="accounts" id="tblAccounts">
             <thead>
               <tr>
@@ -189,27 +199,22 @@
 
   <!-- modal (hidden) -->
   <div id="modalRoot" style="display:none"></div>
-
   <div id="toast" style="display:none" class="toast">Copiado</div>
 
   <script>
-    // Helper utilities
-    const fetchJson = async (url, opts) => {
+    async function fetchJson(url, opts){
       const res = await fetch(url, { credentials: 'same-origin', ...opts });
       const ct = res.headers.get('content-type') || '';
       if(ct.includes('application/json')) return { ok: res.ok, json: await res.json(), status: res.status };
       return { ok: res.ok, text: await res.text(), status: res.status };
-    };
+    }
 
     const byId = id => document.getElementById(id);
     const isoDate = s => s ? new Date(s).toLocaleString() : '-';
     const daysLeft = s => { if(!s) return null; const d = Math.ceil((new Date(s) - Date.now())/(24*60*60*1000)); return d; };
 
-    // State
-    let ACCOUNTS = [];
-    let LISTS = [];
+    let ACCOUNTS = [], LISTS = [];
 
-    // UI elements
     const tbody = document.querySelector('#tblAccounts tbody');
     const q = byId('q');
     const filterStatus = byId('filterStatus');
@@ -219,15 +224,12 @@
     const soonCount = byId('soonCount');
     const expCount = byId('expCount');
 
-    // Load lists and accounts
     async function loadLists(){
       const r = await fetchJson('/admin/available_lists');
       if(r.ok && r.json && Array.isArray(r.json.lists)){
         LISTS = r.json.lists;
         filterList.innerHTML = '<option value="all">Todas las listas</option>' + LISTS.map(l => `<option value="${l}">${l}</option>`).join('');
-      } else {
-        LISTS = [];
-      }
+      } else { LISTS = []; }
     }
 
     async function loadAccounts(){
@@ -242,7 +244,6 @@
       const statusFilter = filterStatus.value;
       const listFilter = filterList.value;
 
-      // compute stats
       let total = ACCOUNTS.length, active=0, soon=0, exp=0;
       const rows = ACCOUNTS
         .filter(a => {
@@ -267,15 +268,19 @@
         })
         .map(a => {
           const dl = daysLeft(a.expiresAt);
-          let state='active', cls='badge-active', label='Activa';
-          if(dl === null) { state='active'; cls='badge-active'; label='Activa'; }
-          else if(dl <= 0){ state='expired'; cls='badge-exp'; label='Vencida'; }
-          else if(dl <= 7){ state='soon'; cls='badge-soon'; label=`${dl} días`; }
-          else { state='active'; cls='badge-active'; label=`${dl} días`; }
+          let cls='badge-active', label='Activa';
+          if(dl === null) { cls='badge-active'; label='Activa'; }
+          else if(dl <= 0){ cls='badge-exp'; label='Vencida'; }
+          else if(dl <= 7){ cls='badge-soon'; label=`${dl} días`; }
+          else { cls='badge-active'; label=`${dl} días`; }
 
-          if(dl !== null){ if(state==='active' && dl>7) active++; if(state==='soon') soon++; if(state==='expired') exp++; }
+          if(dl !== null){
+            if(dl>7) active++;
+            else if(dl>0) soon++;
+            else exp++;
+          }
 
-          const lists = (a.lists||[]).map(x=>`<span class="chip" style="margin-right:6px">${x}</span>`).join('');
+          const lists = (a.lists||[]).map(x=>`<span class="chip">${x}</span>`).join('');
 
           return `
             <tr data-username="${encodeURIComponent(a.username)}">
@@ -312,32 +317,32 @@
           const username = decodeURIComponent(tr.getAttribute('data-username'));
           const account = ACCOUNTS.find(a => a.username === username);
           const act = btn.getAttribute('data-action');
+
           if(act === 'toggle-pass'){
             const passEl = tr.querySelector('.pass');
             if(passEl.textContent.includes('•')) passEl.textContent = account.password;
             else passEl.textContent = '••••••••';
             return;
           }
+
           if(act === 'copy-pass'){
-            // copy full xtream URL (get.php) to clipboard
+            // copia el link completo get.php?username=...&password=...
             const link = `${location.origin}/get.php?username=${encodeURIComponent(account.username)}&password=${encodeURIComponent(account.password)}`;
             try{
               await navigator.clipboard.writeText(link);
               showToast('Enlace copiado al portapapeles');
             }catch(e){
-              // fallback for older browsers: create textarea and execCommand
-              const ta = document.createElement('textarea');
-              ta.value = link;
-              document.body.appendChild(ta);
-              ta.select();
+              const ta = document.createElement('textarea'); ta.value = link; document.body.appendChild(ta); ta.select();
               try{ document.execCommand('copy'); showToast('Enlace copiado al portapapeles'); }catch(e2){ alert('Copia manual: ' + link); }
               ta.remove();
             }
             return;
           }
+
           if(act === 'edit'){
             openEditModal(account); return;
           }
+
           if(act === 'renew'){
             const days = prompt('Cuántos días añadir (ej: 30)?', '30');
             if(!days) return;
@@ -357,20 +362,15 @@
     }
     function closeModal(){ byId('modalRoot').style.display = 'none'; byId('modalRoot').innerHTML = ''; }
 
-    // add account modal
     function openAddModal(){
       const listsOptions = LISTS.map(l => `<option value="${l}">${l}</option>`).join('');
       const html = `
         <div class="modal" role="dialog">
           <h3>Crear nueva cuenta</h3>
-          <label>Usuario</label>
-          <input id="m_username" />
-          <label>Contraseña</label>
-          <input id="m_password" />
-          <label>Días de validez</label>
-          <input id="m_days" type="number" value="30" />
-          <label>Listas asignadas (multi-select)</label>
-          <select id="m_lists" multiple style="height:120px">${listsOptions}</select>
+          <label>Usuario</label><input id="m_username" />
+          <label>Contraseña</label><input id="m_password" />
+          <label>Días de validez</label><input id="m_days" type="number" value="30" />
+          <label>Listas asignadas (multi-select)</label><select id="m_lists" multiple style="height:120px">${listsOptions}</select>
           <div class="foot">
             <button class="btn ghost" id="m_cancel">Cancelar</button>
             <button class="btn" id="m_create">Crear cuenta</button>
@@ -395,14 +395,10 @@
       const html = `
         <div class="modal" role="dialog">
           <h3>Editar cuenta — ${account.username}</h3>
-          <label>Contraseña</label>
-          <input id="e_password" value="${account.password}" />
-          <label>Vence (ISO) — o usar días</label>
-          <input id="e_expiresAt" value="${account.expiresAt || ''}" />
-          <label>Días desde ahora (opcional)</label>
-          <input id="e_days" type="number" placeholder="ej: 30" />
-          <label>Listas (seleccionar para reemplazar)</label>
-          <select id="e_lists" multiple style="height:120px">${listsOptions}</select>
+          <label>Contraseña</label><input id="e_password" value="${account.password}" />
+          <label>Vence (ISO) — o usar días</label><input id="e_expiresAt" value="${account.expiresAt || ''}" />
+          <label>Días desde ahora (opcional)</label><input id="e_days" type="number" placeholder="ej: 30" />
+          <label>Listas (seleccionar para reemplazar)</label><select id="e_lists" multiple style="height:120px">${listsOptions}</select>
           <div class="foot">
             <button class="btn ghost" id="e_cancel">Cancelar</button>
             <button class="btn" id="e_save">Guardar</button>
@@ -416,25 +412,24 @@
         const days = byId('e_days').value ? Number(byId('e_days').value) : undefined;
         const lists = Array.from(byId('e_lists').selectedOptions).map(o=>o.value);
 
-        // if password changed, we recreate by fetching accounts and modifying
-        const read = await fetchJson('/admin/list_accounts');
-        if(!read.ok){ alert('No se puede leer cuentas'); return; }
-        const accounts = read.json.accounts || [];
-        const acc = accounts.find(a=>a.username === account.username);
-        if(!acc){ alert('Cuenta no encontrada'); return; }
-        acc.password = newPass;
-        if(days) acc.expiresAt = new Date(Date.now() + days*24*60*60*1000).toISOString();
-        else if(expiresAt) acc.expiresAt = new Date(expiresAt).toISOString();
-        if(Array.isArray(lists)) acc.lists = lists;
-
-        // save via GH/local: since we don't have a dedicated endpoint for full replace, we use set_account_expiry to update expiry and lists
-        const payload = { username: acc.username };
+        const payload = { username: account.username };
         if(days) payload.days = days;
-        if(expiresAt) payload.expiresAt = acc.expiresAt;
+        if(expiresAt) payload.expiresAt = new Date(expiresAt).toISOString();
         if(lists) payload.lists = lists;
+
+        // If password changed: we update local by re-saving accounts (simpler to call admin/set_account_expiry and then edit password locally)
+        // First update expiry/lists via endpoint:
         const r = await fetchJson('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-        if(r.ok && r.json && r.json.ok){ closeModal(); loadAccounts(); showToast('Cuenta actualizada'); }
-        else { alert('Error actualizando: ' + (r.json?.error || r.text || 'unknown')); }
+        if(r.ok && r.json && r.json.ok){
+          // update password: fetch list_accounts, modify account, then save via admin.add_account flow (we will replace full accounts)
+          // Simpler approach: fetch accounts, modify and call a helper endpoint -> but we don't have one.
+          // So we modify client-side and perform a manual save via set_account_expiry for lists/expiry; password update will be applied by editing accounts.json via GitHub/local on server in a later release.
+          // For now show success and reload.
+          // If you need password-change API, dime y la agrego.
+          closeModal(); loadAccounts(); showToast('Cuenta actualizada (expiry/listas). Para cambiar password contacta al servidor)');
+        }else{
+          alert('Error actualizando: ' + (r.json?.error || r.text || 'unknown'));
+        }
       };
     }
 
@@ -447,7 +442,6 @@
       const t = byId('toast'); t.textContent = text; t.style.display = 'block'; setTimeout(()=> t.style.display='none', 2000);
     }
 
-    // CSV export
     function exportCSV(){
       const rows = [['username','password','createdAt','expiresAt','lists']];
       for(const a of ACCOUNTS){ rows.push([a.username||'', a.password||'', a.createdAt||'', a.expiresAt||'', (a.lists||[]).join(';')]); }
@@ -456,7 +450,6 @@
       const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'accounts.csv'; a.click(); URL.revokeObjectURL(url);
     }
 
-    // download accounts.json
     async function downloadAccounts(){
       const r = await fetchJson('/admin/list_accounts');
       if(!r.ok) return alert('No se pudo descargar');
@@ -464,7 +457,7 @@
       const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'accounts.json'; a.click(); URL.revokeObjectURL(url);
     }
 
-    // Wire up UI
+    // UI wiring
     byId('btnAdd').onclick = openAddModal;
     byId('btnRefresh').onclick = async () => { await loadLists(); await loadAccounts(); showToast('Actualizado'); };
     byId('btnLicense').onclick = async () => { const r = await fetchJson('/license_status'); if(r.ok) alert(JSON.stringify(r.json, null, 2)); else alert('Error'); };
@@ -474,13 +467,12 @@
     filterStatus.onchange = renderAccounts;
     filterList.onchange = renderAccounts;
 
-    // initial load
+    // init
     (async ()=>{
       await loadLists();
       await loadAccounts();
     })();
 
-    // simple keyboard shortcut: N = new account
     window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase() === 'n') openAddModal(); });
   </script>
 </body>
