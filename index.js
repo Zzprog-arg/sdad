@@ -1,7 +1,7 @@
 // index.js - Xtream-lite (Node + Express)
-// Multi-M3U per-account, license, GitHub-backed accounts (optional)
+// Multi-M3U per-account admin, local persistence + optional GitHub sync
 // Compatible con IPTV Smarters: player_api.php?action=get_user_info
-// Node 18+ (fetch global)
+// Node >=18
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// --- CONFIG (desde env) ---
+// ---------------- CONFIG (desde env) ----------------
 const CONFIG = {
   XTREAM_USER: process.env.XTREAM_USER || "demo",
   XTREAM_PASS: process.env.XTREAM_PASS || "demo",
@@ -23,13 +23,13 @@ const CONFIG = {
   localLicenseFile: path.join(__dirname, "license.json"),
   ADMIN_KEY: process.env.ADMIN_KEY || "cambia_esto_admin_key",
   EXPIRE_DAYS: Number(process.env.EXPIRE_DAYS || 30),
-  // GitHub (opcional)
+  // GitHub optional
   GH_TOKEN: process.env.GITHUB_TOKEN || "",
   GH_OWNER: process.env.GITHUB_OWNER || "",
   GH_REPO: process.env.GITHUB_REPO || ""
 };
 
-// --- util: listar y leer M3U ---
+// ---------------- utilities: files & m3u ----------------
 async function listM3UFiles(){
   try{
     const files = await fs.readdir(__dirname);
@@ -41,10 +41,10 @@ async function listM3UFiles(){
 async function readM3UFile(filename){
   const full = path.join(__dirname, filename);
   const text = await fs.readFile(full, "utf8");
-  return text.replace(/\r/g, "");
+  return text.replace(/\r/g,"");
 }
 
-// --- GitHub helpers ---
+// ---------------- GitHub helpers (optional) ----------------
 const GH_API_BASE = "https://api.github.com";
 function ghHeaders(){
   return {
@@ -81,7 +81,7 @@ async function githubPutFile(pathInRepo, contentText, message, sha = null){
   return await resp.json();
 }
 
-// --- Local JSON helpers ---
+// ---------------- local JSON helpers ----------------
 async function readLocalJson(filePath, fallback = null){
   try{
     const text = await fs.readFile(filePath, "utf8");
@@ -94,7 +94,7 @@ async function writeLocalJson(filePath, obj){
   await fs.writeFile(filePath, JSON.stringify(obj, null, 2), "utf8");
 }
 
-// --- license helpers ---
+// ---------------- license helpers ----------------
 function addDaysToNow(days){ const ms = days * 24 * 60 * 60 * 1000; return new Date(Date.now() + ms).toISOString(); }
 async function readLicenseLocal(){ return await readLocalJson(CONFIG.localLicenseFile, null); }
 async function writeLicenseLocal(obj){ return await writeLocalJson(CONFIG.localLicenseFile, obj); }
@@ -128,15 +128,13 @@ async function ensureLicense(){
   return lic;
 }
 
-// --- ACCOUNTS: priorizar local (persistencia) ---
-// readAccounts: prioriza local; si no existe intenta GH; si no, crea vacío local
+// ---------------- ACCOUNTS: local-first persistence ----------------
+// readAccounts: prioritiza local; si no existe intenta GH; si no, crea vacío local
 async function readAccounts(){
-  // 1) intentar local
   try{
     const local = await readLocalJson(CONFIG.localAccountsFile, null);
     if(Array.isArray(local)) return { accounts: local, sha: null, source: "local" };
   }catch(e){}
-  // 2) intentar GH
   try{
     const gh = await githubGetFile("accounts.json");
     if(gh && gh.contentText){
@@ -147,13 +145,12 @@ async function readAccounts(){
   }catch(e){
     console.warn("readAccounts: GH read failed", e && e.message ? e.message : e);
   }
-  // 3) crear vacío local
   const empty = [];
   await writeLocalJson(CONFIG.localAccountsFile, empty);
   return { accounts: empty, sha: null, source: "created_local" };
 }
 
-// saveAccounts: siempre guarda local, luego intenta push a GH si está configurado
+// saveAccounts: escribe local siempre y opcionalmente push a GH
 async function saveAccounts(accounts, sha=null){
   try{
     await writeLocalJson(CONFIG.localAccountsFile, accounts);
@@ -173,7 +170,7 @@ async function saveAccounts(accounts, sha=null){
   return { ok: true, source: "local" };
 }
 
-// ensureLocalAccounts: al arranque garantizar archivo local
+// ensureLocalAccounts: al arranque, garantizar accounts.json local
 async function ensureLocalAccounts(){
   try{
     const local = await readLocalJson(CONFIG.localAccountsFile, null);
@@ -182,7 +179,6 @@ async function ensureLocalAccounts(){
       return;
     }
   }catch(e){}
-  // intentar GH
   try{
     const gh = await githubGetFile("accounts.json");
     if(gh && gh.contentText){
@@ -192,12 +188,11 @@ async function ensureLocalAccounts(){
       return;
     }
   }catch(e){ console.warn("ensureLocalAccounts: GH fetch failed:", e && e.message ? e.message : e); }
-  // crear vacío
   await writeLocalJson(CONFIG.localAccountsFile, []);
   console.log("Created empty local accounts.json");
 }
 
-// --- auth guard para endpoints player (licencia + cuentas) ---
+// ---------------- auth for player endpoints ----------------
 async function authGuard(req, res){
   const lic = await ensureLicense();
   if(lic && lic.expiresAt){
@@ -209,9 +204,13 @@ async function authGuard(req, res){
     }
     res.setHeader("X-License-Expires", lic.expiresAt);
   }
+
   const username = req.query.username || "";
   const password = req.query.password || "";
+
+  // server global creds allowed
   if(username === CONFIG.XTREAM_USER && password === CONFIG.XTREAM_PASS) return true;
+
   try{
     const read = await readAccounts();
     const accounts = read.accounts || [];
@@ -230,11 +229,12 @@ async function authGuard(req, res){
   }catch(e){
     console.warn("authGuard: readAccounts failed", e && e.message ? e.message : e);
   }
+
   res.status(401).json({ error: "Invalid username/password" });
   return false;
 }
 
-// --- adminAuth: Basic Auth o admin_key ---
+// ---------------- adminAuth: Basic Auth o admin_key ----------------
 const ADMIN_USER = process.env.ADMIN_USER || "admin";
 const ADMIN_PASS = process.env.ADMIN_PASS || "adminpass";
 function adminAuth(req, res, next){
@@ -251,14 +251,14 @@ function adminAuth(req, res, next){
     if(key && key === CONFIG.ADMIN_KEY){
       req.isAdmin = true; return next();
     }
-    res.setHeader('WWW-Authenticate', 'Basic realm=\"Admin Area\"');
+    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
     return res.status(401).send('Authentication required');
   }catch(e){
     return res.status(500).send('Auth error');
   }
 }
 
-// --- makeUserInfo helper ---
+// ---------------- helper: makeUserInfo ----------------
 function makeUserInfoFromAccount(acc){
   const nowS = Math.floor(Date.now()/1000);
   const expS = acc && acc.expiresAt ? Math.floor(new Date(acc.expiresAt).getTime()/1000) : null;
@@ -280,15 +280,19 @@ function makeUserInfoFromAccount(acc){
   };
 }
 
-// --- RUTAS ADMIN ---
-// servir UI
+// ---------------- ADMIN ROUTES ----------------
+// serve admin UI file
 app.get('/admin', adminAuth, (req,res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
+
+// list available m3u files
 app.get('/admin/available_lists', adminAuth, async (req,res) => {
   const list = await listM3UFiles();
   res.json({ lists: list });
 });
+
+// list accounts
 app.get('/admin/list_accounts', adminAuth, async (req,res) => {
   try{
     const read = await readAccounts();
@@ -297,6 +301,8 @@ app.get('/admin/list_accounts', adminAuth, async (req,res) => {
     res.status(500).json({ error: e.message || String(e) });
   }
 });
+
+// add account
 app.post('/admin/add_account', adminAuth, async (req, res) => {
   try{
     const { username, password, days, lists } = req.body || {};
@@ -315,6 +321,8 @@ app.post('/admin/add_account', adminAuth, async (req, res) => {
     console.error(e); res.status(500).json({ error: e.message || String(e) });
   }
 });
+
+// set account expiry/lists
 app.post('/admin/set_account_expiry', adminAuth, async (req, res) => {
   try{
     const { username, days, expiresAt, lists } = req.body || {};
@@ -342,18 +350,37 @@ app.post('/admin/set_account_expiry', adminAuth, async (req, res) => {
   }
 });
 
+// delete account (admin)
+app.post('/admin/delete_account', adminAuth, async (req, res) => {
+  try{
+    const { username } = req.body || {};
+    if(!username) return res.status(400).json({ error: "Provide username" });
+    const read = await readAccounts();
+    const accounts = read.accounts || [];
+    const sha = read.sha || null;
+    const idx = accounts.findIndex(a => a.username === username);
+    if(idx === -1) return res.status(404).json({ error: "Account not found" });
+    accounts.splice(idx, 1);
+    await saveAccounts(accounts, sha);
+    res.json({ ok: true, username });
+  }catch(e){
+    console.error("delete_account error:", e && e.message ? e.message : e);
+    res.status(500).json({ error: e && e.message });
+  }
+});
+
 // license status
 app.get('/license_status', adminAuth, async (req, res) => {
   const lic = await ensureLicense();
   res.json(lic);
 });
 
-// get.php -> M3U combinada por listas del usuario
+// ---------------- get.php -> combined M3U per-account ----------------
 app.get("/get.php", async (req, res) => {
   if(!(await authGuard(req,res))) return;
   const username = req.query.username || "";
-  let listsToSend = [];
   try{
+    let listsToSend = [];
     if(username === CONFIG.XTREAM_USER){
       listsToSend = await listM3UFiles();
     }else{
@@ -387,7 +414,7 @@ app.get("/get.php", async (req, res) => {
   }
 });
 
-// player_api.php (get_user_info + streams fallback)
+// ---------------- player_api.php (get_user_info + streams) ----------------
 app.get("/player_api.php", async (req, res) => {
   const action = req.query.action || "";
   // get_user_info
@@ -438,7 +465,7 @@ app.get("/player_api.php", async (req, res) => {
     }
   }
 
-  // fallback: get_live_categories / get_live_streams from canales.m3u or first m3u
+  // fallback: get_live_categories / get_live_streams using canales.m3u or first m3u
   try{
     if(!(await authGuard(req,res))) return;
     const available = await listM3UFiles();
@@ -511,7 +538,7 @@ app.get("/player_api.php", async (req, res) => {
   }
 });
 
-// api.php compatibility
+// ---------------- api.php compatibility ----------------
 app.get("/api.php", async (req, res) => {
   const action = req.query.action || "";
   const sub = req.query.sub || "";
@@ -522,7 +549,7 @@ app.get("/api.php", async (req, res) => {
   res.status(400).json({ error: "Unsupported api.php action" });
 });
 
-// CORS preflight
+// ---------------- CORS preflight ----------------
 app.options("/*", (req,res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
@@ -533,7 +560,7 @@ app.options("/*", (req,res) => {
 // root -> admin
 app.get("/", (req,res) => res.redirect("/admin"));
 
-// START
+// ---------------- START ----------------
 (async () => {
   await ensureLicense();
   await ensureLocalAccounts();
