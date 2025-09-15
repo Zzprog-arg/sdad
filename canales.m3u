@@ -1,6 +1,4 @@
 #EXTM3U
-#EXTINF:-1 group-title="VIEJO CARGOSO",TNT Sports ARG HD
-http://195.66.210.10:80/Bluefox102/XYXNA/36424
 #EXTINF:-1 tvg-logo="https://i.ibb.co/gLk2psqY/250px-Am-rica-TV-Nuevo-logo-Junio-2020.webp" group-title="ARGENTINA", AMÉRICA TV HD
 http://195.66.210.10:80/Bluefox102/XYXNA/209741
 #EXTINF:-1 tvg-logo="https://i.ibb.co/rfTL5TKT/250px-C5-N-2017-Alternate-svg.webp" group-title="ARGENTINA", C5N
@@ -17,19 +15,13 @@ http://195.66.210.10:80/Bluefox102/XYXNA/19708
 http://195.66.210.10:80/Bluefox102/XYXNA/19709
 #EXTINF:-1 tvg-logo="https://i.ibb.co/c77mhxW/Canal-9-2015.webp" group-title="ARGENTINA", EL NUEVE HD
 http://195.66.210.10:80/Bluefox102/XYXNA/46977
-#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", EL TRECE HD
-http://playtv44.com:8080/HYOSUN673/123456/66221
 #EXTINF:-1 tvg-logo="https://i.ibb.co/ymq83CBs/download.jpg" group-title="ARGENTINA", GARAGE TV FHD
 http://195.66.210.10:80/Bluefox102/XYXNA/209745
 #EXTINF:-1 tvg-logo="https://i.ibb.co/8LBFh5jN/AIdro-k-Vdx-Upj4ex0c8f-Oj-Hb-AY8-Cuy503b-B7ocotq-ZZMm-LGq-Cw-s900-c-k-c0x00ffffff-no-rj.webp" group-title="INTERIOR DE ARGENTINA", LITUS TV SANTA FÉ
 http://195.66.210.10:80/Bluefox102/XYXNA/54231
 #EXTINF:-1 tvg-logo="https://i.ibb.co/fdjvC2N0/250px-Net-TV-logo.webp" group-title="ARGENTINA", NET TV
 http://195.66.210.10:80/Bluefox102/XYXNA/54165
-#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ARGENTINA", PAKA PAKA
-http://195.66.210.10:80/Bluefox102/XYXNA/19555
-#EXTINF:-1 tvg-logo="https://i.ibb.co/nqTRZTxX/250px-Telefe-nuevo-logo.webp" group-title="ARGENTINA", TELEFÉ HD
-http://195.66.210.10:80/Bluefox102/XYXNA/12933
-#EXTINF:-1 tvg-logo="https://i.ibb.co/nqTRZTxX/250px-Telefe-nuevo-logo.webp" group-title="ARGENTINA", TELEFÉ INTERNACIONAL HD
+#EXTINF:-1 tvg-logo="https://i.ibb.co/nqTRZTxX/250px-Telefe-nuevo-logo.webp" group-title="ARGENTINA", TELEFÉ INTERNACIONAL
 http://195.66.210.10:80/Bluefox102/XYXNA/259317
 #EXTINF:-1 tvg-logo="https://i.ibb.co/W4XcdM1t/250px-Telemax-Argentina-2018.webp" group-title="ARGENTINA", TELEMAX
 http://195.66.210.10:80/Bluefox102/XYXNA/46973
@@ -47,23 +39,25 @@ http://195.66.210.10:80/Bluefox102/XYXNA/19461
 http://195.66.210.10:80/Bluefox102/XYXNA/21222
 #EXTINF:-1 tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport", TYC SPORTS INT HD
 http://195.66.210.10:80/Bluefox102/XYXNA/188939
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 1 ARG FHD
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN 1
 http://195.66.210.10:80/Bluefox102/XYXNA/439754
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 2 ARG
-http://195.66.210.10:80/Bluefox102/XYXNA/185666
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 3 FHD
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 2
+http://195.66.210.10:80/Bluefox102/XYXNA/439754
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 3
 http://195.66.210.10:80/Bluefox102/XYXNA/518962
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 4 FHD
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 4
 http://195.66.210.10:80/Bluefox102/XYXNA/224430
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 5
 http://195.66.210.10:80/Bluefox102/XYXNA/272499
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN PREMIUM FHD
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN 1 ARG OP2
+http://195.66.210.10:80/Bluefox102/XYXNA/454719
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 2 OP2
+http://195.66.210.10:80/Bluefox102/XYXNA/185666
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN PREMIUM
 http://195.66.210.10:80/Bluefox102/XYXNA/276163
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN PREMIUM HD
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN PREMIUM OP2
 http://195.66.210.10:80/Bluefox102/XYXNA/215252
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN EXTRA HD
-http://195.66.210.10:80/Bluefox102/XYXNA/454717
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN DEPORTES HD
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", SKY SPORTS
 http://195.66.210.10:80/Bluefox102/XYXNA/54533
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS 1 ARG
 http://195.66.210.10:80/Bluefox102/XYXNA/158518
@@ -75,22 +69,26 @@ http://195.66.210.10:80/Bluefox102/XYXNA/36389
 http://195.66.210.10:80/Bluefox102/XYXNA/19496
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS PREMIUM HD
 http://195.66.210.10:80/Bluefox102/XYXNA/158454
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DAZN",DAZN 1 HD
-http://playtv44.com:8080/HYOSUN673/123456/67369
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DAZN",DAZN 2 HD
-http://playtv44.com:8080/HYOSUN673/123456/67370
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DAZN",DAZN 3 HD
-http://playtv44.com:8080/HYOSUN673/123456/67371
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DAZN",DAZN COMBATE
-http://playtv44.com:8080/HYOSUN673/123456/312304
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DAZN",DAZN - FORMULA 1
-http://playtv44.com:8080/HYOSUN673/123456/369754
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="TNT SPORTS",TNT Sports Premium
+http://195.66.210.10:80/Bluefox102/XYXNA/36424
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="TNT SPORTS",TNT Sports Premium OP2
+http://195.66.210.10:80/Bluefox102/XYXNA/439764
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS 1
+http://195.66.210.10:80/Bluefox102/XYXNA/158511
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS 2
+http://195.66.210.10:80/Bluefox102/XYXNA/158513
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS +
+http://195.66.210.10:80/Bluefox102/XYXNA/518959
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS OP2
+http://195.66.210.10:80/Bluefox102/XYXNA/456659
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DSPORTS + OP2
+http://195.66.210.10:80/Bluefox102/XYXNA/310533
 #EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ENTRETENIMIENTO",National Geographic HD
 http://195.66.210.10:80/Bluefox102/XYXNA/54520
 #EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ENTRETENIMIENTO",HISTORY 2
 http://playtv44.com:8080/HYOSUN673/123456/52662
 #EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ENTRETENIMIENTO",DISCOVERY CHANNEL
-http://playtv44.com:8080/HYOSUN673/123456/52677
+http://195.66.210.10:80/Bluefox102/XYXNA/186572
 #EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ENTRETENIMIENTO",DISCOVERY TURBO
 http://playtv44.com:8080/HYOSUN673/123456/218988
 #EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="ENTRETENIMIENTO",DISCOVERY SCIENCE
