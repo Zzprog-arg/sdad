@@ -4,6 +4,8 @@ import express from "express";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import fsSync from "fs";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -20,8 +22,17 @@ const CONFIG = {
   adminsFile: path.join(__dirname, "admins.json"),
   settingsFile: path.join(__dirname, "settings.json"),
   m3uFolder: __dirname, // buscar *.m3u en esta carpeta
-  adminHtml: path.join(__dirname, "admin_v10.html") // archivo del panel (colocalo aquí)
+  // prefer admin.html (legacy) then admin_v10.html
+  adminCandidates: [ path.join(__dirname, "admin.html"), path.join(__dirname, "admin_v10.html") ]
 };
+
+// pick admin HTML file at startup
+let ADMIN_FILE = null;
+for(const p of CONFIG.adminCandidates){
+  try{
+    if(fsSync.existsSync(p)) { ADMIN_FILE = p; break; }
+  }catch(e){}
+}
 
 // --- Utilities: file storage for accounts / admins / settings ---
 async function safeReadJSON(filePath, defaultValue){
@@ -119,20 +130,23 @@ function checkLegacyAuth(req, res){
 // --- Serve admin panel HTML at /admin ---
 app.get("/admin", async (req, res) => {
   try{
-    const html = await fs.readFile(CONFIG.adminHtml, "utf8");
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.send(html);
-  }catch(e){
-    // If admin file missing, send helpful placeholder with instructions
+    if(ADMIN_FILE){
+      const html = await fs.readFile(ADMIN_FILE, "utf8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.send(html);
+      return;
+    }
+    // helpful page when no admin HTML present
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.send(`
       <html><body style="font-family:system-ui,Arial;padding:30px;background:#071226;color:#e6eef8">
         <h2>Admin panel not found</h2>
-        <p>El archivo <code>admin_v10.html</code> no se encuentra en la carpeta del servidor.</p>
-        <p>Subí tu archivo <code>admin_v10.html</code> al mismo directorio que <code>index.js</code> y recargá esta página.</p>
-        <p>Si necesitás un admin listo, subilo y luego accedé a <a href="/admin" style="color:#62c6ff">/admin</a>.</p>
+        <p>Coloca <code>admin.html</code> o <code>admin_v10.html</code> en la misma carpeta que index.js para que /admin funcione.</p>
+        <p>Actualmente no se encontró ningún archivo de panel.</p>
       </body></html>
     `);
+  }catch(e){
+    res.status(500).send("Error leyendo admin file: " + e.message);
   }
 });
 
