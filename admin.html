@@ -3,18 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PanelReseller — Dark Panel (Planes - Personalizado)</title>
+  <title>PanelReseller — Dark Panel (Con Login)</title>
   <style>
-    /* Dark admin panel with plan tabs and personalizado */
+    /* same dark styles as before, minor tweaks */
     :root{
-      --bg:#071126;
-      --muted:#9fb0c8;
-      --text:#e6eef8;
-      --accent:#6c5ce7;
-      --accent-2:#06b6d4;
-      --glass-border: rgba(255,255,255,0.04);
-      --radius:12px;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --bg:#071126;--muted:#9fb0c8;--text:#e6eef8;--accent:#6c5ce7;--accent-2:#06b6d4;
+      --glass-border: rgba(255,255,255,0.04);--radius:12px;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
     }
     html,body{height:100%;margin:0;background:linear-gradient(180deg,#031029,#071226);color:var(--text);-webkit-font-smoothing:antialiased}
     .wrap{max-width:1200px;margin:22px auto;padding:18px}
@@ -27,9 +21,6 @@
     .header-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
     .btn{background:var(--accent);color:white;border:0;padding:10px 12px;border-radius:12px;font-weight:600;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
     .btn.ghost{background:transparent;border:1px solid var(--glass-border);color:var(--text)}
-    .btn.warn{background:transparent;border:1px solid rgba(255,80,80,0.12);color:#f87171}
-    .grid{display:grid;grid-template-columns:280px 1fr;gap:18px;align-items:start}
-    @media (max-width:980px){ .grid{grid-template-columns:1fr} }
     .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:16px;border:1px solid var(--glass-border)}
     input, select, textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;color:var(--text)}
     table.accounts{width:100%;border-collapse:collapse;font-size:14px}
@@ -46,23 +37,15 @@
     .plan-tab.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;border-color:transparent;box-shadow:0 8px 30px rgba(108,92,231,0.12)}
     .toast{position:fixed;right:18px;bottom:18px;background:#041226;padding:10px 14px;border-radius:10px;border:1px solid var(--glass-border);box-shadow:0 10px 30px rgba(4,9,22,0.6);color:var(--text);opacity:0;transform:translateY(10px);transition:all .25s}
     .toast.show{opacity:1;transform:translateY(0)}
-    .plan-meta{font-size:13px;color:var(--muted);margin-top:8px}
-    .lists-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:160px;overflow:auto;padding-top:8px}
-    .list-item{display:flex;align-items:center;gap:8px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);background:rgba(255,255,255,0.01)}
-    @media (max-width:720px){ .modal{width:92%} .lists-grid{grid-template-columns:repeat(2,1fr)} }
+    .hidden{display:none}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header class="top">
       <div class="brand">
-        <div class="logo" aria-hidden>
-          <svg viewBox="0 0 24 24"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-6l1.5 2H15l-1.5-2H10.5L12 20h-1.5L9 18H5a2 2 0 0 1-2-2V5z"/></svg>
-        </div>
-        <div>
-          <h1>PanelReseller</h1>
-          <p id="subtitle">Administración — cuentas, listas y vencimientos</p>
-        </div>
+        <div class="logo" aria-hidden><svg viewBox="0 0 24 24"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-6l1.5 2H15l-1.5-2H10.5L12 20h-1.5L9 18H5a2 2 0 0 1-2-2V5z"/></svg></div>
+        <div><h1>PanelReseller</h1><p id="subtitle">Administración — cuentas, listas y vencimientos</p></div>
       </div>
 
       <div class="header-actions">
@@ -71,463 +54,319 @@
         <button id="btnAdmins" class="btn ghost">Administradores</button>
         <button id="btnSettings" class="btn ghost">Ajustes</button>
         <button id="btnRefresh" class="btn ghost">Actualizar</button>
-        <button id="btnLogout" class="btn ghost">Cerrar sesión</button>
+        <button id="btnLogin" class="btn ghost">Iniciar sesión</button>
       </div>
     </header>
 
-    <div class="grid">
+    <div class="grid" style="display:grid;grid-template-columns:280px 1fr;gap:18px">
       <aside class="card sidebar">
-        <div class="section">
-          <h3>Buscar</h3>
-          <div style="margin-top:8px">
-            <input id="q" type="search" placeholder="Buscar usuario..." />
-          </div>
-        </div>
-
-        <div class="section" style="margin-top:12px">
-          <h3>Stats</h3>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-            <div class="small">Total: <b id="statTotal">—</b></div>
-            <div class="small">Activas: <b id="statActive">—</b></div>
-            <div class="small">Por vencer: <b id="statSoon">—</b></div>
-            <div class="small">Vencidas: <b id="statExp">—</b></div>
-            <div class="small">Créditos: <b id="statCredits">—</b></div>
-          </div>
-        </div>
-
-        <div class="section" style="margin-top:12px">
-          <h3>Exportar</h3>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button id="btnExport" class="btn ghost">CSV</button>
-            <button id="btnDownload" class="btn ghost">accounts.json</button>
-          </div>
+        <h3>Buscar</h3>
+        <div style="margin-top:8px"><input id="q" type="search" placeholder="Buscar usuario..." /></div>
+        <h3 style="margin-top:12px">Stats</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <div class="small">Total: <b id="statTotal">—</b></div>
+          <div class="small">Activas: <b id="statActive">—</b></div>
+          <div class="small">Por vencer: <b id="statSoon">—</b></div>
+          <div class="small">Vencidas: <b id="statExp">—</b></div>
+          <div class="small">Créditos: <b id="statCredits">—</b></div>
         </div>
       </aside>
 
       <main>
-        <div class="card" style="margin-bottom:12px">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-              <b>Lista de cuentas</b>
-              <div class="small">Gestioná usuarios, vencimientos y planes</div>
-            </div>
-            <div style="display:flex;gap:8px">
-              <select id="filterStatus"><option value="all">Todos</option><option value="active">Activas</option><option value="soon">Por vencer</option><option value="expired">Vencidas</option></select>
-              <button id="btnSearch" class="btn ghost">Buscar</button>
-            </div>
-          </div>
+        <div class="card" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+          <div><h3 style="margin:0">Lista de cuentas</h3><div class="small">Gestioná usuarios, vencimientos y planes</div></div>
+          <div style="display:flex;gap:8px"><button id="btnExport" class="btn ghost">CSV</button><button id="btnDownload" class="btn ghost">accounts.json</button></div>
         </div>
 
         <div class="card">
-          <table class="accounts" id="tblAccounts">
-            <thead>
-              <tr><th>Usuario</th><th>Contraseña</th><th>Listas</th><th>Creada</th><th>Vence</th><th>Plan</th><th style="text-align:right">Acciones</th></tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <table class="accounts" id="tblAccounts"><thead><tr><th>Usuario</th><th>Contraseña</th><th>Listas</th><th>Creada</th><th>Vence</th><th>Plan</th><th style="text-align:right">Acciones</th></tr></thead><tbody></tbody></table>
         </div>
       </main>
     </div>
   </div>
 
   <div id="modalRoot" style="display:none"></div>
+  <div id="loginModal" class="hidden"></div>
   <div id="toast" class="toast">...</div>
 
   <script>
-    (function(){
-      const byId = id => document.getElementById(id);
-      const toast = byId('toast');
-      function showToast(txt, ms=2000){ toast.textContent = txt; toast.classList.add('show'); clearTimeout(showToast._t); showToast._t = setTimeout(()=> toast.classList.remove('show'), ms); }
+  (function(){
+    const byId = id => document.getElementById(id);
+    const toast = byId('toast');
+    function showToast(msg, ms=2000){ toast.textContent = msg; toast.classList.add('show'); clearTimeout(showToast._t); showToast._t = setTimeout(()=> toast.classList.remove('show'), ms); }
 
-      async function fetchJson(url, opts){ const res = await fetch(url, { credentials:'same-origin', ...opts }); const ct = res.headers.get('content-type')||''; if(ct.includes('application/json')) return { ok:res.ok, json:await res.json(), status:res.status }; return { ok:res.ok, text:await res.text(), status:res.status }; }
+    // ADMIN CREDENTIALS stored in localStorage (only for panel usage)
+    function getAdminCreds(){ try { const s = localStorage.getItem('admin_creds'); if(!s) return null; return JSON.parse(s); } catch(e){ return null; } }
+    function setAdminCreds(u,p){ localStorage.setItem('admin_creds', JSON.stringify({ username: u, password: p })); }
+    function clearAdminCreds(){ localStorage.removeItem('admin_creds'); showToast('Sesión cerrada'); }
 
-      // PLANS: Demo changed to 1 month costing 1 credit
-      const PLANS = [
-        { id:'demo_1m', label:'Demo 1 MES', unit:'month', months:1, days:30, cost:1 },
-        { id:'1m', label:'1 MES', unit:'month', months:1, days:30, cost:1 },
-        { id:'2m', label:'2 MESES', unit:'month', months:2, days:60, cost:2 },
-        { id:'3m', label:'3 MESES', unit:'month', months:3, days:90, cost:3 },
-        { id:'6m', label:'6 MESES', unit:'month', months:6, days:180, cost:6 },
-        // Personalizado will be handled specially in UI
-      ];
-
-      let ACCOUNTS = [], LISTS = [], ME = null;
-      const tbody = document.querySelector('#tblAccounts tbody');
-
-      const fmtDate = s => s ? new Date(s).toLocaleDateString() : '-';
-      const fmtTime = s => s ? new Date(s).toLocaleTimeString() : '';
-      const daysLeft = s => !s ? null : Math.ceil((new Date(s) - Date.now())/(24*60*60*1000));
-
-      async function loadMe(){ const r = await fetchJson('/admin/me'); if(r.ok && r.json && r.json.me){ ME = r.json.me; byId('subtitle').textContent = `${ME.username} — ${ME.isMaster ? 'SuperAdmin' : 'Reseller'}`; byId('statCredits').textContent = ME.credits ?? '—'; if(ME.isMaster) byId('btnCreateReseller').style.display='inline-flex'; } }
-      async function loadLists(){ const r = await fetchJson('/admin/available_lists'); LISTS = (r.ok && r.json && Array.isArray(r.json.lists)) ? r.json.lists : []; }
-      async function loadAccounts(){ const r = await fetchJson('/admin/list_accounts'); if(!r.ok){ showToast('Error cargando cuentas'); return; } ACCOUNTS = r.json.accounts || []; renderAccounts(); }
-
-      function renderAccounts(){
-        tbody.innerHTML = '';
-        let total=0, act=0, soon=0, exp=0;
-        const qv = byId('q').value.trim().toLowerCase();
-        const statusF = byId('filterStatus').value;
-        ACCOUNTS.forEach(acc => {
-          if(qv && !(acc.username.toLowerCase().includes(qv) || (acc.lists||[]).join(',').toLowerCase().includes(qv))) return;
-          const dl = daysLeft(acc.expiresAt);
-          const planLabel = acc.planLabel || '-';
-          const listsHtml = (acc.lists||[]).map(l => `<span class="chip">${l}</span>`).join(' ');
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td class="username">${acc.username}</td>
-            <td>••••••</td>
-            <td>${listsHtml}</td>
-            <td class="small">${fmtDate(acc.createdAt)} ${fmtTime(acc.createdAt)}</td>
-            <td class="small">${fmtDate(acc.expiresAt)} ${fmtTime(acc.expiresAt)}</td>
-            <td class="small">${planLabel}</td>
-            <td style="text-align:right">
-              <button class="btn ghost" data-act="view">Ver</button>
-              <button class="btn" data-act="copy">Copiar</button>
-              <button class="btn ghost" data-act="renew">Renovar</button>
-              <button class="btn warn" data-act="del">Borrar</button>
-            </td>`;
-          const btnView = tr.querySelector('[data-act="view"]');
-          const btnCopy = tr.querySelector('[data-act="copy"]');
-          const btnRenew = tr.querySelector('[data-act="renew"]');
-          const btnDel = tr.querySelector('[data-act="del"]');
-          btnView.onclick = () => openViewModal(acc);
-          btnCopy.onclick = async () => { const link = `${location.origin}/get.php?username=${encodeURIComponent(acc.username)}&password=${encodeURIComponent(acc.password)}`; try{ await navigator.clipboard.writeText(link); showToast('Enlace copiado'); }catch(e){ alert(link); } };
-          btnRenew.onclick = () => openRenewModal(acc);
-          btnDel.onclick = async () => { if(!confirm('Borrar ' + acc.username + '?')) return; const r = await fetchJson('/admin/delete_account',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ username:acc.username })}); if(r.ok && r.json && r.json.ok){ showToast('Borrada'); await loadAccounts(); } else alert('Error borrando'); };
-          tbody.appendChild(tr);
-
-          total++; if(dl===null) act++; else if(dl<=0) exp++; else if(dl<=7) soon++; else act++;
-        });
-        byId('statTotal').textContent = total;
-        byId('statActive').textContent = act;
-        byId('statSoon').textContent = soon;
-        byId('statExp').textContent = exp;
-      }
-
-      // Modal helpers
-      function showModal(elem){ const root = byId('modalRoot'); root.innerHTML = ''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(elem); root.appendChild(back); root.style.display='block'; }
-      function closeModal(){ const root = byId('modalRoot'); root.style.display='none'; root.innerHTML=''; }
-
-      // Create account with plan-tabs + Personalizado
-      function openCreateModal(){
-        const modal = document.createElement('div'); modal.className='modal';
-        modal.innerHTML = `<h3>Crear cuenta</h3>
-          <div style="margin-top:10px">
-            <div class="form-grid">
-              <div><label class="small">Usuario</label><input id="c_username" /></div>
-              <div><label class="small">Contraseña</label><input id="c_password" /></div>
-              <div style="grid-column:1/3">
-                <label class="small">Elegir plan</label>
-                <div id="planTabs" class="plans-tabs"></div>
-                <div class="plan-meta small" id="planMeta">Seleccioná un plan</div>
-              </div>
-
-              <div id="personalizedArea" style="grid-column:1/3;display:none;margin-top:8px">
-                <div class="small">Personalizado — seleccioná duración y listas</div>
-                <div style="display:flex;gap:8px;margin-top:8px">
-                  <select id="p_unit">
-                    <option value="month">Meses</option>
-                    <option value="hour">Horas</option>
-                  </select>
-                  <input id="p_value" type="number" min="1" value="1" />
-                </div>
-                <div style="margin-top:10px" class="small">Seleccioná listas (si no seleccionás ninguna, se asignarán <b>todas</b>)</div>
-                <div class="lists-grid" id="listsGrid"></div>
-              </div>
-
-              <div style="grid-column:1/3">
-                <label class="small">Plan label (opcional)</label>
-                <input id="c_planlabel" placeholder="Ej: 1 MES, Demo 1M, Personalizado" />
-              </div>
-            </div>
-
-            <div class="footer">
-              <button class="btn ghost" id="c_cancel">Cancelar</button>
-              <button class="btn" id="c_create">Crear cuenta</button>
-            </div>
-          </div>`;
-        showModal(modal);
-
-        // prepare lists grid
-        const listsGrid = modal.querySelector('#listsGrid');
-        function renderListsGrid(){
-          listsGrid.innerHTML = '';
-          LISTS.forEach((l, i) => {
-            const div = document.createElement('div'); div.className='list-item';
-            div.innerHTML = `<label style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-list="${l}" /> <span class="small">${l}</span></label>`;
-            listsGrid.appendChild(div);
-          });
+    // fetch helper that appends admin creds to /admin/* calls as query params
+    async function fetchJsonAuto(url, opts){
+      opts = opts || {};
+      const admin = getAdminCreds();
+      // only attach creds to admin endpoints
+      if(url.startsWith('/admin') || url.startsWith('/admin/') || url === '/admin/me'){
+        if(admin){
+          const sep = url.includes('?') ? '&' : '?';
+          url = url + sep + 'username=' + encodeURIComponent(admin.username) + '&password=' + encodeURIComponent(admin.password);
         }
-        renderListsGrid();
-
-        // render plan tabs (including Personalizado)
-        const planTabs = modal.querySelector('#planTabs');
-        let selectedPlan = PLANS[1]; // default 1m
-        const PERSONAL_ID = 'personalizado';
-        function renderTabs(){
-          planTabs.innerHTML = '';
-          PLANS.concat([{ id: PERSONAL_ID, label:'Personalizado', unit:'custom', cost:0 }]).forEach(p => {
-            const b = document.createElement('button');
-            b.className = 'plan-tab' + (selectedPlan.id === p.id ? ' active' : '');
-            b.textContent = p.label;
-            b.onclick = () => {
-              selectedPlan = p;
-              // show or hide personalized area
-              const perArea = modal.querySelector('#personalizedArea');
-              if(p.id === PERSONAL_ID){
-                perArea.style.display = 'block';
-              } else {
-                perArea.style.display = 'none';
-              }
-              updateMeta();
-              renderTabs();
-            };
-            planTabs.appendChild(b);
-          });
-        }
-        function updateMeta(){
-          const meta = modal.querySelector('#planMeta');
-          if(selectedPlan.id === PERSONAL_ID){
-            meta.textContent = 'Personalizado — podés elegir duración y listas. Costos: 1 mes = 1 crédito, 1 hora = 0 créditos.';
-          } else {
-            meta.textContent = `${selectedPlan.label} — Costo: ${selectedPlan.cost} crédito(s). Incluye todas las listas detectadas (${LISTS.length}).`;
-            modal.querySelector('#c_planlabel').value = modal.querySelector('#c_planlabel').value || selectedPlan.label;
-          }
-        }
-        renderTabs();
-        updateMeta();
-
-        modal.querySelector('#c_cancel').onclick = closeModal;
-        modal.querySelector('#c_create').onclick = async () => {
-          const username = modal.querySelector('#c_username').value.trim();
-          const password = modal.querySelector('#c_password').value.trim();
-          const planLabel = modal.querySelector('#c_planlabel').value.trim();
-          if(!username || !password){ alert('Usuario y contraseña requeridos'); return; }
-
-          // determine lists: selected checkboxes if personalizado, otherwise all
-          let listsToAssign = LISTS.slice();
-          if(selectedPlan.id === PERSONAL_ID){
-            const checked = Array.from(modal.querySelectorAll('#listsGrid input[type="checkbox"]:checked')).map(i => i.getAttribute('data-list'));
-            if(checked.length) listsToAssign = checked;
-          }
-
-          // determine duration and cost
-          let payload = { username, password, lists: listsToAssign, planLabel: planLabel || (selectedPlan.label || 'Personalizado') };
-          let cost = 0;
-          if(selectedPlan.id === PERSONAL_ID){
-            const unit = modal.querySelector('#p_unit').value;
-            const v = Math.max(1, Number(modal.querySelector('#p_value').value) || 1);
-            if(unit === 'hour'){
-              // hours: cost 0
-              payload.expiresAt = new Date(Date.now() + v*60*60*1000).toISOString();
-              cost = 0;
-            } else { // months
-              payload.days = v*30;
-              cost = v; // 1 credit per month
-            }
-          } else {
-            // predefined plan chosen
-            if(selectedPlan.unit === 'hour'){
-              payload.expiresAt = new Date(Date.now() + (selectedPlan.hours||1)*60*60*1000).toISOString();
-              cost = selectedPlan.cost || 0;
-            } else if(selectedPlan.unit === 'month'){
-              payload.days = selectedPlan.days || ((selectedPlan.months||1)*30);
-              cost = selectedPlan.cost || 0;
-            } else {
-              // fallback
-              payload.days = selectedPlan.days || 30;
-              cost = selectedPlan.cost || 0;
-            }
-            // ensure planLabel set
-            payload.planLabel = payload.planLabel || selectedPlan.label;
-          }
-
-          // cost check
-          if(!ME){ alert('No autorizado'); return; }
-          if(!ME.isMaster && cost > 0 && Number(ME.credits || 0) < cost){ alert('No tenés créditos suficientes'); return; }
-
-          // call backend add_account
-          const r = await fetchJson('/admin/add_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-          if(!(r.ok && r.json && r.json.ok)){ alert('Error creando: ' + (r.json?.error || r.text || 'unknown')); return; }
-
-          // deduct credits if reseller
-          if(!ME.isMaster && cost > 0){
-            const newCredits = Number(ME.credits || 0) - cost;
-            const r2 = await fetchJson('/admin/set_admin_credits', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: ME.username, credits: newCredits }) });
-            if(r2.ok && r2.json && r2.json.ok){ ME.credits = newCredits; byId('statCredits').textContent = ME.credits; }
-            else console.warn('No se pudo actualizar créditos en backend');
-          }
-
-          showToast('Cuenta creada');
-          closeModal();
-          await loadAccounts();
-        };
       }
+      const res = await fetch(url, { credentials: 'same-origin', ...opts });
+      const ct = res.headers.get('content-type') || '';
+      if(ct.includes('application/json')) {
+        const json = await res.json();
+        return { ok: res.ok, json, status: res.status };
+      } else {
+        const text = await res.text();
+        return { ok: res.ok, text, status: res.status };
+      }
+    }
 
-      // Renew modal with plan-tabs including personalizado possibility
-      function openRenewModal(acc){
-        const modal = document.createElement('div'); modal.className='modal';
-        modal.innerHTML = `<h3>Renovar — ${acc.username}</h3>
-          <div style="margin-top:10px">
-            <div class="small">Elegí un plan para añadir a la cuenta</div>
-            <div id="renewTabs" class="plans-tabs"></div>
-            <div class="plan-meta small" id="renewMeta"></div>
-            <div id="renewPersonal" style="margin-top:10px;display:none">
-              <div class="small">Personalizado — elegir meses u horas</div>
-              <div style="display:flex;gap:8px;margin-top:8px">
-                <select id="r_unit"><option value="month">Meses</option><option value="hour">Horas</option></select>
-                <input id="r_value" type="number" min="1" value="1" />
-              </div>
-              <div style="margin-top:8px" class="small">Seleccioná listas (las listas aquí no cambian la cuenta, solo para info)</div>
-            </div>
-            <div class="footer">
-              <button class="btn ghost" id="r_cancel">Cancelar</button>
-              <button class="btn" id="r_confirm">Confirmar renovación</button>
-            </div>
-          </div>`;
-        showModal(modal);
-
-        const monthPlans = PLANS.filter(p => p.unit === 'month');
-        const PERSONAL_ID = 'personalizado';
-        let selected = monthPlans[0] || PLANS[0];
-
-        function render(){
-          const tabs = modal.querySelector('#renewTabs'); tabs.innerHTML = '';
-          monthPlans.concat([{ id:PERSONAL_ID, label:'Personalizado', unit:'custom', cost:0 }]).forEach(p=>{
-            const b = document.createElement('button'); b.className='plan-tab' + (selected.id===p.id? ' active':''); b.textContent = p.label;
-            b.onclick = () => { selected = p; update(); render(); };
-            tabs.appendChild(b);
-          });
-        }
-        function update(){
-          const meta = modal.querySelector('#renewMeta');
-          if(selected.id === PERSONAL_ID){
-            modal.querySelector('#renewPersonal').style.display = 'block';
-            meta.textContent = 'Personalizado — seleccioná meses/horas y confirma.';
+    // Show login modal
+    function openLoginModal(prefilledUser=''){
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<h3>Iniciar sesión</h3>
+        <div style="margin-top:10px" class="form-grid">
+          <div><label class="small">Usuario admin</label><input id="login_user" value="${prefilledUser}" /></div>
+          <div><label class="small">Contraseña</label><input id="login_pass" type="password" /></div>
+        </div>
+        <div class="footer"><button class="btn ghost" id="l_cancel">Cancelar</button><button class="btn" id="l_ok">Entrar</button></div>`;
+      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
+      modal.querySelector('#l_cancel').onclick = () => { root.style.display='none'; root.innerHTML=''; };
+      modal.querySelector('#l_ok').onclick = async () => {
+        const u = modal.querySelector('#login_user').value.trim();
+        const p = modal.querySelector('#login_pass').value.trim();
+        if(!u || !p){ alert('Usuario/contraseña requeridos'); return; }
+        // test credentials calling /admin/me with query (we won't rely on fetchJsonAuto here)
+        try{
+          const resp = await fetch('/admin/me?username=' + encodeURIComponent(u) + '&password=' + encodeURIComponent(p), { credentials: 'same-origin' });
+          if(resp.status === 200){
+            setAdminCreds(u,p);
+            showToast('Login ok');
+            root.style.display='none'; root.innerHTML='';
+            await initAfterAuth();
           } else {
-            modal.querySelector('#renewPersonal').style.display = 'none';
-            meta.textContent = `${selected.label} — añadirá ${(selected.months||1)} mes(es). Costo: ${selected.cost} crédito(s).`;
+            const txt = await resp.text();
+            alert('Credenciales inválidas');
           }
-        }
-        render(); update();
-
-        modal.querySelector('#r_cancel').onclick = closeModal;
-        modal.querySelector('#r_confirm').onclick = async () => {
-          // compute months/hours and cost
-          let monthsToAdd = 0, hoursToAdd = 0, cost = 0;
-          if(selected.id === PERSONAL_ID){
-            const unit = modal.querySelector('#r_unit').value;
-            const v = Math.max(1, Number(modal.querySelector('#r_value').value) || 1);
-            if(unit === 'hour'){ hoursToAdd = v; cost = 0; }
-            else { monthsToAdd = v; cost = v; }
-          } else {
-            monthsToAdd = selected.months || 1;
-            cost = selected.cost || 0;
-          }
-
-          if(!ME){ alert('No autorizado'); return; }
-          if(!ME.isMaster && cost > 0 && Number(ME.credits || 0) < cost){ alert('No tenés créditos suficientes'); return; }
-
-          // call backend
-          if(hoursToAdd > 0){
-            // add hours -> extend expiresAt by hoursToAdd hours
-            const res = await fetchJson('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: acc.username, hours: hoursToAdd }) });
-            if(!(res.ok && res.json && res.json.ok)){ alert('Error renovando: ' + (res.json?.error||res.text||'unknown')); return; }
-          } else {
-            const days = monthsToAdd * 30;
-            const res = await fetchJson('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: acc.username, days }) });
-            if(!(res.ok && res.json && res.json.ok)){ alert('Error renovando: ' + (res.json?.error||res.text||'unknown')); return; }
-          }
-
-          // deduct credits for reseller
-          if(!ME.isMaster && cost > 0){
-            const newCredits = Number(ME.credits || 0) - cost;
-            const r2 = await fetchJson('/admin/set_admin_credits', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: ME.username, credits: newCredits }) });
-            if(r2.ok && r2.json && r2.json.ok){ ME.credits = newCredits; byId('statCredits').textContent = ME.credits; }
-          }
-
-          showToast('Cuenta renovada');
-          closeModal();
-          await loadAccounts();
-        };
-      }
-
-      // Create Reseller modal (SuperAdmin)
-      function openCreateResellerModal(){
-        const modal = document.createElement('div'); modal.className='modal';
-        modal.innerHTML = `<h3>Crear Reseller (SuperAdmin)</h3>
-          <div style="margin-top:10px" class="form-grid">
-            <div><label class="small">Usuario</label><input id="r_user" /></div>
-            <div><label class="small">Contraseña</label><input id="r_pass" /></div>
-            <div><label class="small">Créditos iniciales</label><input id="r_credits" type="number" value="10" /></div>
-            <div><label class="small">Es Master?</label><select id="r_master"><option value="false">No (Reseller)</option><option value="true">Sí (SuperAdmin)</option></select></div>
-          </div>
-          <div class="footer"><button class="btn ghost" id="r_cancel">Cancelar</button><button class="btn" id="r_create">Crear</button></div>`;
-        showModal(modal);
-        modal.querySelector('#r_cancel').onclick = closeModal;
-        modal.querySelector('#r_create').onclick = async () => {
-          const u = modal.querySelector('#r_user').value.trim();
-          const p = modal.querySelector('#r_pass').value.trim();
-          const credits = Number(modal.querySelector('#r_credits').value) || 0;
-          const isMaster = modal.querySelector('#r_master').value === 'true';
-          if(!u || !p){ alert('Usuario y pass requeridos'); return; }
-          const r = await fetchJson('/admin/add_admin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username:u, password:p, credits, isMaster }) });
-          if(r.ok && r.json && r.json.ok){ showToast('Reseller creado'); closeModal(); await loadAccounts(); } else alert('Error: ' + (r.json?.error || r.text || 'unknown'));
-        };
-      }
-
-      // View modal
-      function openViewModal(acc){
-        const modal = document.createElement('div'); modal.className='modal';
-        modal.innerHTML = `<h3>Cuenta — ${acc.username}</h3>
-          <div style="margin-top:8px">
-            <div class="small"><b>Usuario:</b> ${acc.username}</div>
-            <div class="small"><b>Contraseña:</b> ${acc.password}</div>
-            <div class="small"><b>Listas:</b> ${(acc.lists||[]).join(', ')}</div>
-            <div class="small"><b>Creada:</b> ${new Date(acc.createdAt).toLocaleString()}</div>
-            <div class="small"><b>Vence:</b> ${acc.expiresAt ? new Date(acc.expiresAt).toLocaleString() : 'Nunca'}</div>
-            <div class="footer"><button class="btn ghost" id="v_close">Cerrar</button></div>
-          </div>`;
-        showModal(modal);
-        modal.querySelector('#v_close').onclick = closeModal;
-      }
-
-      // Admins modal
-      async function openAdminsModal(){
-        const r = await fetchJson('/admin/list_admins');
-        if(!r.ok){ alert('No autorizado'); return; }
-        const list = r.json.admins || [];
-        const modal = document.createElement('div'); modal.className='modal';
-        modal.innerHTML = `<h3>Administradores</h3><div style="margin-top:10px;max-height:360px;overflow:auto"><div id="admList"></div></div><div class="footer"><button class="btn ghost" id="adm_close">Cerrar</button><button class="btn" id="adm_new">Crear admin</button></div>`;
-        showModal(modal);
-        const admList = modal.querySelector('#admList');
-        list.forEach(a => {
-          const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.padding='8px 0';
-          row.innerHTML = `<div><b>${a.username}</b><div class="small">${a.createdAt || ''}</div></div><div style="display:flex;gap:8px;align-items:center"><div class="chip">Créditos ${a.credits||0}</div><button class="btn ghost" data-u="${a.username}">Editar</button></div>`;
-          admList.appendChild(row);
-        });
-        modal.querySelector('#adm_close').onclick = closeModal;
-        modal.querySelector('#adm_new').onclick = () => { closeModal(); openCreateResellerModal(); };
-      }
-
-      // Wiring
-      byId('btnCreate').onclick = openCreateModal;
-      byId('btnCreateReseller').onclick = openCreateResellerModal;
-      byId('btnAdmins').onclick = openAdminsModal;
-      byId('btnRefresh').onclick = async () => { await loadLists(); await loadAccounts(); showToast('Actualizado'); };
-      byId('btnExport').onclick = async () => {
-        const rows = [['username','password','createdAt','expiresAt','lists','planLabel']];
-        ACCOUNTS.forEach(a => rows.push([a.username,a.password,a.createdAt,a.expiresAt,(a.lists||[]).join(';'), a.planLabel||'']));
-        const csv = rows.map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n');
-        const blob = new Blob([csv],{type:'text/csv'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='accounts.csv'; a.click(); URL.revokeObjectURL(url); showToast('CSV generado');
+        }catch(e){ alert('Error contactando servidor: ' + e.message); }
       };
-      byId('btnDownload').onclick = async () => { const r = await fetchJson('/admin/list_accounts'); if(!r.ok){ alert('Error'); return; } const blob = new Blob([JSON.stringify(r.json.accounts,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='accounts.json'; a.click(); URL.revokeObjectURL(url); showToast('Descarga lista'); };
-      byId('btnSettings').onclick = () => alert('Abrir ajustes (backend)');
-      byId('btnLogout').onclick = async () => { try{ const r = await fetch('/admin/logout', { credentials:'same-origin' }); if(r.status === 401) alert('Logout solicitado — cerrá la pestaña para completar.'); else showToast('Logout'); }catch(e){ alert('Error logout'); } };
+    }
 
-      // Init
-      (async ()=>{ await loadMe(); await loadLists(); await loadAccounts(); })();
-      window.__pr = { loadMe, loadLists, loadAccounts, PLANS, ACCOUNTS, LISTS, ME };
-    })();
+    // Open login when clicking header login button
+    byId('btnLogin').onclick = () => {
+      const adm = getAdminCreds();
+      openLoginModal(adm ? adm.username : '');
+    };
+
+    // Logout: clear creds
+    function doLogout(){
+      clearAdminCreds();
+      // optionally reload to ensure UI reflects logged-out state
+      location.reload();
+    }
+
+    // Hook logout to a button (we reuse btnLogin to show login when logged out)
+    // We'll also expose a logout button in header after login
+    function showLoggedInHeader(username, isMaster){
+      const btnLogin = byId('btnLogin');
+      btnLogin.textContent = 'Salir (' + username + ')';
+      btnLogin.onclick = () => { if(confirm('Cerrar sesión?')) doLogout(); };
+      // show reseller creation if allowed
+      if(isMaster) byId('btnCreateReseller').style.display = 'inline-flex';
+    }
+
+    // global state
+    let ACCOUNTS = [], LISTS = [], ME = null;
+
+    async function loadMe(){
+      // try to fetch with stored creds (fetchJsonAuto will add them)
+      const r = await fetchJsonAuto('/admin/me');
+      if(!r.ok){
+        // show login automatically if 401
+        if(r.status === 401){
+          openLoginModal();
+          return null;
+        } else {
+          console.warn('admin/me error', r);
+          return null;
+        }
+      }
+      ME = r.json.me;
+      byId('subtitle').textContent = `${ME.username} — ${ME.isMaster ? 'SuperAdmin' : 'Reseller'}`;
+      byId('statCredits').textContent = ME.credits ?? '—';
+      showLoggedInHeader(ME.username, ME.isMaster);
+      return ME;
+    }
+
+    async function loadLists(){
+      const r = await fetchJsonAuto('/admin/available_lists');
+      LISTS = (r.ok && r.json && Array.isArray(r.json.lists)) ? r.json.lists : [];
+    }
+
+    async function loadAccounts(){
+      const r = await fetchJsonAuto('/admin/list_accounts');
+      if(!r.ok){ showToast('No autorizado o error cargando cuentas'); return; }
+      ACCOUNTS = r.json.accounts || [];
+      renderAccounts();
+    }
+
+    function fmtDate(s){ return s ? new Date(s).toLocaleDateString() : '-'; }
+    function fmtTime(s){ return s ? new Date(s).toLocaleTimeString() : ''; }
+    function daysLeft(s){ return !s ? null : Math.ceil((new Date(s) - Date.now())/(24*60*60*1000)); }
+
+    const tbody = document.querySelector('#tblAccounts tbody');
+
+    function renderAccounts(){
+      tbody.innerHTML = '';
+      ACCOUNTS.forEach(acc => {
+        const dl = daysLeft(acc.expiresAt);
+        const listsHtml = (acc.lists||[]).map(l=>`<span class="chip">${l}</span>`).join(' ');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td class="username">${acc.username}</td><td>••••••</td><td>${listsHtml}</td><td class="small">${fmtDate(acc.createdAt)} ${fmtTime(acc.createdAt)}</td><td class="small">${fmtDate(acc.expiresAt)} ${fmtTime(acc.expiresAt)}</td><td class="small">${acc.planLabel||'-'}</td><td style="text-align:right"><button class="btn ghost" data-act="view">Ver</button><button class="btn" data-act="copy">Copiar</button><button class="btn ghost" data-act="renew">Renovar</button><button class="btn warn" data-act="del">Borrar</button></td>`;
+        tr.querySelector('[data-act="view"]').onclick = () => openViewModal(acc);
+        tr.querySelector('[data-act="copy"]').onclick = async () => {
+          const link = `${location.origin}/playlist/${encodeURIComponent(acc.username)}/${encodeURIComponent(acc.password)}.m3u`;
+          try{ await navigator.clipboard.writeText(link); showToast('Enlace .m3u copiado'); }catch(e){ alert(link); }
+        };
+        tr.querySelector('[data-act="renew"]').onclick = () => openRenewModal(acc);
+        tr.querySelector('[data-act="del"]').onclick = async () => {
+          if(!confirm('Borrar ' + acc.username + '?')) return;
+          const res = await fetchJsonAuto('/admin/delete_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: acc.username }) });
+          if(res.ok && res.json && res.json.ok){ showToast('Cuenta borrada'); await loadAccounts(); } else alert('Error borrando');
+        };
+        tbody.appendChild(tr);
+      });
+      // update stats
+      const total = ACCOUNTS.length;
+      let act=0,soon=0,exp=0;
+      ACCOUNTS.forEach(a => { const dl = daysLeft(a.expiresAt); if(dl===null) act++; else if(dl<=0) exp++; else if(dl<=7) soon++; else act++; });
+      byId('statTotal').textContent = total; byId('statActive').textContent = act; byId('statSoon').textContent = soon; byId('statExp').textContent = exp;
+    }
+
+    // Open basic view modal
+    function openViewModal(acc){
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<h3>Cuenta — ${acc.username}</h3><div style="margin-top:8px"><div class="small"><b>Usuario:</b> ${acc.username}</div><div class="small"><b>Contraseña:</b> ${acc.password}</div><div class="small"><b>Listas:</b> ${(acc.lists||[]).join(', ')}</div><div class="small"><b>Creada:</b> ${new Date(acc.createdAt).toLocaleString()}</div><div class="small"><b>Vence:</b> ${acc.expiresAt ? new Date(acc.expiresAt).toLocaleString() : 'Nunca'}</div><div class="footer"><button class="btn ghost" id="v_close">Cerrar</button></div></div>`;
+      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
+      modal.querySelector('#v_close').onclick = () => { root.style.display='none'; root.innerHTML=''; };
+    }
+
+    // Create modal simplified (uses plan tabs: reuse existing flow)
+    function openCreateModal(){
+      // ensure logged in
+      if(!getAdminCreds()){ openLoginModal(); return; }
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<h3>Crear cuenta — elegir plan</h3><div style="margin-top:10px" class="form-grid"><div><label class="small">Usuario</label><input id="c_user" /></div><div><label class="small">Contraseña</label><input id="c_pass" /></div><div style="grid-column:1/3"><label class="small">Plan</label><div id="planTabs" class="plans-tabs"></div><div id="planMeta" class="plan-meta small"></div></div><div style="grid-column:1/3"><label class="small">Plan label (opcional)</label><input id="c_label" /></div></div><div class="footer"><button class="btn ghost" id="c_cancel">Cancelar</button><button class="btn" id="c_create">Crear</button></div>`;
+      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
+      // plan definitions (same as before, demo is 1 month costing 1)
+      const PLANS = [{id:'demo',label:'Demo 1M',unit:'month',months:1,cost:1},{id:'1m',label:'1 MES',unit:'month',months:1,cost:1},{id:'2m',label:'2 MESES',unit:'month',months:2,cost:2},{id:'3m',label:'3 MESES',unit:'month',months:3,cost:3}];
+      let selected = PLANS[1];
+      const planTabs = modal.querySelector('#planTabs');
+      function renderTabs(){ planTabs.innerHTML=''; PLANS.forEach(p=>{ const b = document.createElement('button'); b.className='plan-tab' + (p.id===selected.id?' active':''); b.innerHTML = `<strong>${p.label}</strong><div class="small">Costo: ${p.cost} créditos</div>`; b.onclick = ()=>{ selected=p; renderTabs(); updateMeta(); }; planTabs.appendChild(b); }); }
+      function updateMeta(){ modal.querySelector('#planMeta').textContent = `${selected.label} — añade ${selected.months} mes(es). Costo ${selected.cost} créditos. Incluye todas las listas.`; modal.querySelector('#c_label').value = modal.querySelector('#c_label').value || selected.label; }
+      renderTabs(); updateMeta();
+      modal.querySelector('#c_cancel').onclick = ()=>{ root.style.display='none'; root.innerHTML=''; };
+      modal.querySelector('#c_create').onclick = async ()=> {
+        const u = modal.querySelector('#c_user').value.trim(); const p = modal.querySelector('#c_pass').value.trim(); const label = modal.querySelector('#c_label').value.trim() || selected.label;
+        if(!u || !p){ alert('Usuario y contraseña requeridos'); return; }
+        // check credits
+        const cost = selected.cost || 0;
+        if(!ME){ alert('No autorizado'); return; }
+        if(!ME.isMaster && cost > 0 && Number(ME.credits||0) < cost){ alert('No tenés créditos suficientes'); return; }
+        const payload = { username: u, password: p, days: (selected.months||1)*30, lists: LISTS.slice(), planLabel: label };
+        const res = await fetchJsonAuto('/admin/add_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        if(!(res.ok && res.json && res.json.ok)){ alert('Error creando: ' + (res.json?.error || res.text || 'unknown')); return; }
+        // deduct credits
+        if(!ME.isMaster && cost > 0){
+          const newCredits = Number(ME.credits||0) - cost;
+          const r2 = await fetchJsonAuto('/admin/set_admin_credits', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: ME.username, credits: newCredits }) });
+          if(r2.ok && r2.json && r2.json.ok){ ME.credits = newCredits; byId('statCredits').textContent = ME.credits; }
+        }
+        showToast('Cuenta creada');
+        root.style.display='none'; root.innerHTML=''; await loadAccounts();
+      };
+    }
+
+    // Renew modal - simplified to pick months
+    function openRenewModal(acc){
+      if(!getAdminCreds()){ openLoginModal(); return; }
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<h3>Renovar — ${acc.username}</h3><div style="margin-top:10px"><div class="small">Elegí meses para añadir</div><div style="display:flex;gap:8px;margin-top:8px"><input id="r_months" type="number" min="1" value="1" /><button class="btn" id="r_apply">Aplicar</button></div><div class="footer"><button class="btn ghost" id="r_cancel">Cancelar</button><button class="btn" id="r_confirm">Confirmar</button></div></div>`;
+      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
+      modal.querySelector('#r_cancel').onclick = ()=>{ root.style.display='none'; root.innerHTML=''; };
+      modal.querySelector('#r_confirm').onclick = async ()=> {
+        const months = Math.max(1, Number(modal.querySelector('#r_months').value)||1);
+        const cost = months; // 1 credit per month
+        if(!ME){ alert('No autorizado'); return; }
+        if(!ME.isMaster && cost > 0 && Number(ME.credits||0) < cost){ alert('No tenés créditos suficientes'); return; }
+        const days = months * 30;
+        const res = await fetchJsonAuto('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: acc.username, days }) });
+        if(!(res.ok && res.json && res.json.ok)){ alert('Error renovando'); return; }
+        if(!ME.isMaster && cost > 0){
+          const newCredits = Number(ME.credits||0) - cost;
+          const r2 = await fetchJsonAuto('/admin/set_admin_credits', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: ME.username, credits: newCredits }) });
+          if(r2.ok && r2.json && r2.json.ok){ ME.credits = newCredits; byId('statCredits').textContent = ME.credits; }
+        }
+        showToast('Cuenta renovada');
+        root.style.display='none'; root.innerHTML=''; await loadAccounts();
+      };
+    }
+
+    // Create Reseller modal (SuperAdmin)
+    function openCreateResellerModal(){
+      if(!getAdminCreds()){ openLoginModal(); return; }
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<h3>Crear Reseller</h3><div style="margin-top:10px" class="form-grid"><div><label class="small">Usuario</label><input id="r_user" /></div><div><label class="small">Contraseña</label><input id="r_pass" /></div><div><label class="small">Créditos iniciales</label><input id="r_credits" type="number" value="10" /></div><div><label class="small">Es Master?</label><select id="r_master"><option value="false">No</option><option value="true">Sí</option></select></div></div><div class="footer"><button class="btn ghost" id="r_cancel">Cancelar</button><button class="btn" id="r_create">Crear</button></div>`;
+      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
+      modal.querySelector('#r_cancel').onclick = ()=>{ root.style.display='none'; root.innerHTML=''; };
+      modal.querySelector('#r_create').onclick = async ()=> {
+        const u = modal.querySelector('#r_user').value.trim(); const p = modal.querySelector('#r_pass').value.trim(); const credits = Number(modal.querySelector('#r_credits').value)||0; const isMaster = modal.querySelector('#r_master').value === 'true';
+        if(!u || !p){ alert('Usuario y pass requeridos'); return; }
+        const res = await fetchJsonAuto('/admin/add_admin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username:u, password:p, credits, isMaster }) });
+        if(res.ok && res.json && res.json.ok){ showToast('Reseller creado'); root.style.display='none'; root.innerHTML=''; await loadAccounts(); } else alert('Error creando reseller');
+      };
+    }
+
+    // Admins modal - list admins
+    async function openAdminsModal(){
+      if(!getAdminCreds()){ openLoginModal(); return; }
+      const r = await fetchJsonAuto('/admin/list_admins');
+      if(!r.ok){ alert('No autorizado'); return; }
+      const list = r.json.admins || [];
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<h3>Administradores</h3><div style="margin-top:10px;max-height:360px;overflow:auto"><div id="admList"></div></div><div class="footer"><button class="btn ghost" id="adm_close">Cerrar</button><button class="btn" id="adm_new">Crear admin</button></div>`;
+      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
+      const admList = modal.querySelector('#admList');
+      list.forEach(a => { const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.padding='8px 0'; row.innerHTML = `<div><b>${a.username}</b><div class="small">${a.createdAt||''}</div></div><div style="display:flex;gap:8px;align-items:center"><div class="chip">Créditos ${a.credits||0}</div></div>`; admList.appendChild(row); });
+      modal.querySelector('#adm_close').onclick = ()=>{ byId('modalRoot').innerHTML=''; byId('modalRoot').style.display='none'; };
+      modal.querySelector('#adm_new').onclick = ()=>{ byId('modalRoot').innerHTML=''; byId('modalRoot').style.display='none'; openCreateResellerModal(); };
+    }
+
+    // Wiring header buttons
+    byId('btnCreate').onclick = openCreateModal;
+    byId('btnCreateReseller').onclick = openCreateResellerModal;
+    byId('btnAdmins').onclick = openAdminsModal;
+    byId('btnRefresh').onclick = async ()=>{ await loadLists(); await loadAccounts(); showToast('Actualizado'); };
+    byId('btnExport').onclick = async ()=> {
+      const rows = [['username','password','createdAt','expiresAt','lists','planLabel']]; ACCOUNTS.forEach(a=>rows.push([a.username,a.password,a.createdAt,a.expiresAt,(a.lists||[]).join(';'), a.planLabel||''])); const csv = rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='accounts.csv'; a.click(); URL.revokeObjectURL(url); showToast('CSV generado');
+    };
+    byId('btnDownload').onclick = async ()=>{ const r = await fetchJsonAuto('/admin/list_accounts'); if(!r.ok){ alert('Error'); return; } const blob = new Blob([JSON.stringify(r.json.accounts,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='accounts.json'; a.click(); URL.revokeObjectURL(url); showToast('Descarga lista'); };
+    byId('btnSettings').onclick = ()=> alert('Abrir ajustes (backend)');
+
+    // init after auth: loads lists/accounts
+    async function initAfterAuth(){
+      await loadMe();
+      await loadLists();
+      await loadAccounts();
+    }
+
+    // initial boot: try loadMe (if no creds, open login but don't force)
+    (async ()=>{ await loadMe(); await loadLists(); await loadAccounts(); })();
+
+    // expose for debugging
+    window.__pr = { getAdminCreds, setAdminCreds, clearAdminCreds, loadAccounts, loadLists };
+  })();
   </script>
 </body>
 </html>
