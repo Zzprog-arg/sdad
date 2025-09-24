@@ -3,13 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PanelReseller — Dark Panel (Con Login)</title>
+  <title>PanelReseller — Dark Panel (Links .m3u + PHP)</title>
   <style>
-    /* same dark styles as before, minor tweaks */
-    :root{
-      --bg:#071126;--muted:#9fb0c8;--text:#e6eef8;--accent:#6c5ce7;--accent-2:#06b6d4;
-      --glass-border: rgba(255,255,255,0.04);--radius:12px;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-    }
+    :root{--bg:#071126;--muted:#9fb0c8;--text:#e6eef8;--accent:#6c5ce7;--accent-2:#06b6d4;--glass-border: rgba(255,255,255,0.04);--radius:12px;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;}
     html,body{height:100%;margin:0;background:linear-gradient(180deg,#031029,#071226);color:var(--text);-webkit-font-smoothing:antialiased}
     .wrap{max-width:1200px;margin:22px auto;padding:18px}
     header.top{display:flex;align-items:center;gap:18px;margin-bottom:18px}
@@ -21,6 +17,8 @@
     .header-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
     .btn{background:var(--accent);color:white;border:0;padding:10px 12px;border-radius:12px;font-weight:600;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
     .btn.ghost{background:transparent;border:1px solid var(--glass-border);color:var(--text)}
+    .btn.warn{background:transparent;border:1px solid rgba(255,80,80,0.12);color:#f87171}
+    .grid{display:grid;grid-template-columns:280px 1fr;gap:18px;align-items:start}
     .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:16px;border:1px solid var(--glass-border)}
     input, select, textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;color:var(--text)}
     table.accounts{width:100%;border-collapse:collapse;font-size:14px}
@@ -37,7 +35,10 @@
     .plan-tab.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;border-color:transparent;box-shadow:0 8px 30px rgba(108,92,231,0.12)}
     .toast{position:fixed;right:18px;bottom:18px;background:#041226;padding:10px 14px;border-radius:10px;border:1px solid var(--glass-border);box-shadow:0 10px 30px rgba(4,9,22,0.6);color:var(--text);opacity:0;transform:translateY(10px);transition:all .25s}
     .toast.show{opacity:1;transform:translateY(0)}
-    .hidden{display:none}
+    .link-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+    .link-item{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;border:1px solid var(--glass-border);font-size:13px}
+    .link-actions{display:flex;gap:8px;margin-left:auto}
+    @media (max-width:900px){ .modal{width:92%} .grid{grid-template-columns:1fr} }
   </style>
 </head>
 <body>
@@ -58,7 +59,7 @@
       </div>
     </header>
 
-    <div class="grid" style="display:grid;grid-template-columns:280px 1fr;gap:18px">
+    <div class="grid">
       <aside class="card sidebar">
         <h3>Buscar</h3>
         <div style="margin-top:8px"><input id="q" type="search" placeholder="Buscar usuario..." /></div>
@@ -86,111 +87,66 @@
   </div>
 
   <div id="modalRoot" style="display:none"></div>
-  <div id="loginModal" class="hidden"></div>
   <div id="toast" class="toast">...</div>
 
   <script>
   (function(){
-    const byId = id => document.getElementById(id);
-    const toast = byId('toast');
-    function showToast(msg, ms=2000){ toast.textContent = msg; toast.classList.add('show'); clearTimeout(showToast._t); showToast._t = setTimeout(()=> toast.classList.remove('show'), ms); }
+    const byId=id=>document.getElementById(id);
+    const toast=byId('toast');
+    function showToast(txt,ms=2000){ toast.textContent=txt; toast.classList.add('show'); clearTimeout(showToast._t); showToast._t=setTimeout(()=>toast.classList.remove('show'),ms); }
 
-    // ADMIN CREDENTIALS stored in localStorage (only for panel usage)
-    function getAdminCreds(){ try { const s = localStorage.getItem('admin_creds'); if(!s) return null; return JSON.parse(s); } catch(e){ return null; } }
-    function setAdminCreds(u,p){ localStorage.setItem('admin_creds', JSON.stringify({ username: u, password: p })); }
+    function getAdminCreds(){ try{ const s=localStorage.getItem('admin_creds'); if(!s) return null; return JSON.parse(s); }catch(e){ return null; } }
+    function setAdminCreds(u,p){ localStorage.setItem('admin_creds', JSON.stringify({ username:u, password:p })); }
     function clearAdminCreds(){ localStorage.removeItem('admin_creds'); showToast('Sesión cerrada'); }
 
-    // fetch helper that appends admin creds to /admin/* calls as query params
     async function fetchJsonAuto(url, opts){
       opts = opts || {};
       const admin = getAdminCreds();
-      // only attach creds to admin endpoints
-      if(url.startsWith('/admin') || url.startsWith('/admin/') || url === '/admin/me'){
-        if(admin){
-          const sep = url.includes('?') ? '&' : '?';
-          url = url + sep + 'username=' + encodeURIComponent(admin.username) + '&password=' + encodeURIComponent(admin.password);
-        }
+      if((url.startsWith('/admin') || url === '/admin/me') && admin){
+        const sep = url.includes('?') ? '&' : '?';
+        url = url + sep + 'username=' + encodeURIComponent(admin.username) + '&password=' + encodeURIComponent(admin.password);
       }
-      const res = await fetch(url, { credentials: 'same-origin', ...opts });
-      const ct = res.headers.get('content-type') || '';
-      if(ct.includes('application/json')) {
-        const json = await res.json();
-        return { ok: res.ok, json, status: res.status };
-      } else {
-        const text = await res.text();
-        return { ok: res.ok, text, status: res.status };
-      }
+      const res = await fetch(url, { credentials:'same-origin', ...opts });
+      const ct = res.headers.get('content-type')||'';
+      if(ct.includes('application/json')) return { ok:res.ok, json:await res.json(), status:res.status };
+      return { ok:res.ok, text:await res.text(), status:res.status };
     }
 
-    // Show login modal
-    function openLoginModal(prefilledUser=''){
-      const modal = document.createElement('div'); modal.className='modal';
-      modal.innerHTML = `<h3>Iniciar sesión</h3>
-        <div style="margin-top:10px" class="form-grid">
-          <div><label class="small">Usuario admin</label><input id="login_user" value="${prefilledUser}" /></div>
-          <div><label class="small">Contraseña</label><input id="login_pass" type="password" /></div>
-        </div>
-        <div class="footer"><button class="btn ghost" id="l_cancel">Cancelar</button><button class="btn" id="l_ok">Entrar</button></div>`;
-      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
-      modal.querySelector('#l_cancel').onclick = () => { root.style.display='none'; root.innerHTML=''; };
-      modal.querySelector('#l_ok').onclick = async () => {
-        const u = modal.querySelector('#login_user').value.trim();
-        const p = modal.querySelector('#login_pass').value.trim();
-        if(!u || !p){ alert('Usuario/contraseña requeridos'); return; }
-        // test credentials calling /admin/me with query (we won't rely on fetchJsonAuto here)
+    function openLoginModal(pref=''){
+      const modal=document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<h3>Iniciar sesión</h3><div style="margin-top:10px" class="form-grid"><div><label class="small">Usuario admin</label><input id="login_user" value="${pref}" /></div><div><label class="small">Contraseña</label><input id="login_pass" type="password" /></div></div><div class="footer"><button class="btn ghost" id="l_cancel">Cancelar</button><button class="btn" id="l_ok">Entrar</button></div>`;
+      const root=byId('modalRoot'); root.innerHTML=''; const back=document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
+      modal.querySelector('#l_cancel').onclick = ()=>{ root.style.display='none'; root.innerHTML=''; };
+      modal.querySelector('#l_ok').onclick = async ()=> {
+        const u=modal.querySelector('#login_user').value.trim(), p=modal.querySelector('#login_pass').value.trim();
+        if(!u||!p){ alert('Usuario/clave requeridos'); return; }
         try{
-          const resp = await fetch('/admin/me?username=' + encodeURIComponent(u) + '&password=' + encodeURIComponent(p), { credentials: 'same-origin' });
-          if(resp.status === 200){
-            setAdminCreds(u,p);
-            showToast('Login ok');
-            root.style.display='none'; root.innerHTML='';
-            await initAfterAuth();
-          } else {
-            const txt = await resp.text();
-            alert('Credenciales inválidas');
-          }
-        }catch(e){ alert('Error contactando servidor: ' + e.message); }
+          const resp = await fetch('/admin/me?username='+encodeURIComponent(u)+'&password='+encodeURIComponent(p), { credentials:'same-origin' });
+          if(resp.status===200){ setAdminCreds(u,p); showToast('Login ok'); root.style.display='none'; root.innerHTML=''; await initAfterAuth(); }
+          else { alert('Credenciales inválidas'); }
+        }catch(e){ alert('Error contacto servidor: '+e.message); }
       };
     }
 
-    // Open login when clicking header login button
-    byId('btnLogin').onclick = () => {
-      const adm = getAdminCreds();
-      openLoginModal(adm ? adm.username : '');
-    };
+    byId('btnLogin').onclick = ()=>{ const adm=getAdminCreds(); openLoginModal(adm?adm.username:''); };
 
-    // Logout: clear creds
-    function doLogout(){
-      clearAdminCreds();
-      // optionally reload to ensure UI reflects logged-out state
-      location.reload();
+    function showLoggedInHeader(username,isMaster){
+      const btn=byId('btnLogin'); btn.textContent = 'Salir ('+username+')'; btn.onclick = ()=>{ if(confirm('Cerrar sesión?')){ clearAdminCreds(); location.reload(); } };
+      if(isMaster) byId('btnCreateReseller').style.display='inline-flex';
     }
 
-    // Hook logout to a button (we reuse btnLogin to show login when logged out)
-    // We'll also expose a logout button in header after login
-    function showLoggedInHeader(username, isMaster){
-      const btnLogin = byId('btnLogin');
-      btnLogin.textContent = 'Salir (' + username + ')';
-      btnLogin.onclick = () => { if(confirm('Cerrar sesión?')) doLogout(); };
-      // show reseller creation if allowed
-      if(isMaster) byId('btnCreateReseller').style.display = 'inline-flex';
-    }
+    let ACCOUNTS=[], LISTS=[], ME=null;
+    const tbody = document.querySelector('#tblAccounts tbody');
 
-    // global state
-    let ACCOUNTS = [], LISTS = [], ME = null;
+    function fmtDate(s){ return s? new Date(s).toLocaleDateString() : '-'; }
+    function fmtTime(s){ return s? new Date(s).toLocaleTimeString() : ''; }
+    function daysLeft(s){ return !s? null : Math.ceil((new Date(s)-Date.now())/(24*60*60*1000)); }
 
     async function loadMe(){
-      // try to fetch with stored creds (fetchJsonAuto will add them)
       const r = await fetchJsonAuto('/admin/me');
       if(!r.ok){
-        // show login automatically if 401
-        if(r.status === 401){
-          openLoginModal();
-          return null;
-        } else {
-          console.warn('admin/me error', r);
-          return null;
-        }
+        if(r.status===401) { openLoginModal(); return null; }
+        return null;
       }
       ME = r.json.me;
       byId('subtitle').textContent = `${ME.username} — ${ME.isMaster ? 'SuperAdmin' : 'Reseller'}`;
@@ -199,172 +155,99 @@
       return ME;
     }
 
-    async function loadLists(){
-      const r = await fetchJsonAuto('/admin/available_lists');
-      LISTS = (r.ok && r.json && Array.isArray(r.json.lists)) ? r.json.lists : [];
-    }
-
-    async function loadAccounts(){
-      const r = await fetchJsonAuto('/admin/list_accounts');
-      if(!r.ok){ showToast('No autorizado o error cargando cuentas'); return; }
-      ACCOUNTS = r.json.accounts || [];
-      renderAccounts();
-    }
-
-    function fmtDate(s){ return s ? new Date(s).toLocaleDateString() : '-'; }
-    function fmtTime(s){ return s ? new Date(s).toLocaleTimeString() : ''; }
-    function daysLeft(s){ return !s ? null : Math.ceil((new Date(s) - Date.now())/(24*60*60*1000)); }
-
-    const tbody = document.querySelector('#tblAccounts tbody');
+    async function loadLists(){ const r = await fetchJsonAuto('/admin/available_lists'); LISTS = (r.ok && r.json && Array.isArray(r.json.lists))? r.json.lists : []; }
+    async function loadAccounts(){ const r = await fetchJsonAuto('/admin/list_accounts'); if(!r.ok){ showToast('No autorizado o error'); return; } ACCOUNTS = r.json.accounts || []; renderAccounts(); }
 
     function renderAccounts(){
-      tbody.innerHTML = '';
-      ACCOUNTS.forEach(acc => {
+      tbody.innerHTML=''; ACCOUNTS.forEach(acc=>{
         const dl = daysLeft(acc.expiresAt);
         const listsHtml = (acc.lists||[]).map(l=>`<span class="chip">${l}</span>`).join(' ');
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td class="username">${acc.username}</td><td>••••••</td><td>${listsHtml}</td><td class="small">${fmtDate(acc.createdAt)} ${fmtTime(acc.createdAt)}</td><td class="small">${fmtDate(acc.expiresAt)} ${fmtTime(acc.expiresAt)}</td><td class="small">${acc.planLabel||'-'}</td><td style="text-align:right"><button class="btn ghost" data-act="view">Ver</button><button class="btn" data-act="copy">Copiar</button><button class="btn ghost" data-act="renew">Renovar</button><button class="btn warn" data-act="del">Borrar</button></td>`;
-        tr.querySelector('[data-act="view"]').onclick = () => openViewModal(acc);
-        tr.querySelector('[data-act="copy"]').onclick = async () => {
-          const link = `${location.origin}/playlist/${encodeURIComponent(acc.username)}/${encodeURIComponent(acc.password)}.m3u`;
-          try{ await navigator.clipboard.writeText(link); showToast('Enlace .m3u copiado'); }catch(e){ alert(link); }
+        tr.innerHTML = `<td class="username">${acc.username}</td><td>••••••</td><td>${listsHtml}</td><td class="small">${fmtDate(acc.createdAt)} ${fmtTime(acc.createdAt)}</td><td class="small">${fmtDate(acc.expiresAt)} ${fmtTime(acc.expiresAt)}</td><td class="small">${acc.planLabel||'-'}</td><td style="text-align:right"><button class="btn ghost" data-act="view">Ver</button><button class="btn" data-act="copy">Copiar links</button><button class="btn ghost" data-act="renew">Renovar</button><button class="btn warn" data-act="del">Borrar</button></td>`;
+        tr.querySelector('[data-act="view"]').onclick = ()=> openViewModal(acc);
+        tr.querySelector('[data-act="copy"]').onclick = async ()=>{
+          const origin = location.origin;
+          const p1 = `${origin}/playlist/${encodeURIComponent(acc.username)}/${encodeURIComponent(acc.password)}.m3u`;
+          const p2 = `${origin}/get.php.m3u?username=${encodeURIComponent(acc.username)}&password=${encodeURIComponent(acc.password)}`;
+          const p3 = `${origin}/get.php?username=${encodeURIComponent(acc.username)}&password=${encodeURIComponent(acc.password)}`;
+          const combined = `M3U (direct): ${p1}\nM3U (get.php.m3u): ${p2}\nLegacy URL (get.php): ${p3}`;
+          try{ await navigator.clipboard.writeText(combined); showToast('Copiados los 3 enlaces (.m3u + get.php)'); }catch(e){ alert(combined); }
         };
-        tr.querySelector('[data-act="renew"]').onclick = () => openRenewModal(acc);
-        tr.querySelector('[data-act="del"]').onclick = async () => {
-          if(!confirm('Borrar ' + acc.username + '?')) return;
-          const res = await fetchJsonAuto('/admin/delete_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: acc.username }) });
-          if(res.ok && res.json && res.json.ok){ showToast('Cuenta borrada'); await loadAccounts(); } else alert('Error borrando');
-        };
+        tr.querySelector('[data-act="renew"]').onclick = ()=> openRenewModal(acc);
+        tr.querySelector('[data-act="del"]').onclick = async ()=>{ if(!confirm('Borrar '+acc.username+'?')) return; const res = await fetchJsonAuto('/admin/delete_account',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: acc.username }) }); if(res.ok && res.json && res.json.ok){ showToast('Cuenta borrada'); await loadAccounts(); } else alert('Error borrando'); };
         tbody.appendChild(tr);
       });
-      // update stats
-      const total = ACCOUNTS.length;
-      let act=0,soon=0,exp=0;
-      ACCOUNTS.forEach(a => { const dl = daysLeft(a.expiresAt); if(dl===null) act++; else if(dl<=0) exp++; else if(dl<=7) soon++; else act++; });
+      const total = ACCOUNTS.length; let act=0,soon=0,exp=0;
+      ACCOUNTS.forEach(a=>{ const dl = daysLeft(a.expiresAt); if(dl===null) act++; else if(dl<=0) exp++; else if(dl<=7) soon++; else act++; });
       byId('statTotal').textContent = total; byId('statActive').textContent = act; byId('statSoon').textContent = soon; byId('statExp').textContent = exp;
     }
 
-    // Open basic view modal
     function openViewModal(acc){
+      const origin = location.origin;
+      const p1 = `${origin}/playlist/${encodeURIComponent(acc.username)}/${encodeURIComponent(acc.password)}.m3u`;
+      const p2 = `${origin}/get.php.m3u?username=${encodeURIComponent(acc.username)}&password=${encodeURIComponent(acc.password)}`;
+      const p3 = `${origin}/get.php?username=${encodeURIComponent(acc.username)}&password=${encodeURIComponent(acc.password)}`;
       const modal = document.createElement('div'); modal.className='modal';
-      modal.innerHTML = `<h3>Cuenta — ${acc.username}</h3><div style="margin-top:8px"><div class="small"><b>Usuario:</b> ${acc.username}</div><div class="small"><b>Contraseña:</b> ${acc.password}</div><div class="small"><b>Listas:</b> ${(acc.lists||[]).join(', ')}</div><div class="small"><b>Creada:</b> ${new Date(acc.createdAt).toLocaleString()}</div><div class="small"><b>Vence:</b> ${acc.expiresAt ? new Date(acc.expiresAt).toLocaleString() : 'Nunca'}</div><div class="footer"><button class="btn ghost" id="v_close">Cerrar</button></div></div>`;
-      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
-      modal.querySelector('#v_close').onclick = () => { root.style.display='none'; root.innerHTML=''; };
+      modal.innerHTML = `<h3>Cuenta — ${acc.username}</h3><div style="margin-top:8px"><div class="small"><b>Usuario:</b> ${acc.username}</div><div class="small"><b>Contraseña:</b> ${acc.password}</div><div class="small"><b>Listas:</b> ${(acc.lists||[]).join(', ')}</div><div class="small"><b>Creada:</b> ${new Date(acc.createdAt).toLocaleString()}</div><div class="small"><b>Vence:</b> ${acc.expiresAt ? new Date(acc.expiresAt).toLocaleString() : 'Nunca'}</div><div style="margin-top:10px"><div class="small">Enlaces disponibles</div><div class="link-list"><div class="link-item"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1">${p1}</div><div class="link-actions"><button class="btn" id="copy_p1">Copiar</button></div></div></div><div class="link-item"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1">${p2}</div><div class="link-actions"><button class="btn" id="copy_p2">Copiar</button></div></div></div><div class="link-item"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1">${p3}</div><div class="link-actions"><button class="btn ghost" id="copy_p3">Copiar</button></div></div></div></div></div><div class="footer"><button class="btn ghost" id="v_close">Cerrar</button></div></div>`;
+      const root=byId('modalRoot'); root.innerHTML=''; const back=document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
+      modal.querySelector('#v_close').onclick = ()=>{ root.style.display='none'; root.innerHTML=''; };
+      modal.querySelector('#copy_p1').onclick = async ()=>{ try{ await navigator.clipboard.writeText(p1); showToast('.m3u (playlist) copiado'); }catch(e){ alert(p1); } };
+      modal.querySelector('#copy_p2').onclick = async ()=>{ try{ await navigator.clipboard.writeText(p2); showToast('.m3u (get.php.m3u) copiado'); }catch(e){ alert(p2); } };
+      modal.querySelector('#copy_p3').onclick = async ()=>{ try{ await navigator.clipboard.writeText(p3); showToast('Legacy get.php copiado'); }catch(e){ alert(p3); } };
     }
 
-    // Create modal simplified (uses plan tabs: reuse existing flow)
     function openCreateModal(){
-      // ensure logged in
       if(!getAdminCreds()){ openLoginModal(); return; }
-      const modal = document.createElement('div'); modal.className='modal';
-      modal.innerHTML = `<h3>Crear cuenta — elegir plan</h3><div style="margin-top:10px" class="form-grid"><div><label class="small">Usuario</label><input id="c_user" /></div><div><label class="small">Contraseña</label><input id="c_pass" /></div><div style="grid-column:1/3"><label class="small">Plan</label><div id="planTabs" class="plans-tabs"></div><div id="planMeta" class="plan-meta small"></div></div><div style="grid-column:1/3"><label class="small">Plan label (opcional)</label><input id="c_label" /></div></div><div class="footer"><button class="btn ghost" id="c_cancel">Cancelar</button><button class="btn" id="c_create">Crear</button></div>`;
-      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
-      // plan definitions (same as before, demo is 1 month costing 1)
-      const PLANS = [{id:'demo',label:'Demo 1M',unit:'month',months:1,cost:1},{id:'1m',label:'1 MES',unit:'month',months:1,cost:1},{id:'2m',label:'2 MESES',unit:'month',months:2,cost:2},{id:'3m',label:'3 MESES',unit:'month',months:3,cost:3}];
-      let selected = PLANS[1];
-      const planTabs = modal.querySelector('#planTabs');
-      function renderTabs(){ planTabs.innerHTML=''; PLANS.forEach(p=>{ const b = document.createElement('button'); b.className='plan-tab' + (p.id===selected.id?' active':''); b.innerHTML = `<strong>${p.label}</strong><div class="small">Costo: ${p.cost} créditos</div>`; b.onclick = ()=>{ selected=p; renderTabs(); updateMeta(); }; planTabs.appendChild(b); }); }
-      function updateMeta(){ modal.querySelector('#planMeta').textContent = `${selected.label} — añade ${selected.months} mes(es). Costo ${selected.cost} créditos. Incluye todas las listas.`; modal.querySelector('#c_label').value = modal.querySelector('#c_label').value || selected.label; }
-      renderTabs(); updateMeta();
+      const modal=document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<h3>Crear cuenta</h3><div style="margin-top:10px" class="form-grid"><div><label class="small">Usuario</label><input id="c_user" /></div><div><label class="small">Contraseña</label><input id="c_pass" /></div><div style="grid-column:1/3"><label class="small">Meses</label><input id="c_months" type="number" min="1" value="1" /></div><div style="grid-column:1/3"><label class="small">Plan label (opcional)</label><input id="c_label" /></div></div><div class="footer"><button class="btn ghost" id="c_cancel">Cancelar</button><button class="btn" id="c_create">Crear</button></div>`;
+      const root=byId('modalRoot'); root.innerHTML=''; const back=document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
       modal.querySelector('#c_cancel').onclick = ()=>{ root.style.display='none'; root.innerHTML=''; };
       modal.querySelector('#c_create').onclick = async ()=> {
-        const u = modal.querySelector('#c_user').value.trim(); const p = modal.querySelector('#c_pass').value.trim(); const label = modal.querySelector('#c_label').value.trim() || selected.label;
-        if(!u || !p){ alert('Usuario y contraseña requeridos'); return; }
-        // check credits
-        const cost = selected.cost || 0;
+        const u=modal.querySelector('#c_user').value.trim(), p=modal.querySelector('#c_pass').value.trim(), months=Math.max(1,Number(modal.querySelector('#c_months').value)||1), label=modal.querySelector('#c_label').value.trim()||(`${months} MES`);
+        if(!u||!p){ alert('Usuario/clave requeridos'); return; }
+        const cost = months;
         if(!ME){ alert('No autorizado'); return; }
-        if(!ME.isMaster && cost > 0 && Number(ME.credits||0) < cost){ alert('No tenés créditos suficientes'); return; }
-        const payload = { username: u, password: p, days: (selected.months||1)*30, lists: LISTS.slice(), planLabel: label };
-        const res = await fetchJsonAuto('/admin/add_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-        if(!(res.ok && res.json && res.json.ok)){ alert('Error creando: ' + (res.json?.error || res.text || 'unknown')); return; }
-        // deduct credits
-        if(!ME.isMaster && cost > 0){
-          const newCredits = Number(ME.credits||0) - cost;
-          const r2 = await fetchJsonAuto('/admin/set_admin_credits', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: ME.username, credits: newCredits }) });
-          if(r2.ok && r2.json && r2.json.ok){ ME.credits = newCredits; byId('statCredits').textContent = ME.credits; }
-        }
-        showToast('Cuenta creada');
-        root.style.display='none'; root.innerHTML=''; await loadAccounts();
+        if(!ME.isMaster && cost>0 && Number(ME.credits||0) < cost){ alert('No tenés créditos suficientes'); return; }
+        const payload = { username:u, password:p, days: months*30, lists: LISTS.slice(), planLabel: label };
+        const res = await fetchJsonAuto('/admin/add_account',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        if(!(res.ok && res.json && res.json.ok)){ alert('Error creando'); return; }
+        if(!ME.isMaster && cost>0){ const newCredits = Number(ME.credits||0)-cost; await fetchJsonAuto('/admin/set_admin_credits',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: ME.username, credits: newCredits }) }); ME.credits=newCredits; byId('statCredits').textContent=ME.credits; }
+        showToast('Cuenta creada'); root.style.display='none'; root.innerHTML=''; await loadAccounts();
       };
     }
 
-    // Renew modal - simplified to pick months
     function openRenewModal(acc){
       if(!getAdminCreds()){ openLoginModal(); return; }
-      const modal = document.createElement('div'); modal.className='modal';
-      modal.innerHTML = `<h3>Renovar — ${acc.username}</h3><div style="margin-top:10px"><div class="small">Elegí meses para añadir</div><div style="display:flex;gap:8px;margin-top:8px"><input id="r_months" type="number" min="1" value="1" /><button class="btn" id="r_apply">Aplicar</button></div><div class="footer"><button class="btn ghost" id="r_cancel">Cancelar</button><button class="btn" id="r_confirm">Confirmar</button></div></div>`;
-      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
+      const modal=document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<h3>Renovar — ${acc.username}</h3><div style="margin-top:10px"><div class="small">Añadir meses</div><div style="display:flex;gap:8px;margin-top:8px"><input id="r_months" type="number" min="1" value="1" /><button class="btn" id="r_apply">Aplicar</button></div><div class="footer"><button class="btn ghost" id="r_cancel">Cancelar</button><button class="btn" id="r_confirm">Confirmar</button></div></div>`;
+      const root=byId('modalRoot'); root.innerHTML=''; const back=document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
       modal.querySelector('#r_cancel').onclick = ()=>{ root.style.display='none'; root.innerHTML=''; };
       modal.querySelector('#r_confirm').onclick = async ()=> {
-        const months = Math.max(1, Number(modal.querySelector('#r_months').value)||1);
-        const cost = months; // 1 credit per month
-        if(!ME){ alert('No autorizado'); return; }
-        if(!ME.isMaster && cost > 0 && Number(ME.credits||0) < cost){ alert('No tenés créditos suficientes'); return; }
-        const days = months * 30;
-        const res = await fetchJsonAuto('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: acc.username, days }) });
+        const months = Math.max(1,Number(modal.querySelector('#r_months').value)||1); const cost = months;
+        if(!ME){ alert('No autorizado'); return; } if(!ME.isMaster && cost>0 && Number(ME.credits||0) < cost){ alert('No tenés créditos suficientes'); return; }
+        const days = months*30;
+        const res = await fetchJsonAuto('/admin/set_account_expiry',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: acc.username, days }) });
         if(!(res.ok && res.json && res.json.ok)){ alert('Error renovando'); return; }
-        if(!ME.isMaster && cost > 0){
-          const newCredits = Number(ME.credits||0) - cost;
-          const r2 = await fetchJsonAuto('/admin/set_admin_credits', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: ME.username, credits: newCredits }) });
-          if(r2.ok && r2.json && r2.json.ok){ ME.credits = newCredits; byId('statCredits').textContent = ME.credits; }
-        }
-        showToast('Cuenta renovada');
-        root.style.display='none'; root.innerHTML=''; await loadAccounts();
+        if(!ME.isMaster && cost>0){ const newCredits = Number(ME.credits||0)-cost; await fetchJsonAuto('/admin/set_admin_credits',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: ME.username, credits: newCredits }) }); ME.credits=newCredits; byId('statCredits').textContent=ME.credits; }
+        showToast('Cuenta renovada'); root.style.display='none'; root.innerHTML=''; await loadAccounts();
       };
     }
 
-    // Create Reseller modal (SuperAdmin)
-    function openCreateResellerModal(){
-      if(!getAdminCreds()){ openLoginModal(); return; }
-      const modal = document.createElement('div'); modal.className='modal';
-      modal.innerHTML = `<h3>Crear Reseller</h3><div style="margin-top:10px" class="form-grid"><div><label class="small">Usuario</label><input id="r_user" /></div><div><label class="small">Contraseña</label><input id="r_pass" /></div><div><label class="small">Créditos iniciales</label><input id="r_credits" type="number" value="10" /></div><div><label class="small">Es Master?</label><select id="r_master"><option value="false">No</option><option value="true">Sí</option></select></div></div><div class="footer"><button class="btn ghost" id="r_cancel">Cancelar</button><button class="btn" id="r_create">Crear</button></div>`;
-      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
-      modal.querySelector('#r_cancel').onclick = ()=>{ root.style.display='none'; root.innerHTML=''; };
-      modal.querySelector('#r_create').onclick = async ()=> {
-        const u = modal.querySelector('#r_user').value.trim(); const p = modal.querySelector('#r_pass').value.trim(); const credits = Number(modal.querySelector('#r_credits').value)||0; const isMaster = modal.querySelector('#r_master').value === 'true';
-        if(!u || !p){ alert('Usuario y pass requeridos'); return; }
-        const res = await fetchJsonAuto('/admin/add_admin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username:u, password:p, credits, isMaster }) });
-        if(res.ok && res.json && res.json.ok){ showToast('Reseller creado'); root.style.display='none'; root.innerHTML=''; await loadAccounts(); } else alert('Error creando reseller');
-      };
-    }
+    function openCreateResellerModal(){ if(!getAdminCreds()){ openLoginModal(); return; } const modal=document.createElement('div'); modal.className='modal'; modal.innerHTML = `<h3>Crear Reseller</h3><div style="margin-top:10px" class="form-grid"><div><label class="small">Usuario</label><input id="r_user" /></div><div><label class="small">Contraseña</label><input id="r_pass" /></div><div><label class="small">Créditos iniciales</label><input id="r_credits" type="number" value="10" /></div><div><label class="small">Es Master?</label><select id="r_master"><option value="false">No</option><option value="true">Sí</option></select></div></div><div class="footer"><button class="btn ghost" id="r_cancel">Cancelar</button><button class="btn" id="r_create">Crear</button></div>`; const root=byId('modalRoot'); root.innerHTML=''; const back=document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block'; modal.querySelector('#r_cancel').onclick = ()=>{ root.style.display='none'; root.innerHTML=''; }; modal.querySelector('#r_create').onclick = async ()=> { const u=modal.querySelector('#r_user').value.trim(), p=modal.querySelector('#r_pass').value.trim(), credits=Number(modal.querySelector('#r_credits').value)||0, isMaster=modal.querySelector('#r_master').value==='true'; if(!u||!p){ alert('Usuario y pass requeridos'); return; } const res = await fetchJsonAuto('/admin/add_admin',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username:u, password:p, credits, isMaster }) }); if(res.ok && res.json && res.json.ok){ showToast('Reseller creado'); root.style.display='none'; root.innerHTML=''; await loadAccounts(); } else alert('Error creando reseller'); }; }
 
-    // Admins modal - list admins
-    async function openAdminsModal(){
-      if(!getAdminCreds()){ openLoginModal(); return; }
-      const r = await fetchJsonAuto('/admin/list_admins');
-      if(!r.ok){ alert('No autorizado'); return; }
-      const list = r.json.admins || [];
-      const modal = document.createElement('div'); modal.className='modal';
-      modal.innerHTML = `<h3>Administradores</h3><div style="margin-top:10px;max-height:360px;overflow:auto"><div id="admList"></div></div><div class="footer"><button class="btn ghost" id="adm_close">Cerrar</button><button class="btn" id="adm_new">Crear admin</button></div>`;
-      const root = byId('modalRoot'); root.innerHTML=''; const back = document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block';
-      const admList = modal.querySelector('#admList');
-      list.forEach(a => { const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.padding='8px 0'; row.innerHTML = `<div><b>${a.username}</b><div class="small">${a.createdAt||''}</div></div><div style="display:flex;gap:8px;align-items:center"><div class="chip">Créditos ${a.credits||0}</div></div>`; admList.appendChild(row); });
-      modal.querySelector('#adm_close').onclick = ()=>{ byId('modalRoot').innerHTML=''; byId('modalRoot').style.display='none'; };
-      modal.querySelector('#adm_new').onclick = ()=>{ byId('modalRoot').innerHTML=''; byId('modalRoot').style.display='none'; openCreateResellerModal(); };
-    }
+    async function openAdminsModal(){ if(!getAdminCreds()){ openLoginModal(); return; } const r = await fetchJsonAuto('/admin/list_admins'); if(!r.ok){ alert('No autorizado'); return; } const list = r.json.admins || []; const modal=document.createElement('div'); modal.className='modal'; modal.innerHTML = `<h3>Administradores</h3><div style="margin-top:10px;max-height:360px;overflow:auto"><div id="admList"></div></div><div class="footer"><button class="btn ghost" id="adm_close">Cerrar</button><button class="btn" id="adm_new">Crear admin</button></div>`; const root=byId('modalRoot'); root.innerHTML=''; const back=document.createElement('div'); back.className='modal-backdrop'; back.appendChild(modal); root.appendChild(back); root.style.display='block'; const admList = modal.querySelector('#admList'); list.forEach(a=>{ const row=document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.padding='8px 0'; row.innerHTML = `<div><b>${a.username}</b><div class="small">${a.createdAt||''}</div></div><div style="display:flex;gap:8px;align-items:center"><div class="chip">Créditos ${a.credits||0}</div></div>`; admList.appendChild(row); }); modal.querySelector('#adm_close').onclick = ()=>{ byId('modalRoot').innerHTML=''; byId('modalRoot').style.display='none'; }; modal.querySelector('#adm_new').onclick = ()=>{ byId('modalRoot').innerHTML=''; byId('modalRoot').style.display='none'; openCreateResellerModal(); };
 
-    // Wiring header buttons
     byId('btnCreate').onclick = openCreateModal;
     byId('btnCreateReseller').onclick = openCreateResellerModal;
     byId('btnAdmins').onclick = openAdminsModal;
     byId('btnRefresh').onclick = async ()=>{ await loadLists(); await loadAccounts(); showToast('Actualizado'); };
-    byId('btnExport').onclick = async ()=> {
-      const rows = [['username','password','createdAt','expiresAt','lists','planLabel']]; ACCOUNTS.forEach(a=>rows.push([a.username,a.password,a.createdAt,a.expiresAt,(a.lists||[]).join(';'), a.planLabel||''])); const csv = rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='accounts.csv'; a.click(); URL.revokeObjectURL(url); showToast('CSV generado');
-    };
-    byId('btnDownload').onclick = async ()=>{ const r = await fetchJsonAuto('/admin/list_accounts'); if(!r.ok){ alert('Error'); return; } const blob = new Blob([JSON.stringify(r.json.accounts,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='accounts.json'; a.click(); URL.revokeObjectURL(url); showToast('Descarga lista'); };
+    byId('btnExport').onclick = async ()=> { const rows=[['username','password','createdAt','expiresAt','lists','planLabel']]; ACCOUNTS.forEach(a=>rows.push([a.username,a.password,a.createdAt,a.expiresAt,(a.lists||[]).join(';'), a.planLabel||''])); const csv = rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='accounts.csv'; a.click(); URL.revokeObjectURL(url); showToast('CSV generado'); };
+    byId('btnDownload').onclick = async ()=>{ const r = await fetchJsonAuto('/admin/list_accounts'); if(!r.ok){ alert('Error'); return; } const blob=new Blob([JSON.stringify(r.json.accounts,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='accounts.json'; a.click(); URL.revokeObjectURL(url); showToast('Descarga lista'); };
     byId('btnSettings').onclick = ()=> alert('Abrir ajustes (backend)');
 
-    // init after auth: loads lists/accounts
-    async function initAfterAuth(){
-      await loadMe();
-      await loadLists();
-      await loadAccounts();
-    }
-
-    // initial boot: try loadMe (if no creds, open login but don't force)
+    async function initAfterAuth(){ await loadMe(); await loadLists(); await loadAccounts(); }
     (async ()=>{ await loadMe(); await loadLists(); await loadAccounts(); })();
 
-    // expose for debugging
     window.__pr = { getAdminCreds, setAdminCreds, clearAdminCreds, loadAccounts, loadLists };
   })();
   </script>
