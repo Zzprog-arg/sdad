@@ -1,498 +1,330 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PanelReseller — Dark Panel</title>
-  <style>
-    :root{--bg:#071126;--muted:#9fb0c8;--text:#e6eef8;--accent:#6c5ce7;--accent-2:#06b6d4;--glass-border: rgba(255,255,255,0.04);--radius:12px;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;}
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#031029,#071226);color:var(--text);-webkit-font-smoothing:antialiased}
-    .wrap{max-width:1200px;margin:22px auto;padding:18px}
-    header.top{display:flex;align-items:center;gap:18px;margin-bottom:18px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#7b61ff);display:flex;align-items:center;justify-content:center}
-    .logo svg{width:30px;height:30px;fill:white}
-    .brand h1{margin:0;font-size:18px}
-    .brand p{margin:0;font-size:12px;color:var(--muted)}
-    .header-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
-    .btn{background:var(--accent);color:white;border:0;padding:10px 12px;border-radius:12px;font-weight:600;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
-    .btn.ghost{background:transparent;border:1px solid var(--glass-border);color:var(--text)}
-    .btn.warn{background:transparent;border:1px solid rgba(255,80,80,0.12);color:#f87171}
-    .grid{display:grid;grid-template-columns:280px 1fr;gap:18px;align-items:start}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:16px;border:1px solid var(--glass-border)}
-    input, select, textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;color:var(--text)}
-    table.accounts{width:100%;border-collapse:collapse;font-size:14px}
-    table.accounts thead th{font-size:12px;color:var(--muted);text-align:left;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.02)}
-    table.accounts td{padding:12px 14px;vertical-align:middle;border-bottom:1px solid rgba(255,255,255,0.02)}
-    .chip{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);font-size:12px;color:var(--muted);margin-right:6px}
-    .small{font-size:12px;color:var(--muted)}
-    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:9999}
-    .modal{width:760px;background:linear-gradient(180deg,#071022,#04111a);border-radius:12px;padding:18px;border:1px solid var(--glass-border);max-height:90vh;overflow:auto}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .footer{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
-    .plans-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    .plan-tab{padding:10px 12px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;cursor:pointer;color:var(--text)}
-    .plan-tab.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;border-color:transparent;box-shadow:0 8px 30px rgba(108,92,231,0.12)}
-    .toast{position:fixed;right:18px;bottom:18px;background:#041226;padding:10px 14px;border-radius:10px;border:1px solid var(--glass-border);box-shadow:0 10px 30px rgba(4,9,22,0.6);color:var(--text);opacity:0;transform:translateY(10px);transition:all .25s}
-    .toast.show{opacity:1;transform:translateY(0)}
-    .link-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
-    .link-item{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;border:1px solid var(--glass-border);font-size:13px}
-    .link-actions{display:flex;gap:8px;margin-left:auto}
-    @media (max-width:900px){ .modal{width:92%} .grid{grid-template-columns:1fr} }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PanelReseller — Admin</title>
+<style>
+:root{--bg:#0b1220;--card:#0f1724;--muted:#94a3b8;--accent:#22c55e;--danger:#ff6b6b;--glass:rgba(255,255,255,0.03)}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,#071026 0%,#081624 100%);color:#e6eef8}
+.header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.03);gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;background:linear-gradient(135deg,#0ea5a4,#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+.title{font-size:18px;font-weight:700}
+.sub{color:var(--muted);font-size:13px}
+.container{padding:20px;display:grid;grid-template-columns:320px 1fr;gap:18px}
+.card{background:var(--card);padding:16px;border-radius:10px;box-shadow:0 6px 18px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.02)}
+.sidebar .section{margin-bottom:12px}
+.input,select,button,textarea{font-size:14px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit;width:100%;box-sizing:border-box}
+.row{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:0;background:linear-gradient(90deg,#10b981,#22c55e);color:white;cursor:pointer}
+.btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th{ text-align:left;padding:10px 8px;color:var(--muted);font-size:12px;background:transparent;border-bottom:1px solid rgba(255,255,255,0.02)}
+.table td{padding:10px 8px;border-bottom:1px dashed rgba(255,255,255,0.02)}
+.actions button{margin-right:6px}
+.small{font-size:12px;color:var(--muted)}
+.toast{position:fixed;right:20px;bottom:20px;padding:12px 16px;border-radius:8px;background:rgba(0,0,0,0.6);color:white;box-shadow:0 8px 22px rgba(2,6,23,0.6)}
+.linkbtn{background:transparent;border:1px solid rgba(255,255,255,0.05);padding:6px 8px;border-radius:6px;cursor:pointer}
+.copyarea{display:flex;gap:8px;align-items:center}
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:40}
+.modal .card{width:720px;max-width:95%}
+.kv{display:flex;gap:6px;align-items:center}
+.kv b{min-width:110px;color:var(--muted);font-weight:600}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="top">
-      <div class="brand">
-        <div class="logo" aria-hidden><svg viewBox="0 0 24 24"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-6l1.5 2H15l-1.5-2H10.5L12 20h-1.5L9 18H5a2 2 0 0 1-2-2V5z"/></svg></div>
-        <div><h1>PanelReseller</h1><p id="subtitle">Administración — cuentas, listas y vencimientos</p></div>
+<div class="header">
+  <div class="brand">
+    <div class="logo">PR</div>
+    <div>
+      <div class="title" id="panelTitle">PanelReseller</div>
+      <div class="sub" id="panelSub">Administración — cuentas, listas y vencimientos</div>
+    </div>
+  </div>
+  <div id="topActions" class="row">
+    <div id="loggedInfo" class="small"></div>
+    <button id="logoutBtn" class="btn secondary" style="display:none">Cerrar sesión</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="sidebar">
+    <div class="card section">
+      <h3 style="margin:0 0 8px 0">Crear cuenta</h3>
+      <div class="kv"><b>Usuario</b><input id="newUser" class="input" placeholder="usuario"></div>
+      <div class="kv" style="margin-top:8px"><b>Contraseña</b><input id="newPass" class="input" placeholder="password"></div>
+      <div style="margin-top:8px"><label class="small">Plan (días)</label>
+        <select id="newDays" class="input">
+          <option value="30">1 Mes (30 días)</option>
+          <option value="60">2 Meses (60 días)</option>
+          <option value="90">3 Meses (90 días)</option>
+          <option value="7">Demo 1 Semana (7 días)</option>
+          <option value="0">Sin vencimiento</option>
+        </select>
       </div>
-
-      <div class="header-actions">
-        <button id="btnCreate" class="btn">+ Crear cuenta</button>
-        <button id="btnCreateReseller" class="btn ghost" style="display:none">+ Crear Reseller</button>
-        <button id="btnAdmins" class="btn ghost">Administradores</button>
-        <button id="btnSettings" class="btn ghost">Ajustes</button>
-        <button id="btnRefresh" class="btn ghost">Actualizar</button>
-        <button id="btnLogin" class="btn ghost">Iniciar sesión</button>
+      <div style="margin-top:8px">
+        <label class="small">Listas (elige o deja todas)</label>
+        <select id="listsSelect" multiple class="input" style="height:110px;overflow:auto"></select>
       </div>
-    </header>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button id="createBtn" class="btn">Crear cuenta</button>
+        <button id="refreshBtn" class="btn secondary">Refrescar</button>
+      </div>
+      <div id="createResult" style="margin-top:8px"></div>
+    </div>
 
-    <div class="grid">
-      <aside class="card sidebar">
-        <h3>Buscar</h3>
-        <div style="margin-top:8px"><input id="q" type="search" placeholder="Buscar usuario..." /></div>
-        <h3 style="margin-top:12px">Stats</h3>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-          <div class="small">Total: <b id="statTotal">—</b></div>
-          <div class="small">Activas: <b id="statActive">—</b></div>
-          <div class="small">Por vencer: <b id="statSoon">—</b></div>
-          <div class="small">Vencidas: <b id="statExp">—</b></div>
-          <div class="small">Créditos: <b id="statCredits">—</b></div>
-        </div>
-      </aside>
-
-      <main>
-        <div class="card" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-          <div><h3 style="margin:0">Lista de cuentas</h3><div class="small">Gestioná usuarios, vencimientos y planes</div></div>
-          <div style="display:flex;gap:8px"><button id="btnExport" class="btn ghost">CSV</button><button id="btnDownload" class="btn ghost">accounts.json</button></div>
-        </div>
-
-        <div class="card">
-          <table class="accounts" id="tblAccounts"><thead><tr><th>Usuario</th><th>Contraseña</th><th>Listas</th><th>Creada</th><th>Vence</th><th>Plan</th><th style="text-align:right">Acciones</th></tr></thead><tbody></tbody></table>
-        </div>
-      </main>
+    <div class="card section">
+      <h3 style="margin:0 0 8px 0">Estadísticas</h3>
+      <div class="small">Cuentas totales: <span id="statTotal">0</span></div>
+      <div class="small" style="margin-top:6px">Créditos (admin): <span id="statCredits">-</span></div>
     </div>
   </div>
 
-  <div id="modalRoot" style="display:none"></div>
-  <div id="toast" class="toast">...</div>
+  <div class="main card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="margin:0">Cuentas</h3>
+      <div><button id="exportCsv" class="btn secondary">Exportar CSV</button></div>
+    </div>
 
-  <script>
-  (function(){
-    const byId = id => document.getElementById(id);
-    const toast = byId('toast');
+    <table class="table" id="accountsTable">
+      <thead><tr><th>Usuario</th><th>Contraseña</th><th>Listas</th><th>Creada</th><th>Vence</th><th>Acciones</th></tr></thead>
+      <tbody id="accountsBody"></tbody>
+    </table>
+  </div>
+</div>
 
-    function showToast(msg, ms = 2000){
-      toast.textContent = msg;
-      toast.classList.add('show');
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => toast.classList.remove('show'), ms);
+<!-- view modal -->
+<div id="viewModal" style="display:none" class="modal">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 id="viewTitle">Cuenta</h3>
+      <button id="closeView" class="btn secondary">Cerrar</button>
+    </div>
+    <div style="margin-top:10px" id="viewContent"></div>
+  </div>
+</div>
+
+<div id="toast" style="display:none" class="toast"></div>
+
+<script>
+const API = location.origin;
+const getCreds = ()=>({ username: localStorage.getItem("adminUser")||"", password: localStorage.getItem("adminPass")||"" });
+const setCreds = (u,p)=>{ localStorage.setItem("adminUser", u); localStorage.setItem("adminPass", p); updateAuthUI(); };
+function updateAuthUI(){
+  const creds = getCreds();
+  const logged = creds.username ? `${creds.username}` : null;
+  document.getElementById("loggedInfo").textContent = logged ? `${logged} (SuperAdmin)` : "";
+  document.getElementById("logoutBtn").style.display = logged ? "inline-flex" : "none";
+  if(!logged){
+    // show quick login prompt
+    const u = prompt("Usuario admin:");
+    if(!u) return;
+    const p = prompt("Contraseña:");
+    if(!p) return;
+    setCreds(u,p);
+    init(); // try to load
+  }
+}
+
+async function apiGet(path, qs = {}){
+  const creds = getCreds();
+  if(creds.username){
+    const qp = new URLSearchParams(Object.assign({}, qs, { username: creds.username, password: creds.password }));
+    const res = await fetch(`${API}${path}?${qp.toString()}`);
+    if(res.status === 401) { throw new Error("Unauthorized"); }
+    return res.json();
+  }else{
+    const qp = new URLSearchParams(qs);
+    const res = await fetch(`${API}${path}?${qp.toString()}`);
+    return res.json();
+  }
+}
+async function apiPost(path, body = {}){
+  const res = await fetch(`${API}${path}`, {
+    method: "POST",
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify(body)
+  });
+  if(res.status === 401) throw new Error("Unauthorized");
+  return res.json();
+}
+
+function showToast(text, ok=true){
+  const t = document.getElementById("toast");
+  t.style.display = "block";
+  t.style.background = ok ? "linear-gradient(90deg,#2dd4bf,#16a34a)" : "linear-gradient(90deg,#ff7b7b,#ff5252)";
+  t.textContent = text;
+  setTimeout(()=>{ t.style.display="none"; }, 3000);
+}
+
+async function loadLists(){
+  try{
+    const data = await apiGet("/admin/available_lists").catch(()=>({ lists: [] }));
+    const sel = document.getElementById("listsSelect");
+    sel.innerHTML = "";
+    for(const l of (data.lists||[])){
+      const opt = document.createElement("option");
+      opt.value = l; opt.textContent = l;
+      sel.appendChild(opt);
     }
+  }catch(e){ console.error(e); }
+}
 
-    function getAdminCreds(){
+async function loadAccounts(){
+  try{
+    const data = await apiGet("/admin/list_accounts");
+    const tbody = document.getElementById("accountsBody");
+    tbody.innerHTML = "";
+    const accounts = data.accounts || [];
+    document.getElementById("statTotal").textContent = accounts.length;
+    for(const acc of accounts){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${acc.username}</td>
+        <td>${acc.password}</td>
+        <td>${(acc.lists||[]).join(", ")}</td>
+        <td class="small">${acc.createdAt||""}</td>
+        <td class="small">${acc.expiresAt||"---"}</td>
+        <td class="actions small">
+          <button class="linkbtn" data-user="${acc.username}" data-pass="${acc.password}" onclick="viewAccount('${acc.username}','${acc.password}')">Ver</button>
+          <button class="linkbtn" onclick="copyLinks('${acc.username}','${acc.password}')">Copiar links</button>
+          <button class="linkbtn" onclick="renewAccountPrompt('${acc.username}')">Renovar</button>
+          <button class="linkbtn" onclick="deleteAccount('${acc.username}')">Borrar</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }catch(e){ console.error(e); showToast("Error cargando cuentas", false); }
+}
+
+function copyToClipboard(text){
+  navigator.clipboard.writeText(text).then(()=> showToast("Copiado al portapapeles")).catch(()=> showToast("Fallo al copiar", false));
+}
+
+function generateLinks(user, pass){
+  const base = location.origin;
+  const p1 = `${base}/playlist/${encodeURIComponent(user)}/${encodeURIComponent(pass)}.m3u`;
+  const p2 = `${base}/get.php.m3u?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`;
+  const p3 = `${base}/get.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`;
+  return { p1,p2,p3 };
+}
+
+function copyLinks(user, pass){
+  const {p1,p2,p3} = generateLinks(user,pass);
+  copyToClipboard(`${p1}\n${p2}\n${p3}`);
+}
+
+function viewAccount(user, pass){
+  const modal = document.getElementById("viewModal");
+  const content = document.getElementById("viewContent");
+  const {p1,p2,p3} = generateLinks(user,pass);
+  content.innerHTML = `
+    <div class="kv"><b>Usuario</b><div>${user}</div></div>
+    <div class="kv" style="margin-top:8px"><b>Contraseña</b><div>${pass}</div></div>
+    <div style="margin-top:10px">
+      <div class="small">Enlaces disponibles:</div>
+      <div style="margin-top:6px" class="copyarea">
+        <input class="input" readonly value="${p1}"><button class="linkbtn" onclick="copySingle('${p1}')">Copiar</button>
+      </div>
+      <div style="margin-top:6px" class="copyarea">
+        <input class="input" readonly value="${p2}"><button class="linkbtn" onclick="copySingle('${p2}')">Copiar</button>
+      </div>
+      <div style="margin-top:6px" class="copyarea">
+        <input class="input" readonly value="${p3}"><button class="linkbtn" onclick="copySingle('${p3}')">Copiar</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = "flex";
+}
+
+function copySingle(text){ copyToClipboard(text); }
+
+document.getElementById("closeView").addEventListener("click", ()=>{
+  document.getElementById("viewModal").style.display = "none";
+});
+
+async function createAccount(){
+  const user = document.getElementById("newUser").value.trim();
+  const pass = document.getElementById("newPass").value.trim();
+  const days = Number(document.getElementById("newDays").value || 0);
+  const lists = Array.from(document.getElementById("listsSelect").selectedOptions).map(o=>o.value);
+  if(!user || !pass){ showToast("Usuario/contraseña requeridos", false); return; }
+  try{
+    const body = { username: user, password: pass, days: days>0?days:0, lists };
+    const r = await apiPost("/admin/add_account", body);
+    if(r && r.ok){
+      showToast("Cuenta creada correctamente");
+      document.getElementById("newUser").value = "";
+      document.getElementById("newPass").value = "";
+      await loadAccounts();
+    }else{
+      showToast("Error: " + (r && r.error? r.error : "desconocido"), false);
+    }
+  }catch(e){ console.error(e); showToast("Error creando cuenta", false); }
+}
+
+async function deleteAccount(user){
+  if(!confirm("Borrar cuenta " + user + " ?")) return;
+  try{
+    const r = await apiPost("/admin/delete_account", { username: user });
+    if(r && r.ok){ showToast("Cuenta borrada"); await loadAccounts(); } else showToast("Error borrando", false);
+  }catch(e){ console.error(e); showToast("Error borrando", false); }
+}
+
+async function renewAccountPrompt(user){
+  const days = prompt("¿Cuántos días añadir? (ej: 30)");
+  if(!days) return;
+  const n = Number(days);
+  if(Number.isNaN(n) || n<=0){ showToast("Días inválidos", false); return; }
+  try{
+    const r = await apiPost("/admin/set_account_expiry", { username: user, days: n });
+    if(r && r.ok){ showToast("Cuenta renovada"); await loadAccounts(); } else showToast("Error renovando", false);
+  }catch(e){ console.error(e); showToast("Error renovando", false); }
+}
+
+document.getElementById("createBtn").addEventListener("click", createAccount);
+document.getElementById("refreshBtn").addEventListener("click", ()=>{ loadLists(); loadAccounts(); });
+
+document.getElementById("logoutBtn").addEventListener("click", ()=>{ localStorage.removeItem("adminUser"); localStorage.removeItem("adminPass"); location.reload(); });
+
+document.getElementById("exportCsv").addEventListener("click", async ()=>{
+  try{
+    const data = await apiGet("/admin/list_accounts");
+    const rows = [["username","password","lists","createdAt","expiresAt"]];
+    for(const a of (data.accounts||[])) rows.push([a.username,a.password,(a.lists||[]).join("|"),a.createdAt||"",(a.expiresAt||"")]);
+    const csv = rows.map(r=>r.map(c=>`"${(c||"").toString().replace(/"/g,'""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "accounts.csv"; a.click(); URL.revokeObjectURL(url);
+  }catch(e){ showToast("Error exportando", false); }
+});
+
+async function init(){
+  try{
+    updateAuthUI();
+    await loadLists();
+    await loadAccounts();
+    // try to fetch /admin/me to display credits (optional)
+    const creds = getCreds();
+    if(creds.username){
       try{
-        const s = localStorage.getItem('admin_creds');
-        if(!s) return null;
-        return JSON.parse(s);
-      }catch(e){
-        return null;
-      }
-    }
-    function setAdminCreds(u,p){
-      localStorage.setItem('admin_creds', JSON.stringify({ username: u, password: p }));
-    }
-    function clearAdminCreds(){
-      localStorage.removeItem('admin_creds');
-      showToast('Sesión cerrada');
-    }
-
-    async function fetchJsonAuto(url, opts){
-      opts = opts || {};
-      const admin = getAdminCreds();
-      if((url.startsWith('/admin') || url === '/admin/me') && admin){
-        const sep = url.includes('?') ? '&' : '?';
-        url = url + sep + 'username=' + encodeURIComponent(admin.username) + '&password=' + encodeURIComponent(admin.password);
-      }
-      const res = await fetch(url, { credentials: 'same-origin', ...opts });
-      const ct = res.headers.get('content-type') || '';
-      if(ct.includes('application/json')) return { ok: res.ok, json: await res.json(), status: res.status };
-      return { ok: res.ok, text: await res.text(), status: res.status };
-    }
-
-    function openLoginModal(prefilledUser = ''){
-      const modal = document.createElement('div');
-      modal.className = 'modal';
-      modal.innerHTML = '<h3>Iniciar sesión</h3>' +
-        '<div style="margin-top:10px" class="form-grid">' +
-        '<div><label class="small">Usuario admin</label><input id="login_user" value="' + (prefilledUser||'') + '" /></div>' +
-        '<div><label class="small">Contraseña</label><input id="login_pass" type="password" /></div>' +
-        '</div>' +
-        '<div class="footer"><button class="btn ghost" id="l_cancel">Cancelar</button><button class="btn" id="l_ok">Entrar</button></div>';
-
-      const root = byId('modalRoot');
-      root.innerHTML = '';
-      const back = document.createElement('div');
-      back.className = 'modal-backdrop';
-      back.appendChild(modal);
-      root.appendChild(back);
-      root.style.display = 'block';
-
-      modal.querySelector('#l_cancel').onclick = () => { root.style.display = 'none'; root.innerHTML = ''; };
-      modal.querySelector('#l_ok').onclick = async () => {
-        const u = modal.querySelector('#login_user').value.trim();
-        const p = modal.querySelector('#login_pass').value.trim();
-        if(!u || !p){ alert('Usuario/contraseña requeridos'); return; }
-        try{
-          const resp = await fetch('/admin/me?username=' + encodeURIComponent(u) + '&password=' + encodeURIComponent(p), { credentials: 'same-origin' });
-          if(resp.status === 200){
-            setAdminCreds(u,p);
-            showToast('Login ok');
-            root.style.display = 'none';
-            root.innerHTML = '';
-            await initAfterAuth();
-          } else {
-            alert('Credenciales inválidas');
-          }
-        }catch(e){
-          alert('Error contactando servidor: ' + e.message);
+        const res = await fetch(`${API}/admin/me?username=${encodeURIComponent(creds.username)}&password=${encodeURIComponent(creds.password)}`);
+        if(res.ok){
+          const j = await res.json();
+          document.getElementById("statCredits").textContent = j.me ? j.me.credits : "-";
+          document.getElementById("panelSub").textContent = `${j.me ? j.me.username : ''} — ${(j.me && j.me.isMaster) ? 'SuperAdmin' : 'Reseller'}`;
         }
-      };
+      }catch(e){}
     }
+  }catch(e){ console.error(e); }
+}
 
-    byId('btnLogin').onclick = () => {
-      const adm = getAdminCreds();
-      openLoginModal(adm ? adm.username : '');
-    };
-
-    function showLoggedInHeader(username, isMaster){
-      const btnLogin = byId('btnLogin');
-      btnLogin.textContent = 'Salir (' + username + ')';
-      btnLogin.onclick = () => { if(confirm('Cerrar sesión?')){ clearAdminCreds(); location.reload(); } };
-      if(isMaster) byId('btnCreateReseller').style.display = 'inline-flex';
-    }
-
-    // State
-    let ACCOUNTS = [], LISTS = [], ME = null;
-    const tbody = document.querySelector('#tblAccounts tbody');
-
-    function fmtDate(s){ return s ? new Date(s).toLocaleDateString() : '-'; }
-    function fmtTime(s){ return s ? new Date(s).toLocaleTimeString() : ''; }
-    function daysLeft(s){ return !s ? null : Math.ceil((new Date(s) - Date.now()) / (24*60*60*1000)); }
-
-    async function loadMe(){
-      const r = await fetchJsonAuto('/admin/me');
-      if(!r.ok){
-        if(r.status === 401){
-          openLoginModal();
-          return null;
-        }
-        console.warn('admin/me error', r);
-        return null;
-      }
-      ME = r.json.me;
-      byId('subtitle').textContent = ME.username + ' — ' + (ME.isMaster ? 'SuperAdmin' : 'Reseller');
-      byId('statCredits').textContent = ME.credits ?? '—';
-      showLoggedInHeader(ME.username, ME.isMaster);
-      return ME;
-    }
-
-    async function loadLists(){
-      const r = await fetchJsonAuto('/admin/available_lists');
-      LISTS = (r.ok && r.json && Array.isArray(r.json.lists)) ? r.json.lists : [];
-    }
-
-    async function loadAccounts(){
-      const r = await fetchJsonAuto('/admin/list_accounts');
-      if(!r.ok){ showToast('No autorizado o error cargando cuentas'); return; }
-      ACCOUNTS = r.json.accounts || [];
-      renderAccounts();
-    }
-
-    function renderAccounts(){
-      tbody.innerHTML = '';
-      ACCOUNTS.forEach(acc => {
-        const listsHtml = (acc.lists||[]).map(l => '<span class="chip">' + l + '</span>').join(' ');
-        const tr = document.createElement('tr');
-        tr.innerHTML = '<td class="username">' + acc.username + '</td>' +
-                       '<td>••••••</td>' +
-                       '<td>' + listsHtml + '</td>' +
-                       '<td class="small">' + fmtDate(acc.createdAt) + ' ' + fmtTime(acc.createdAt) + '</td>' +
-                       '<td class="small">' + fmtDate(acc.expiresAt) + ' ' + fmtTime(acc.expiresAt) + '</td>' +
-                       '<td class="small">' + (acc.planLabel||'-') + '</td>' +
-                       '<td style="text-align:right"><button class="btn ghost" data-act="view">Ver</button> <button class="btn" data-act="copy">Copiar links</button> <button class="btn ghost" data-act="renew">Renovar</button> <button class="btn warn" data-act="del">Borrar</button></td>';
-        tr.querySelector('[data-act="view"]').onclick = () => openViewModal(acc);
-        tr.querySelector('[data-act="copy"]').onclick = async () => {
-          const origin = location.origin;
-          const p1 = origin + '/playlist/' + encodeURIComponent(acc.username) + '/' + encodeURIComponent(acc.password) + '.m3u';
-          const p2 = origin + '/get.php.m3u?username=' + encodeURIComponent(acc.username) + '&password=' + encodeURIComponent(acc.password);
-          const p3 = origin + '/get.php?username=' + encodeURIComponent(acc.username) + '&password=' + encodeURIComponent(acc.password);
-          const combined = 'M3U (direct): ' + p1 + '\nM3U (get.php.m3u): ' + p2 + '\nLegacy URL (get.php): ' + p3;
-          try{
-            await navigator.clipboard.writeText(combined);
-            showToast('Copiados los 3 enlaces (.m3u + get.php)');
-          }catch(e){
-            alert(combined);
-          }
-        };
-        tr.querySelector('[data-act="renew"]').onclick = () => openRenewModal(acc);
-        tr.querySelector('[data-act="del"]').onclick = async () => {
-          if(!confirm('Borrar ' + acc.username + '?')) return;
-          const res = await fetchJsonAuto('/admin/delete_account', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: acc.username }) });
-          if(res.ok && res.json && res.json.ok){ showToast('Cuenta borrada'); await loadAccounts(); } else { alert('Error borrando'); }
-        };
-        tbody.appendChild(tr);
-      });
-
-      // stats
-      const total = ACCOUNTS.length;
-      let act=0, soon=0, exp=0;
-      ACCOUNTS.forEach(a => {
-        const dl = daysLeft(a.expiresAt);
-        if(dl === null) act++;
-        else if(dl <= 0) exp++;
-        else if(dl <= 7) soon++;
-        else act++;
-      });
-      byId('statTotal').textContent = total;
-      byId('statActive').textContent = act;
-      byId('statSoon').textContent = soon;
-      byId('statExp').textContent = exp;
-    }
-
-    function openViewModal(acc){
-      const origin = location.origin;
-      const p1 = origin + '/playlist/' + encodeURIComponent(acc.username) + '/' + encodeURIComponent(acc.password) + '.m3u';
-      const p2 = origin + '/get.php.m3u?username=' + encodeURIComponent(acc.username) + '&password=' + encodeURIComponent(acc.password);
-      const p3 = origin + '/get.php?username=' + encodeURIComponent(acc.username) + '&password=' + encodeURIComponent(acc.password);
-      const modal = document.createElement('div');
-      modal.className = 'modal';
-      modal.innerHTML = '<h3>Cuenta — ' + acc.username + '</h3>' +
-        '<div style="margin-top:8px">' +
-        '<div class="small"><b>Usuario:</b> ' + acc.username + '</div>' +
-        '<div class="small"><b>Contraseña:</b> ' + acc.password + '</div>' +
-        '<div class="small"><b>Listas:</b> ' + (acc.lists||[]).join(', ') + '</div>' +
-        '<div class="small"><b>Creada:</b> ' + new Date(acc.createdAt).toLocaleString() + '</div>' +
-        '<div class="small"><b>Vence:</b> ' + (acc.expiresAt ? new Date(acc.expiresAt).toLocaleString() : 'Nunca') + '</div>' +
-        '<div style="margin-top:10px"><div class="small">Enlaces disponibles</div>' +
-        '<div class="link-list">' +
-        '<div class="link-item"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1">' + p1 + '</div><div class="link-actions"><button class="btn" id="copy_p1">Copiar</button></div></div></div>' +
-        '<div class="link-item"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1">' + p2 + '</div><div class="link-actions"><button class="btn" id="copy_p2">Copiar</button></div></div></div>' +
-        '<div class="link-item"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1">' + p3 + '</div><div class="link-actions"><button class="btn ghost" id="copy_p3">Copiar</button></div></div></div>' +
-        '</div></div>' +
-        '<div class="footer"><button class="btn ghost" id="v_close">Cerrar</button></div>' +
-        '</div>';
-
-      const root = byId('modalRoot');
-      root.innerHTML = '';
-      const back = document.createElement('div');
-      back.className = 'modal-backdrop';
-      back.appendChild(modal);
-      root.appendChild(back);
-      root.style.display = 'block';
-
-      modal.querySelector('#v_close').onclick = () => { root.style.display = 'none'; root.innerHTML = ''; };
-      modal.querySelector('#copy_p1').onclick = async () => { try{ await navigator.clipboard.writeText(p1); showToast('.m3u (playlist) copiado'); }catch(e){ alert(p1); } };
-      modal.querySelector('#copy_p2').onclick = async () => { try{ await navigator.clipboard.writeText(p2); showToast('.m3u (get.php.m3u) copiado'); }catch(e){ alert(p2); } };
-      modal.querySelector('#copy_p3').onclick = async () => { try{ await navigator.clipboard.writeText(p3); showToast('Legacy get.php copiado'); }catch(e){ alert(p3); } };
-    }
-
-    function openCreateModal(){
-      if(!getAdminCreds()){ openLoginModal(); return; }
-      const modal = document.createElement('div');
-      modal.className = 'modal';
-      modal.innerHTML = '<h3>Crear cuenta</h3>' +
-        '<div style="margin-top:10px" class="form-grid">' +
-        '<div><label class="small">Usuario</label><input id="c_user" /></div>' +
-        '<div><label class="small">Contraseña</label><input id="c_pass" /></div>' +
-        '<div style="grid-column:1/3"><label class="small">Meses</label><input id="c_months" type="number" min="1" value="1" /></div>' +
-        '<div style="grid-column:1/3"><label class="small">Plan label (opcional)</label><input id="c_label" /></div>' +
-        '</div>' +
-        '<div class="footer"><button class="btn ghost" id="c_cancel">Cancelar</button><button class="btn" id="c_create">Crear</button></div>';
-
-      const root = byId('modalRoot');
-      root.innerHTML = '';
-      const back = document.createElement('div');
-      back.className = 'modal-backdrop';
-      back.appendChild(modal);
-      root.appendChild(back);
-      root.style.display = 'block';
-
-      modal.querySelector('#c_cancel').onclick = () => { root.style.display = 'none'; root.innerHTML = ''; };
-      modal.querySelector('#c_create').onclick = async () => {
-        const u = modal.querySelector('#c_user').value.trim();
-        const p = modal.querySelector('#c_pass').value.trim();
-        const months = Math.max(1, Number(modal.querySelector('#c_months').value) || 1);
-        const label = modal.querySelector('#c_label').value.trim() || (months + ' MES');
-        if(!u || !p){ alert('Usuario/clave requeridos'); return; }
-        const cost = months;
-        if(!ME){ alert('No autorizado'); return; }
-        if(!ME.isMaster && cost > 0 && Number(ME.credits || 0) < cost){ alert('No tenés créditos suficientes'); return; }
-        const payload = { username: u, password: p, days: months * 30, lists: LISTS.slice(), planLabel: label };
-        const res = await fetchJsonAuto('/admin/add_account', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-        if(!(res.ok && res.json && res.json.ok)){ alert('Error creando: ' + (res.json?.error || res.text || 'unknown')); return; }
-        if(!ME.isMaster && cost > 0){
-          const newCredits = Number(ME.credits || 0) - cost;
-          const r2 = await fetchJsonAuto('/admin/set_admin_credits', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: ME.username, credits: newCredits }) });
-          if(r2.ok && r2.json && r2.json.ok){ ME.credits = newCredits; byId('statCredits').textContent = ME.credits; }
-        }
-        showToast('Cuenta creada');
-        root.style.display = 'none';
-        root.innerHTML = '';
-        await loadAccounts();
-      };
-    }
-
-    function openRenewModal(acc){
-      if(!getAdminCreds()){ openLoginModal(); return; }
-      const modal = document.createElement('div');
-      modal.className = 'modal';
-      modal.innerHTML = '<h3>Renovar — ' + acc.username + '</h3>' +
-        '<div style="margin-top:10px"><div class="small">Añadir meses</div>' +
-        '<div style="display:flex;gap:8px;margin-top:8px"><input id="r_months" type="number" min="1" value="1" /><button class="btn" id="r_apply">Aplicar</button></div>' +
-        '<div class="footer"><button class="btn ghost" id="r_cancel">Cancelar</button><button class="btn" id="r_confirm">Confirmar</button></div></div>';
-
-      const root = byId('modalRoot');
-      root.innerHTML = '';
-      const back = document.createElement('div');
-      back.className = 'modal-backdrop';
-      back.appendChild(modal);
-      root.appendChild(back);
-      root.style.display = 'block';
-
-      modal.querySelector('#r_cancel').onclick = () => { root.style.display = 'none'; root.innerHTML = ''; };
-      modal.querySelector('#r_confirm').onclick = async () => {
-        const months = Math.max(1, Number(modal.querySelector('#r_months').value) || 1);
-        const cost = months;
-        if(!ME){ alert('No autorizado'); return; }
-        if(!ME.isMaster && cost > 0 && Number(ME.credits || 0) < cost){ alert('No tenés créditos suficientes'); return; }
-        const days = months * 30;
-        const res = await fetchJsonAuto('/admin/set_account_expiry', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: acc.username, days }) });
-        if(!(res.ok && res.json && res.json.ok)){ alert('Error renovando'); return; }
-        if(!ME.isMaster && cost > 0){
-          const newCredits = Number(ME.credits || 0) - cost;
-          const r2 = await fetchJsonAuto('/admin/set_admin_credits', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: ME.username, credits: newCredits }) });
-          if(r2.ok && r2.json && r2.json.ok){ ME.credits = newCredits; byId('statCredits').textContent = ME.credits; }
-        }
-        showToast('Cuenta renovada');
-        root.style.display = 'none';
-        root.innerHTML = '';
-        await loadAccounts();
-      };
-    }
-
-    function openCreateResellerModal(){
-      if(!getAdminCreds()){ openLoginModal(); return; }
-      const modal = document.createElement('div');
-      modal.className = 'modal';
-      modal.innerHTML = '<h3>Crear Reseller</h3>' +
-        '<div style="margin-top:10px" class="form-grid">' +
-        '<div><label class="small">Usuario</label><input id="r_user" /></div>' +
-        '<div><label class="small">Contraseña</label><input id="r_pass" /></div>' +
-        '<div><label class="small">Créditos iniciales</label><input id="r_credits" type="number" value="10" /></div>' +
-        '<div><label class="small">Es Master?</label><select id="r_master"><option value="false">No</option><option value="true">Sí</option></select></div>' +
-        '</div>' +
-        '<div class="footer"><button class="btn ghost" id="r_cancel">Cancelar</button><button class="btn" id="r_create">Crear</button></div>';
-
-      const root = byId('modalRoot');
-      root.innerHTML = '';
-      const back = document.createElement('div');
-      back.className = 'modal-backdrop';
-      back.appendChild(modal);
-      root.appendChild(back);
-      root.style.display = 'block';
-
-      modal.querySelector('#r_cancel').onclick = () => { root.style.display = 'none'; root.innerHTML = ''; };
-      modal.querySelector('#r_create').onclick = async () => {
-        const u = modal.querySelector('#r_user').value.trim();
-        const p = modal.querySelector('#r_pass').value.trim();
-        const credits = Number(modal.querySelector('#r_credits').value) || 0;
-        const isMaster = modal.querySelector('#r_master').value === 'true';
-        if(!u || !p){ alert('Usuario y pass requeridos'); return; }
-        const res = await fetchJsonAuto('/admin/add_admin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: u, password: p, credits, isMaster }) });
-        if(res.ok && res.json && res.json.ok){ showToast('Reseller creado'); root.style.display = 'none'; root.innerHTML = ''; await loadAccounts(); } else { alert('Error creando reseller'); }
-      };
-    }
-
-    async function openAdminsModal(){
-      if(!getAdminCreds()){ openLoginModal(); return; }
-      const r = await fetchJsonAuto('/admin/list_admins');
-      if(!r.ok){ alert('No autorizado'); return; }
-      const list = r.json.admins || [];
-      const modal = document.createElement('div');
-      modal.className = 'modal';
-      modal.innerHTML = '<h3>Administradores</h3><div style="margin-top:10px;max-height:360px;overflow:auto"><div id="admList"></div></div><div class="footer"><button class="btn ghost" id="adm_close">Cerrar</button><button class="btn" id="adm_new">Crear admin</button></div>';
-      const root = byId('modalRoot');
-      root.innerHTML = '';
-      const back = document.createElement('div');
-      back.className = 'modal-backdrop';
-      back.appendChild(modal);
-      root.appendChild(back);
-      root.style.display = 'block';
-      const admList = modal.querySelector('#admList');
-      list.forEach(a => {
-        const row = document.createElement('div');
-        row.style.display = 'flex';
-        row.style.justifyContent = 'space-between';
-        row.style.padding = '8px 0';
-        row.innerHTML = '<div><b>' + a.username + '</b><div class="small">' + (a.createdAt || '') + '</div></div><div style="display:flex;gap:8px;align-items:center"><div class="chip">Créditos ' + (a.credits || 0) + '</div></div>';
-        admList.appendChild(row);
-      });
-      modal.querySelector('#adm_close').onclick = () => { byId('modalRoot').innerHTML = ''; byId('modalRoot').style.display = 'none'; };
-      modal.querySelector('#adm_new').onclick = () => { byId('modalRoot').innerHTML = ''; byId('modalRoot').style.display = 'none'; openCreateResellerModal(); };
-    }
-
-    // header actions wiring
-    byId('btnCreate').onclick = openCreateModal;
-    byId('btnCreateReseller').onclick = openCreateResellerModal;
-    byId('btnAdmins').onclick = openAdminsModal;
-    byId('btnRefresh').onclick = async () => { await loadLists(); await loadAccounts(); showToast('Actualizado'); };
-    byId('btnExport').onclick = async () => {
-      const rows = [['username','password','createdAt','expiresAt','lists','planLabel']];
-      ACCOUNTS.forEach(a => rows.push([a.username,a.password,a.createdAt,a.expiresAt,(a.lists||[]).join(';'), a.planLabel||'']));
-      const csv = rows.map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n');
-      const blob = new Blob([csv], { type:'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'accounts.csv'; a.click(); URL.revokeObjectURL(url);
-      showToast('CSV generado');
-    };
-    byId('btnDownload').onclick = async () => {
-      const r = await fetchJsonAuto('/admin/list_accounts');
-      if(!r.ok){ alert('Error'); return; }
-      const blob = new Blob([JSON.stringify(r.json.accounts,null,2)], { type:'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'accounts.json'; a.click(); URL.revokeObjectURL(url);
-      showToast('Descarga lista');
-    };
-    byId('btnSettings').onclick = () => alert('Abrir ajustes (backend)');
-
-    async function initAfterAuth(){
-      await loadMe();
-      await loadLists();
-      await loadAccounts();
-    }
-
-    // initial boot
-    (async function(){
-      await loadMe();
-      await loadLists();
-      await loadAccounts();
-    })();
-
-    // expose debug
-    window.__pr = { getAdminCreds, setAdminCreds, clearAdminCreds, loadAccounts, loadLists };
-  })();
-  </script>
+window.addEventListener("load", ()=>{
+  // start UI
+  updateAuthUI();
+  init();
+});
+</script>
 </body>
 </html>
