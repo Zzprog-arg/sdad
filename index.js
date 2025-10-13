@@ -4,7 +4,7 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import fsSync from "fs";
-
+const app = express();
 // ... otras importaciones
 
 // justo después de crear `app = express();`
@@ -14,7 +14,8 @@ app.use(express.static(path.join(__dirname, "public")));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = ();
+
+
 app.use(.json());
 app.use(express.urlencoded({ extended: true }));
 
