@@ -5,6 +5,14 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fsSync from "fs";
 
+import express from "express";
+import path from "path";
+// ... otras importaciones
+
+// justo después de crear `app = express();`
+app.use(express.static(path.join(__dirname, "public")));
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
