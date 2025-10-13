@@ -1,4 +1,4 @@
-#EXTM3U
+#EXTM3U x-tvg-url="https://www.open-epg.com/files/argentina1.xml"
 #EXTINF:-1 tvg-id="AMRICA.TV.HD.ar" tvg-logo="https://i.ibb.co/gLk2psqY/250px-Am-rica-TV-Nuevo-logo-Junio-2020.webp" group-title="ARGENTINA",AMÉRICA TV HD
 http://200.55.244.75:8000/play/a055/index.m3u8
 #EXTINF:-1 tvg-id="C5N.ar" tvg-logo="https://i.ibb.co/rfTL5TKT/250px-C5-N-2017-Alternate-svg.webp" group-title="ARGENTINA",C5N -
