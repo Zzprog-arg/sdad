@@ -1,4 +1,4 @@
-#EXTM3U x-tvg-url="https://sdad-3.onrender.com/argentina1.xml"
+#EXTM3U x-tvg-url="https://www.open-epg.com/files/argentina1.xml"
 #EXTINF:-1 tvg-id="AMERICA TV.ar" tvg-logo="https://i.ibb.co/gLk2psqY/250px-Am-rica-TV-Nuevo-logo-Junio-2020.webp" group-title="ARGENTINA",AMÉRICA TV HD
 http://200.55.244.75:8000/play/a055/index.m3u8
 #EXTINF:-1 tvg-id="C5N.ar" tvg-logo="https://i.ibb.co/rfTL5TKT/250px-C5-N-2017-Alternate-svg.webp" group-title="ARGENTINA",C5N -
@@ -7,13 +7,13 @@ http://195.66.210.10:80/Bluefox102/XYXNA/242080
 http://195.66.210.10:80/Bluefox102/XYXNA/54199
 #EXTINF:-1 tvg-id="CANAL.5.TV.CORRIENTES.ar" tvg-logo="https://i.ibb.co/v4KTM0vN/download.jpg" group-title="INTERIOR DE ARGENTINA",CANAL 5 TV CORRIENTES -
 http://195.66.210.10:80/Bluefox102/XYXNA/54215
-#EXTINF:-1 tvg-id="CANAL.9.SALTA.ar" tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="INTERIOR DE ARGENTINA",CANAL 9 SALTA -
+#EXTINF:-1 tvg-id="CANAL 9 TELEVIDA.ar" tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="INTERIOR DE ARGENTINA",CANAL 9 SALTA -
 http://195.66.210.10:80/Bluefox102/XYXNA/47017
 #EXTINF:-1 tvg-id="CRONICA TV.ar" tvg-logo="https://i.ibb.co/qYnR5FRD/image.webp" group-title="ARGENTINA",CRÓNICA TV -
 http://195.66.210.10:80/Bluefox102/XYXNA/19708
 #EXTINF:-1 tvg-id="DEPORTV.HD.ar" tvg-logo="https://i.ibb.co/4gtScLSs/250px-Deportv-svg.webp" group-title="ARGENTINA",DEPORTV HD
 http://195.66.210.10:80/Bluefox102/XYXNA/19709
-#EXTINF:-1 tvg-id="EL.NUEVE.HD.ar" tvg-logo="https://i.ibb.co/c77mhxW/Canal-9-2015.webp" group-title="ARGENTINA",EL NUEVE HD -
+#EXTINF:-1 tvg-id="EL NUEVE.ar" tvg-logo="https://i.ibb.co/c77mhxW/Canal-9-2015.webp" group-title="ARGENTINA",EL NUEVE HD -
 http://195.66.210.10:80/Bluefox102/XYXNA/46977
 #EXTINF:-1 tvg-id="GARAGE.TV.FHD.ar" tvg-logo="https://i.ibb.co/ymq83CBs/download.jpg" group-title="ARGENTINA",GARAGE TV FHD
 https://stream1.sersat.com/hls/garagetv.m3u8
@@ -25,7 +25,7 @@ https://unlimited1-cl-isp.dps.live/nettv/nettv.smil/playlist.m3u8
 https://telefe.com/Api/Videos/GetSourceUrl/694564/0/HLS?.m3u8
 #EXTINF:-1 tvg-id="TELEMAX.ar" tvg-logo="https://i.ibb.co/W4XcdM1t/250px-Telemax-Argentina-2018.webp" group-title="ARGENTINA",TELEMAX
 https://stream-gtlc.telecentro.net.ar/hls/telemaxhls/0/playlist.m3u8
-#EXTINF:-1 tvg-id="TV.PBLICA.HD.ar" tvg-logo="https://i.ibb.co/KpszndV7/512px-TVP-Televisi-n-P-blica-2021-svg.webp" group-title="ARGENTINA",TV PÚBLICA HD -
+#EXTINF:-1 tvg-id="TV PUBLICA.ar" tvg-logo="https://i.ibb.co/KpszndV7/512px-TVP-Televisi-n-P-blica-2021-svg.webp" group-title="ARGENTINA",TV PÚBLICA HD -
 http://195.66.210.10:80/Bluefox102/XYXNA/46972
 #EXTINF:-1 tvg-id="VOLVER.ar" tvg-logo="https://i.ibb.co/tTxRFTzG/512px-Logo-volver-2016.jpg" group-title="ARGENTINA",VOLVER -
 http://195.66.210.10:80/Bluefox102/XYXNA/19983
@@ -33,9 +33,9 @@ http://195.66.210.10:80/Bluefox102/XYXNA/19983
 http://195.66.210.10:80/Bluefox102/XYXNA/610876
 #EXTINF:-1 tvg-id="TN.ar" tvg-logo="https://i.ibb.co/6xSzL5t/250px-TN-todo-noticias-logo-svg.webp" group-title="ARGENTINA",TN -
 http://195.66.210.10:80/Bluefox102/XYXNA/613255
-#EXTINF:-1 tvg-id="TYC.SPORTS.FHD.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TYC SPORTS  FHD
+#EXTINF:-1 tvg-id="TYC SPORTS.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TYC SPORTS  FHD
 http://200.60.124.19:29000/play/a017/index.m3u8
-#EXTINF:-1 tvg-id="TyC.Sport.SD.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TyC Sport SD
+#EXTINF:-1 tvg-id="TYC SPORTS.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TyC Sport SD
 http://200.60.124.19:29000/play/a017/index.m3u8
 #EXTINF:-1 tvg-id="TYC.SPORTS.INT.HD.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TYC SPORTS INT HD
 http://195.66.210.10:80/Bluefox102/XYXNA/188939
@@ -59,13 +59,13 @@ http://195.66.210.10:80/Bluefox102/XYXNA/276163
 http://195.66.210.10:80/Bluefox102/XYXNA/215252
 #EXTINF:-1 tvg-id="SKY.SPORTS.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",SKY SPORTS --
 http://195.66.210.10:80/Bluefox102/XYXNA/54533
-#EXTINF:-1 tvg-id="FOX.SPORTS.1.ARG.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 1 ARG
+#EXTINF:-1 tvg-id="FOX SPORTS ARGENTINA.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 1 ARG
 http://195.66.210.10:80/Bluefox102/XYXNA/158518
 #EXTINF:-1 tvg-id="FOX SPORTS 2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 2 ARG HD
 http://195.66.210.10:80/Bluefox102/XYXNA/19652
-#EXTINF:-1 tvg-id="FOX.SPORTS.3.FHD.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 3 FHD
+#EXTINF:-1 tvg-id="FOX SPORTS 3.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 3 FHD
 http://195.66.210.10:80/Bluefox102/XYXNA/36389
-#EXTINF:-1 tvg-id="FOX.SPORTS.3.HD.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 3 HD
+#EXTINF:-1 tvg-id="FOX SPORTS 3.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 3 HD
 http://195.66.210.10:80/Bluefox102/XYXNA/19496
 #EXTINF:-1 tvg-id="FOX.SPORTS.PREMIUM.HD.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS PREMIUM HD
 http://195.66.210.10:80/Bluefox102/XYXNA/158454
