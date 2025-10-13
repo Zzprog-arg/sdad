@@ -5,7 +5,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fsSync from "fs";
 
-import path from "path";
 // ... otras importaciones
 
 // justo después de crear `app = express();`
