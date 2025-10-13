@@ -66,6 +66,7 @@ body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helveti
       <div style="margin-top:8px">
         <label class="small">Listas (elige o deja todas)</label>
         <select id="listsSelect" multiple class="input" style="height:110px;overflow:auto"></select>
+        <div class="small" style="margin-top:6px">Seleccioná las listas que quieras asignar a la cuenta. Si no hay selección, se asignan todas.</div>
       </div>
       <div style="margin-top:10px;display:flex;gap:8px">
         <button id="createBtn" class="btn">Crear cuenta</button>
@@ -114,7 +115,7 @@ const setCreds = (u,p)=>{ localStorage.setItem("adminUser", u); localStorage.set
 function updateAuthUI(){
   const creds = getCreds();
   const logged = creds.username ? `${creds.username}` : null;
-  document.getElementById("loggedInfo").textContent = logged ? `${logged} (SuperAdmin)` : "";
+  document.getElementById("loggedInfo").textContent = logged ? `${creds.username} (${creds.password ? 'Authed' : ''})` : "";
   document.getElementById("logoutBtn").style.display = logged ? "inline-flex" : "none";
   if(!logged){
     // show quick login prompt
@@ -129,19 +130,17 @@ function updateAuthUI(){
 
 async function apiGet(path, qs = {}){
   const creds = getCreds();
-  if(creds.username){
-    const qp = new URLSearchParams(Object.assign({}, qs, { username: creds.username, password: creds.password }));
-    const res = await fetch(`${API}${path}?${qp.toString()}`);
-    if(res.status === 401) { throw new Error("Unauthorized"); }
-    return res.json();
-  }else{
-    const qp = new URLSearchParams(qs);
-    const res = await fetch(`${API}${path}?${qp.toString()}`);
-    return res.json();
-  }
+  const qp = new URLSearchParams(Object.assign({}, qs, creds.username ? { username: creds.username, password: creds.password } : {}));
+  const res = await fetch(`${API}${path}?${qp.toString()}`);
+  if(res.status === 401) { throw new Error("Unauthorized"); }
+  return res.json();
 }
+// POST will attach admin creds as query params (so server can authenticate)
 async function apiPost(path, body = {}){
-  const res = await fetch(`${API}${path}`, {
+  const creds = getCreds();
+  const qp = new URLSearchParams(creds.username ? { username: creds.username, password: creds.password } : {});
+  const url = `${API}${path}?${qp.toString()}`;
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type":"application/json" },
     body: JSON.stringify(body)
