@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 
 
 
-app.use(.json());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CONFIG
