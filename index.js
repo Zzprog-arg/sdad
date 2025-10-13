@@ -1,5 +1,4 @@
-// index.js - Xtream-lite full server (updated get.php behavior)
-// ES module (use "type": "module" in package.json)
+// index.js - Xtream-lite full server (updated: require admin auth for account operations, lists per-reseller)
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
@@ -22,7 +21,7 @@ const CONFIG = {
   adminsFile: path.join(__dirname, "admins.json"),
   settingsFile: path.join(__dirname, "settings.json"),
   m3uFolder: __dirname,
-  adminCandidates: [ path.join(__dirname, "admin.html"), path.join(__dirname, "admin_v13.html"), path.join(__dirname, "admin_v12.html"), path.join(__dirname, "admin_v11.html") ]
+  adminCandidates: [ path.join(__dirname, "admin.html"), path.join(__dirname, "admin_v14.html"), path.join(__dirname, "admin_v13.html"), path.join(__dirname, "admin_v12.html") ]
 };
 
 let ADMIN_FILE = null;
@@ -78,6 +77,7 @@ async function buildM3UForAccount(account){
     for(const [name, info] of map){
       if(lower.includes(name.toLowerCase()) || lower.includes(info.filename.toLowerCase())) listsToUse.push(info);
     }
+    // If none matched, fallback to all
     if(listsToUse.length === 0 && map.size > 0) listsToUse = Array.from(map.values());
   }else{
     listsToUse = Array.from(map.values());
@@ -103,7 +103,25 @@ function isLegacyCredentials(username, password){
   return username === CONFIG.xtreamUser && password === CONFIG.xtreamPass;
 }
 
-// ensure admins
+// Authenticate admin from request (query or Basic auth)
+async function authenticateAdminFromReq(req){
+  let username = req.query.username || req.query.admin_user || null;
+  let password = req.query.password || req.query.admin_pass || null;
+  if(!username){
+    const auth = req.headers.authorization || "";
+    if(auth.startsWith("Basic ")){
+      const decoded = Buffer.from(auth.slice(6), "base64").toString("utf8");
+      const [u,p] = decoded.split(":",2);
+      username = u; password = p;
+    }
+  }
+  if(!username) return null;
+  const admins = await readAdmins();
+  const adm = admins.find(a=>a.username === username && a.password === password);
+  return adm || null;
+}
+
+// ensure admins exist
 await ensureAdmins();
 
 // Serve admin HTML at /admin
@@ -116,19 +134,24 @@ app.get("/admin", async (req, res) => {
       return;
     }
     res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.send(`<html><body style="font-family:system-ui,Arial;padding:30px;background:#071226;color:#e6eef8"><h2>Admin panel not found</h2><p>Coloca admin.html o admin_v13.html en la misma carpeta que index.js</p></body></html>`);
+    res.send(`<html><body style="font-family:system-ui,Arial;padding:30px;background:#071226;color:#e6eef8"><h2>Admin panel not found</h2><p>Coloca admin.html o admin_v14.html en la misma carpeta que index.js</p></body></html>`);
   }catch(e){ res.status(500).send("Error leyendo admin file: " + e.message); }
 });
 
 app.use("/public", express.static(path.join(__dirname, "public")));
 
-// Admin endpoints (minimal set)
+// Public endpoints
 app.get("/admin/available_lists", async (req,res)=>{
   try{ const map = await readAvailableM3Us(); res.json({ lists: Array.from(map.keys()) }); }catch(e){ res.status(500).json({ error: e.message }); }
 });
 app.get("/admin/list_accounts", async (req,res)=>{ try{ const accounts = await readAccounts(); res.json({ accounts }); }catch(e){ res.status(500).json({ error: e.message }); } });
+
+// Protected admin actions: require admin auth (master or reseller allowed)
 app.post("/admin/add_account", async (req,res)=>{
   try{
+    const requester = await authenticateAdminFromReq(req);
+    if(!requester) return res.status(401).json({ error: "Unauthorized (admin required)" });
+
     const { username, password, days, expiresAt, lists, planLabel } = req.body;
     if(!username || !password) return res.status(400).json({ error: "username/password required" });
     const accounts = await readAccounts();
@@ -142,17 +165,26 @@ app.post("/admin/add_account", async (req,res)=>{
       const map = await readAvailableM3Us();
       listsToAssign = Array.from(map.keys());
     }
-    const newAcc = { username, password, createdAt, expiresAt: finalExpires, lists: listsToAssign, planLabel: planLabel || null };
+    const newAcc = { username, password, createdAt, expiresAt: finalExpires, lists: listsToAssign, planLabel: planLabel || null, createdBy: requester.username };
     accounts.push(newAcc);
     await writeAccounts(accounts);
     res.json({ ok: true, account: newAcc });
   }catch(e){ res.status(500).json({ error: e.message }); }
 });
+
 app.post("/admin/delete_account", async (req,res)=>{
-  try{ const { username } = req.body; if(!username) return res.status(400).json({ error: "username required" }); let accounts = await readAccounts(); const before = accounts.length; accounts = accounts.filter(a=>a.username !== username); await writeAccounts(accounts); res.json({ ok: true, deleted: before - accounts.length }); }catch(e){ res.status(500).json({ error: e.message }); }
+  try{
+    const requester = await authenticateAdminFromReq(req);
+    if(!requester) return res.status(401).json({ error: "Unauthorized (admin required)" });
+    const { username } = req.body; if(!username) return res.status(400).json({ error: "username required" });
+    let accounts = await readAccounts(); const before = accounts.length; accounts = accounts.filter(a=>a.username !== username); await writeAccounts(accounts); res.json({ ok: true, deleted: before - accounts.length });
+  }catch(e){ res.status(500).json({ error: e.message }); }
 });
+
 app.post("/admin/set_account_expiry", async (req,res)=>{
   try{
+    const requester = await authenticateAdminFromReq(req);
+    if(!requester) return res.status(401).json({ error: "Unauthorized (admin required)" });
     const { username, days, hours, expiresAt } = req.body;
     if(!username) return res.status(400).json({ error: "username required" });
     const accounts = await readAccounts();
@@ -168,32 +200,42 @@ app.post("/admin/set_account_expiry", async (req,res)=>{
   }catch(e){ res.status(500).json({ error: e.message }); }
 });
 
-app.get("/admin/list_admins", async (req,res)=>{ try{ const admins = await readAdmins(); res.json({ admins }); }catch(e){ res.status(500).json({ error: e.message }); } });
-app.post("/admin/add_admin", async (req,res)=>{ try{ const { username, password, credits, isMaster } = req.body; if(!username || !password) return res.status(400).json({ error: "username/password required" }); const admins = await readAdmins(); if(admins.find(a=>a.username===username)) return res.status(400).json({ error: "admin exists" }); const newAdmin = { username, password, credits: Number(credits||0), isMaster: !!isMaster, createdAt: new Date().toISOString() }; admins.push(newAdmin); await writeAdmins(admins); res.json({ ok: true, admin: newAdmin }); }catch(e){ res.status(500).json({ error: e.message }); } });
-app.post("/admin/set_admin_credits", async (req,res)=>{ try{ const { username, credits } = req.body; if(!username) return res.status(400).json({ error: "username required" }); const admins = await readAdmins(); const adm = admins.find(a=>a.username===username); if(!adm) return res.status(404).json({ error: "admin not found" }); adm.credits = Number(credits||0); await writeAdmins(admins); res.json({ ok: true, admin: adm }); }catch(e){ res.status(500).json({ error: e.message }); } });
+// Admin management endpoints (master required for certain actions)
+app.get("/admin/list_admins", async (req,res)=>{
+  try{
+    const requester = await authenticateAdminFromReq(req);
+    if(!requester) return res.status(401).json({ error: "Unauthorized (admin required)" });
+    const admins = await readAdmins(); res.json({ admins });
+  }catch(e){ res.status(500).json({ error: e.message }); }
+});
+app.post("/admin/add_admin", async (req,res)=>{
+  try{
+    const requester = await authenticateAdminFromReq(req);
+    if(!requester || !requester.isMaster) return res.status(401).json({ error: "Unauthorized (master admin required)" });
+    const { username, password, credits, isMaster } = req.body; if(!username || !password) return res.status(400).json({ error: "username/password required" });
+    const admins = await readAdmins(); if(admins.find(a=>a.username===username)) return res.status(400).json({ error: "admin exists" });
+    const newAdmin = { username, password, credits: Number(credits||0), isMaster: !!isMaster, createdAt: new Date().toISOString() }; admins.push(newAdmin); await writeAdmins(admins); res.json({ ok: true, admin: newAdmin });
+  }catch(e){ res.status(500).json({ error: e.message }); }
+});
+app.post("/admin/set_admin_credits", async (req,res)=>{
+  try{
+    const requester = await authenticateAdminFromReq(req);
+    if(!requester || !requester.isMaster) return res.status(401).json({ error: "Unauthorized (master required)" });
+    const { username, credits } = req.body; if(!username) return res.status(400).json({ error: "username required" });
+    const admins = await readAdmins(); const adm = admins.find(a=>a.username===username); if(!adm) return res.status(404).json({ error: "admin not found" }); adm.credits = Number(credits||0); await writeAdmins(admins); res.json({ ok: true, admin: adm });
+  }catch(e){ res.status(500).json({ error: e.message }); }
+});
+
 app.get("/admin/me", async (req,res)=>{
   try{
-    const qUser = req.query.username || req.query.admin_user || null;
-    const qPass = req.query.password || req.query.admin_pass || null;
-    let username = qUser, password = qPass;
-    if(!username){
-      const auth = req.headers.authorization || "";
-      if(auth.startsWith("Basic ")){
-        const decoded = Buffer.from(auth.slice(6), "base64").toString("utf8");
-        const [u,p] = decoded.split(":",2);
-        username = u; password = p;
-      }
-    }
-    if(!username) return res.status(401).json({ error: "not logged in" });
-    const admins = await readAdmins();
-    const adm = admins.find(a=>a.username === username && a.password === password);
-    if(!adm) return res.status(401).json({ error: "invalid credentials" });
+    const adm = await authenticateAdminFromReq(req);
+    if(!adm) return res.status(401).json({ error: "not logged in or invalid credentials" });
     const info = { username: adm.username, isMaster: !!adm.isMaster, credits: adm.credits || 0, createdAt: adm.createdAt };
     res.json({ me: info });
   }catch(e){ res.status(500).json({ error: e.message }); }
 });
 
-// Modified GET /get.php
+// Modified GET /get.php and variants
 app.get("/get.php", async (req, res) => {
   try{
     const username = req.query.username || "";
