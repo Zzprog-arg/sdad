@@ -1,47 +1,47 @@
 #EXTM3U
 #EXTINF:-1 tvg-logo="https://i.ibb.co/gLk2psqY/250px-Am-rica-TV-Nuevo-logo-Junio-2020.webp" group-title="ARGENTINA", AMÉRICA TV HD
-http://195.66.210.10:80/Bluefox102/XYXNA/209741
-#EXTINF:-1 tvg-logo="https://i.ibb.co/rfTL5TKT/250px-C5-N-2017-Alternate-svg.webp" group-title="ARGENTINA", C5N
+http://200.55.244.75:8000/play/a055/index.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/rfTL5TKT/250px-C5-N-2017-Alternate-svg.webp" group-title="ARGENTINA", C5N -
 http://195.66.210.10:80/Bluefox102/XYXNA/242080
-#EXTINF:-1 tvg-logo="https://i.ibb.co/KpCqGXcp/250px-Canal-26-logo-2022-svg.webp" group-title="ARGENTINA", CANAL 26
+#EXTINF:-1 tvg-logo="https://i.ibb.co/KpCqGXcp/250px-Canal-26-logo-2022-svg.webp" group-title="ARGENTINA", CANAL 26 -
 http://195.66.210.10:80/Bluefox102/XYXNA/54199
-#EXTINF:-1 tvg-logo="https://i.ibb.co/v4KTM0vN/download.jpg" group-title="INTERIOR DE ARGENTINA", CANAL 5 TV CORRIENTES
+#EXTINF:-1 tvg-logo="https://i.ibb.co/v4KTM0vN/download.jpg" group-title="INTERIOR DE ARGENTINA", CANAL 5 TV CORRIENTES -
 http://195.66.210.10:80/Bluefox102/XYXNA/54215
-#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="INTERIOR DE ARGENTINA", CANAL 9 SALTA
+#EXTINF:-1 tvg-logo="https://i.ibb.co/mrz4g6Qk/latest.webp" group-title="INTERIOR DE ARGENTINA", CANAL 9 SALTA -
 http://195.66.210.10:80/Bluefox102/XYXNA/47017
-#EXTINF:-1 tvg-logo="https://i.ibb.co/qYnR5FRD/image.webp" group-title="ARGENTINA", CRÓNICA TV
+#EXTINF:-1 tvg-logo="https://i.ibb.co/qYnR5FRD/image.webp" group-title="ARGENTINA", CRÓNICA TV -
 http://195.66.210.10:80/Bluefox102/XYXNA/19708
 #EXTINF:-1 tvg-logo="https://i.ibb.co/4gtScLSs/250px-Deportv-svg.webp" group-title="ARGENTINA", DEPORTV HD
 http://195.66.210.10:80/Bluefox102/XYXNA/19709
-#EXTINF:-1 tvg-logo="https://i.ibb.co/c77mhxW/Canal-9-2015.webp" group-title="ARGENTINA", EL NUEVE HD
+#EXTINF:-1 tvg-logo="https://i.ibb.co/c77mhxW/Canal-9-2015.webp" group-title="ARGENTINA", EL NUEVE HD -
 http://195.66.210.10:80/Bluefox102/XYXNA/46977
 #EXTINF:-1 tvg-logo="https://i.ibb.co/ymq83CBs/download.jpg" group-title="ARGENTINA", GARAGE TV FHD
-http://195.66.210.10:80/Bluefox102/XYXNA/209745
-#EXTINF:-1 tvg-logo="https://i.ibb.co/8LBFh5jN/AIdro-k-Vdx-Upj4ex0c8f-Oj-Hb-AY8-Cuy503b-B7ocotq-ZZMm-LGq-Cw-s900-c-k-c0x00ffffff-no-rj.webp" group-title="INTERIOR DE ARGENTINA", LITUS TV SANTA FÉ
+https://stream1.sersat.com/hls/garagetv.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/8LBFh5jN/AIdro-k-Vdx-Upj4ex0c8f-Oj-Hb-AY8-Cuy503b-B7ocotq-ZZMm-LGq-Cw-s900-c-k-c0x00ffffff-no-rj.webp" group-title="INTERIOR DE ARGENTINA", LITUS TV SANTA FÉ -
 http://195.66.210.10:80/Bluefox102/XYXNA/54231
 #EXTINF:-1 tvg-logo="https://i.ibb.co/fdjvC2N0/250px-Net-TV-logo.webp" group-title="ARGENTINA", NET TV
-http://195.66.210.10:80/Bluefox102/XYXNA/54165
-#EXTINF:-1 tvg-logo="https://i.ibb.co/nqTRZTxX/250px-Telefe-nuevo-logo.webp" group-title="ARGENTINA", TELEFÉ INTERNACIONAL
-http://195.66.210.10:80/Bluefox102/XYXNA/259317
+https://unlimited1-cl-isp.dps.live/nettv/nettv.smil/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/nqTRZTxX/250px-Telefe-nuevo-logo.webp" group-title="ARGENTINA", TELEFÉ
+https://telefe.com/Api/Videos/GetSourceUrl/694564/0/HLS?.m3u8
 #EXTINF:-1 tvg-logo="https://i.ibb.co/W4XcdM1t/250px-Telemax-Argentina-2018.webp" group-title="ARGENTINA", TELEMAX
-http://195.66.210.10:80/Bluefox102/XYXNA/46973
-#EXTINF:-1 tvg-logo="https://i.ibb.co/KpszndV7/512px-TVP-Televisi-n-P-blica-2021-svg.webp" group-title="ARGENTINA", TV PÚBLICA HD
+https://stream-gtlc.telecentro.net.ar/hls/telemaxhls/0/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/KpszndV7/512px-TVP-Televisi-n-P-blica-2021-svg.webp" group-title="ARGENTINA", TV PÚBLICA HD -
 http://195.66.210.10:80/Bluefox102/XYXNA/46972
-#EXTINF:-1 tvg-logo="https://i.ibb.co/tTxRFTzG/512px-Logo-volver-2016.jpg" group-title="ARGENTINA", VOLVER
+#EXTINF:-1 tvg-logo="https://i.ibb.co/tTxRFTzG/512px-Logo-volver-2016.jpg" group-title="ARGENTINA", VOLVER -
 http://195.66.210.10:80/Bluefox102/XYXNA/19983
-#EXTINF:-1 tvg-logo="https://i.ibb.co/3Zf95gr/250px-A24-2025-svg.webp" group-title="ARGENTINA", A24
+#EXTINF:-1 tvg-logo="https://i.ibb.co/3Zf95gr/250px-A24-2025-svg.webp" group-title="ARGENTINA", A24 -
 http://195.66.210.10:80/Bluefox102/XYXNA/610876
-#EXTINF:-1 tvg-logo="https://i.ibb.co/6xSzL5t/250px-TN-todo-noticias-logo-svg.webp" group-title="ARGENTINA", TN
+#EXTINF:-1 tvg-logo="https://i.ibb.co/6xSzL5t/250px-TN-todo-noticias-logo-svg.webp" group-title="ARGENTINA", TN -
 http://195.66.210.10:80/Bluefox102/XYXNA/613255
 #EXTINF:-1 tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport", TYC SPORTS  FHD
-http://195.66.210.10:80/Bluefox102/XYXNA/19461
+http://200.60.124.19:29000/play/a017/index.m3u8
 #EXTINF:-1 tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport", TyC Sport SD
-http://195.66.210.10:80/Bluefox102/XYXNA/21222
+http://200.60.124.19:29000/play/a017/index.m3u8
 #EXTINF:-1 tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport", TYC SPORTS INT HD
 http://195.66.210.10:80/Bluefox102/XYXNA/188939
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN 1
-http://195.66.210.10:80/Bluefox102/XYXNA/439754
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 2
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN
+http://200.60.124.19:29000/play/a016/index.m3u8
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 2 --
 http://195.66.210.10:80/Bluefox102/XYXNA/439754
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN 3
 http://195.66.210.10:80/Bluefox102/XYXNA/518962
@@ -57,7 +57,7 @@ http://195.66.210.10:80/Bluefox102/XYXNA/185666
 http://195.66.210.10:80/Bluefox102/XYXNA/276163
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", ESPN PREMIUM OP2
 http://195.66.210.10:80/Bluefox102/XYXNA/215252
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", SKY SPORTS
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN", SKY SPORTS --
 http://195.66.210.10:80/Bluefox102/XYXNA/54533
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT", FOX SPORTS 1 ARG
 http://195.66.210.10:80/Bluefox102/XYXNA/158518
