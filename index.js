@@ -363,14 +363,13 @@ app.get("/player_api.php", async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// --- BEGIN: proxy + m3u rewrite endpoints ---
-// Proxy simple that takes ?u=<url-encoded> and forwards the stream.
+// --- BEGIN: improved proxy + m3u rewrite endpoints ---
+// Improved proxy: rewrites m3u8 manifests so the client never talks to the origin directly.
 app.get("/proxy", (req, res) => {
   const u = req.query.u;
   if (!u) return res.status(400).send("Missing 'u' param");
   let remote;
   try { remote = decodeURIComponent(u); } catch (e) { return res.status(400).send("Bad url encode"); }
-
   if (!(remote.startsWith("http://") || remote.startsWith("https://"))) return res.status(400).send("Invalid URL protocol");
 
   try {
@@ -381,27 +380,78 @@ app.get("/proxy", (req, res) => {
       port: parsed.port || (parsed.protocol === "https:" ? 443 : 80),
       path: parsed.pathname + parsed.search,
       method: "GET",
+      // IMPORTANT: ignore invalid cert on the outgoing request to origin
       rejectUnauthorized: false,
       headers: {
-        "User-Agent": "Node-Proxy",
+        // forward client UA if present
+        "User-Agent": req.get("User-Agent") || "Node-Proxy",
         "Accept": "*/*"
       }
     };
 
-    const proxyReq = client.request(options, proxyRes => {
-      const headersToForward = Object.assign({}, proxyRes.headers);
-      delete headersToForward["content-disposition"];
-      res.writeHead(proxyRes.statusCode || 200, headersToForward);
-      proxyRes.pipe(res);
+    const upstreamReq = client.request(options, upstreamRes => {
+      const ct = (upstreamRes.headers['content-type'] || '').toLowerCase();
+
+      // If looks like a text manifest (m3u8/m3u) -> buffer, rewrite all URLs to go through our proxy
+      const isManifest = ct.includes('mpegurl') || ct.includes('vnd.apple') || ct.includes('text') || parsed.pathname.endsWith('.m3u8') || parsed.pathname.endsWith('.m3u');
+      if (isManifest) {
+        const chunks = [];
+        upstreamRes.on('data', c => chunks.push(c));
+        upstreamRes.on('end', () => {
+          try {
+            const raw = Buffer.concat(chunks).toString('utf8').replace(/^\uFEFF/, '');
+            const base = `${parsed.protocol}//${parsed.hostname}${parsed.port ? ':' + parsed.port : ''}`;
+            const dirname = parsed.pathname.replace(/\/[^\/]*$/, '');
+            const lines = raw.split(/\r?\n/);
+            const outLines = lines.map(line => {
+              const t = line.trim();
+              if (!t) return '';
+              if (t.startsWith('#')) return t; // keep metadata
+              // absolute url -> proxy it
+              if (t.startsWith('http://') || t.startsWith('https://')) {
+                return `${req.protocol}://${req.get('host')}/proxy?u=${encodeURIComponent(t)}`;
+              }
+              // root-relative -> base + t
+              if (t.startsWith('/')) {
+                const abs = base + t;
+                return `${req.protocol}://${req.get('host')}/proxy?u=${encodeURIComponent(abs)}`;
+              }
+              // relative path -> join with dirname
+              const abs = base + (dirname.endsWith('/') ? dirname : dirname + '/') + t;
+              return `${req.protocol}://${req.get('host')}/proxy?u=${encodeURIComponent(abs)}`;
+            }).join('\n');
+
+            const headers = Object.assign({}, upstreamRes.headers);
+            delete headers['content-disposition'];
+            headers['content-type'] = 'application/vnd.apple.mpegurl; charset=utf-8';
+            headers['content-length'] = Buffer.byteLength(outLines, 'utf8');
+            res.writeHead(upstreamRes.statusCode || 200, headers);
+            res.end(outLines, 'utf8');
+          } catch (err) {
+            console.error("Error rewriting manifest:", err);
+            if (!res.headersSent) res.status(502).send("Error processing manifest");
+          }
+        });
+        upstreamRes.on('error', err => {
+          console.error("Upstream manifest error:", err);
+          if (!res.headersSent) res.status(502).send("Upstream error");
+        });
+        return;
+      }
+
+      // Otherwise stream binary (ts segments, etc.)
+      const headersToForward = Object.assign({}, upstreamRes.headers);
+      delete headersToForward['content-disposition'];
+      res.writeHead(upstreamRes.statusCode || 200, headersToForward);
+      upstreamRes.pipe(res);
     });
 
-    proxyReq.on("error", err => {
-      console.error("Proxy error:", err.message);
-      if (!res.headersSent) res.status(502).send("Proxy error: " + err.message);
+    upstreamReq.on('error', err => {
+      console.error("Proxy upstream error:", err);
+      if (!res.headersSent) res.status(502).send("Proxy upstream error: " + err.message);
     });
 
-    proxyReq.end();
-
+    upstreamReq.end();
   } catch (err) {
     console.error("Proxy exception:", err);
     return res.status(500).send("Proxy internal error");
@@ -515,7 +565,7 @@ app.get("/asd.m3u", async (req, res) => {
     res.status(404).send("Archivo asd.m3u no encontrado");
   }
 });
-// --- END: proxy + m3u rewrite endpoints ---
+// --- END: improved proxy + m3u rewrite endpoints ---
 
 app.options("/*", (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
