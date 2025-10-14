@@ -1,22 +1,20 @@
 #EXTM3U x-tvg-url="https://www.open-epg.com/files/argentina1.xml"
 #EXTINF:-1 tvg-id="AMERICA TV.ar" tvg-logo="https://i.ibb.co/gLk2psqY/250px-Am-rica-TV-Nuevo-logo-Junio-2020.webp" group-title="ARGENTINA",AMÉRICA TV HD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h6BBOel_sPRiGAZeuKKhFpxHV_5yzVEA6VfrjBTI4c21%2Fm3u8
-#EXTINF:-1 tvg-id="AMERICA TV.ar" tvg-name="AMERICA SD" tvg-logo="http://descargas.podzone.net/logos/-america.png" group-title="ARGENTINA",AMERICA SD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h6BBOel_sPRiGAZeuKKhFpyvXj19GETNwE-1UcOsaHfp%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h6fEijXis_0_YNKaTRBj4R5TBu1LOb4hm_8aKIkUKdPM%2Fm3u8
 #EXTINF:-1 tvg-id="C5N.ar" tvg-logo="https://i.ibb.co/rfTL5TKT/250px-C5-N-2017-Alternate-svg.webp" group-title="ARGENTINA",C5N
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FgSx7RXPdwkqgAIO7zQDqo4w0KCcXce3M69JSqaSnC_Vp90CknvwLRhttJOLnRnTb
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hwa5BTM2CYgQFseM8bvwAhYFU-JZGWl3R3Yc2lyl7mFt%2Fm3u8
 #EXTINF:-1 tvg-id="C5N.ar" tvg-name="C5N" tvg-logo="http://descargas.podzone.net/logos/-C5N.png" group-title="ARGENTINA",C5N
-http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/17901.m3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hwa5BTM2CYgQFseM8bvwAhZBxsTzLbtkvFnasKE_0Q6D%2Fm3u8
 #EXTINF:-1 tvg-id="Canal 26.ar" tvg-logo="https://i.ibb.co/KpCqGXcp/250px-Canal-26-logo-2022-svg.webp" group-title="ARGENTINA",CANAL 26
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h17UlfzvZR0ecsCbKScm9vBnAEP0WUmQJ2aGzvGaXieO%2Fm3u8
 #EXTINF:-1 tvg-id="13C.cl" tvg-name="CIUDAD MAGAZINE" tvg-logo="http://descargas.podzone.net/logos/-ciudad-magazine.png" group-title="ARGENTINA",CIUDAD MAGAZINE
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h0-7-tLK45R6ecSxgnnTCcOR8LXjLRH8xVty4DQtwraW%2Fm3u8
 #EXTINF:-1 tvg-id="" tvg-name="LN+" tvg-logo="http://descargas.podzone.net/logos/-LN+.png" group-title="ARGENTINA",LN+
-http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/7976.m3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hwVAc9gwys3IhGE8Ydk6a4r7hU08H75TwU0EOn4gLbJn%2Fm3u8
 #EXTINF:-1 tvg-id="" tvg-name="ORBE 21" tvg-logo="http://descargas.podzone.net/logos/-ORBE21.png" group-title="ARGENTINA",ORBE 21
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FgSx7RXPdwkqgAIO7zQDqoyfU-0W1IBS7bXZ82d2gs5PdY8NYr7eu3H3SM-kapl0i
 #EXTINF:-1 tvg-id="volver.ar" tvg-name="VOLVER" tvg-logo="http://descargas.podzone.net/logos/-volver.png" group-title="ARGENTINA",VOLVER
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FgSx7RXPdwkqgAIO7zQDqoz0fgKdat6CZ5ZwFNX0StfUzKiLVor-cJb7lRazou1K7
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hwa5BTM2CYgQFseM8bvwAhZWUgncb94Lza07w8ox_3Aq%2Fm3u8
 #EXTINF:-1 tvg-id="encuentro.ar" tvg-name="ENCUENTRO" tvg-logo="http://descargas.podzone.net/logos/-encuentro.png" group-title="ARGENTINA",ENCUENTRO
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/7974.m3u8
 #EXTINF:-1 tvg-id="CRONICA TV.ar" tvg-logo="https://i.ibb.co/qYnR5FRD/image.webp" group-title="ARGENTINA",CRÓNICA TV
@@ -29,26 +27,28 @@ http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h2hcaA6V_LjqcG_e5nNnsxuvGO2r03eRzPQG037VRIO9%2Fm3u8
 #EXTINF:-1 tvg-id="GARAGE.ar" tvg-logo="https://i.ibb.co/ymq83CBs/download.jpg" group-title="ARGENTINA",GARAGE TV FHD
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FgSx7RXPdwkqgAIO7zQDqoxnqkr87ltiYinSim3K3C1O0G6KHfoq35GqQzEPTPOSF
+#EXTINF:-1,13 EL TRECE
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h6176ILHAgmhnpcRfstL7FKEiNMEWy3ckHyme9c_fX8c%2Fm3u8
 #EXTINF:-1 tvg-id="" tvg-name="CINE AR" tvg-logo="http://descargas.podzone.net/logos/-cine-AR.png" group-title="ARGENTINA",CINE AR
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h_cLVJ6m2CG3BzPhzgvxRv4nB8XV9vvCt8V_V9V_Y-Y_%2Fm3u8
 #EXTINF:-1 tvg-id="NET TV.ar" tvg-logo="https://i.ibb.co/fdjvC2N0/250px-Net-TV-logo.webp" group-title="ARGENTINA",NET TV
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hyg1dtNkzCts7fz_23h0yHNqAajo7t_eZr55TX3-_QEh%2Fm3u8
 #EXTINF:-1 tvg-id="NET TV.ar" tvg-name="NET TV" tvg-logo="http://descargas.podzone.net/logos/-NET-tv.png" group-title="ARGENTINA",NET TV
-http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/23229.m3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hyg1dtNkzCts7fz_23h0yHNqAajo7t_eZr55TX3-_QEh%2Fm3u8
 #EXTINF:-1 tvg-id="TELEFE.ar" tvg-logo="https://i.ibb.co/nqTRZTxX/250px-Telefe-nuevo-logo.webp" group-title="ARGENTINA",TELEFÉ
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FgSx7RXPdwkqgAIO7zQDqo8vIWfzeNQLKvLp9fLSigK8uKFtKj97mDUhWjDU4RQZ_
-#EXTINF:-1 tvg-id="TELEFE.ar" tvg-name="TELEFE " tvg-logo="http://descargas.podzone.net/logos/-telefe.png" group-title="ARGENTINA",TELEFE
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h6176ILHAgmhnpcRfstL7FLsWc90JhfeJjObr14SsIlo%2Fm3u8
+#EXTINF:-1 tvg-id="TELEFE.ar" tvg-name="TELEFE " tvg-logo="http://descargas.podzone.net/logos/-telefe.png" group-title="ARGENTINA",TELEFE op2
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/1155824.m3u8
 #EXTINF:-1 tvg-id="TELEMAX.ar" tvg-logo="https://i.ibb.co/W4XcdM1t/250px-Telemax-Argentina-2018.webp" group-title="ARGENTINA",TELEMAX
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h8i_ZV6EL_mGgBtvR_VfSvNzI5_UkBOTyXSMb1EY21kT%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hxlnFh4ir5v7Vs2z_Hz2J7zgf9bW95NPhOdEs7Fg-SDA%2Fm3u8
 #EXTINF:-1 tvg-id="TV PUBLICA.ar" tvg-logo="https://i.ibb.co/KpszndV7/512px-TVP-Televisi-n-P-blica-2021-svg.webp" group-title="ARGENTINA",TV PÚBLICA HD -
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hyg1dtNkzCts7fz_23h0yHOLKd2yPwBVJVg-vG05ZEEI%2Fm3u8
 #EXTINF:-1 tvg-id="TV Publica.ar" tvg-name="TV PUBLICA " tvg-logo="http://descargas.podzone.net/logos/-tv-publica.png" group-title="ARGENTINA",TV PUBLICA
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hyg1dtNkzCts7fz_23h0yHPohpptpzB7EZBnB2QgnzcL%2Fm3u8
 #EXTINF:-1 tvg-id="A24.ar" tvg-logo="https://i.ibb.co/3Zf95gr/250px-A24-2025-svg.webp" group-title="ARGENTINA",A24 -
-http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/51073.m3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hwVAc9gwys3IhGE8Ydk6a4qMo3qcThtdujH2wNAnl_2s%2Fm3u8
 #EXTINF:-1 tvg-id="TN.ar" tvg-logo="https://i.ibb.co/6xSzL5t/250px-TN-todo-noticias-logo-svg.webp" group-title="ARGENTINA",TN -
-http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/18766.m3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h7JhQC7pph5uf3Y6amJrPhirrkhEf7HqWVYzELuI1ZJE%2Fm3u8
 #EXTINF:-1 tvg-id="TYC SPORTS.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TYC SPORTS  FHD
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h3ACQzXmHpdjCA9mfnt-Hy0p7RBdo73qGjX5CKOntvPG%2Fm3u8
 #EXTINF:-1 tvg-id="TYC SPORTS.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TyC Sport SD
@@ -56,31 +56,33 @@ http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F
 #EXTINF:-1 tvg-id="TYC SPORTS.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TYC SPORTS INT HD
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hxfV0vWW-bnm_fcxS8QwgXbVdtdng-CNJjHrDkMnjXic%2Fm3u8
 #EXTINF:-1 tvg-id="ESPN.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hy0xUbB-eNFxgjhiVi4xyXTfDMqQaf-UKURmze3WRtQn%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hy0xUbB-eNFxgjhiVi4xyXQA1_SlOGqsT43L7XD3wrAq%2Fm3u8
 #EXTINF:-1 tvg-id="ESPN 2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN 2 --
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hy0xUbB-eNFxgjhiVi4xyXQLv3iGoGzNCFtsOGh2JG9c%2Fm3u8
+#EXTINF:-1,AR | ESPN 3 FHD
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hy0xUbB-eNFxgjhiVi4xyXTFdSnN7Tlr83y0r6JVLtxH%2Fm3u8
 #EXTINF:-1 tvg-id="ESPN PREMIUM.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN PREMIUM
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hy0xUbB-eNFxgjhiVi4xyXSh6dghjpCxrCmRBxt1_EtH%2Fm3u8
 #EXTINF:-1 tvg-id="ESPN PREMIUM.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN PREMIUM OP2
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FgSx7RXPdwkqgAIO7zQDqo4w0KCcXce3M69JSqaSnC_VUnaTj4PQB0ylFgNWTenZ7
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hy0xUbB-eNFxgjhiVi4xyXSh6dghjpCxrCmRBxt1_EtH%2Fm3u8
 #EXTINF:-1 tvg-id="Fox Sports Premium.ar" tvg-name="ESPN PREMIUM" tvg-logo="http://descargas.podzone.net/logos2/-ESPN-PREMIUM.png" group-title="ARGENTINA",ESPN PREMIUM
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h72mvAH9kvb-jtjjCmZ-zB9kLtQukitW2AgnKJGWd-cL%2Fm3u8
 #EXTINF:-1 tvg-id="FOX SPORTS.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 1 ARG
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hxfV0vWW-bnm_fcxS8QwgXY2wWn1pBEPmw0Ygj2oMbsx%2Fm3u8
-#EXTINF:-1 tvg-id="FOX SPORTS 2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 2 ARG HD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h0f38jy-1qCE432a8KYFn9qKZoh-VKPn-xcKmhelKClV%2Fm3u8
+#EXTINF:-1 tvg-id="FOX SPORTS 2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 2 HD
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hxfV0vWW-bnm_fcxS8QwgXZpOUtmH0yRgv-sAbLib3iv%2Fm3u8
 #EXTINF:-1 tvg-id="FOX SPORTS 3.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 3 FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h0f38jy-1qCE432a8KYFn9oEmbfOWaSUxIZ-SYAukUes%2Fm3u8
-#EXTINF:-1 tvg-id="TNT SPORTS PREMIUM.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="TNT SPORTS",TNT Sports Premium
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hxfV0vWW-bnm_fcxS8QwgXZfBlB2FjrSbDCpHobDkSyv%2Fm3u8
+#EXTINF:-1 tvg-id="TNT SPORTS PREMIUM.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="TNT SPORTS",TNT Sports
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hxfV0vWW-bnm_fcxS8QwgXYWfulX_SRUs15MNYu1kSn3%2Fm3u8
 #EXTINF:-1 tvg-id="TNT.Sports.Premium.OP2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="TNT SPORTS",TNT Sports Premium OP2
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hxfV0vWW-bnm_fcxS8QwgXZ6-0gwtm1U_M5T2uaKWOaP%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hxfV0vWW-bnm_fcxS8QwgXbVdtdng-CNJjHrDkMnjXic%2Fm3u8
 #EXTINF:-1 tvg-id="TNTSports.ar" tvg-name="TNT SPORTS" tvg-logo="http://descargas.podzone.net/logos/-TNT-sports.png" group-title="ARGENTINA",TNT SPORTS
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h6BBOel_sPRiGAZeuKKhFpwwSQmv6p0ttCdRYn3KhMBS%2Fm3u8
 #EXTINF:-1 tvg-id="DIRECTV.SPORTS.1.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS 1
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hy0xUbB-eNFxgjhiVi4xyXQUJMp7sejlLPNFJGEE8x5N%2Fm3u8
 #EXTINF:-1 tvg-id="DIRECTV.SPORTS.2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS 2
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_h0f38jy-1qCE432a8KYFn9qHA2zmuyGqO3lxi7_hHJIw%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hy0xUbB-eNFxgjhiVi4xyXQUJMp7sejlLPNFJGEE8x5N%2Fm3u8
 #EXTINF:-1 tvg-id="DIRECTV.SPORTS.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS +
 http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2Fsf1nsekuoDVe7MM7TZW_hz612C_yVEppUqnMktCo6HVdUJF3etdJkxHrl0bG4Zeh%2Fm3u8
 #EXTINF:-1 tvg-id="DIRECTV.SPORTS.OP2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS OP2
