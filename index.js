@@ -461,7 +461,7 @@ app.get("/proxy", (req, res) => {
 // Endpoint that fetches the remote M3U and rewrites stream URLs to pass through /proxy
 app.get("/fetchm3u", async (req, res) => {
   try {
-    const remoteM3U = "https://zona593.live:8443/playlist/mBPhCV47hp/J5ETPYUvHz/m3u?output=hls";
+    const remoteM3U = "https://zona593.live:8443/playlist/RZyG7gVs8K/fKDKKDM9ch/m3u?output=hls";
 
     const u = new URL(remoteM3U);
     const client = u.protocol === "https:" ? https : http;
