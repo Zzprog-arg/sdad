@@ -10,28 +10,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-app.get("/fetchm3u", (req, res) => {
-  const url = "https://zona593.live:8443/playlist/mBPhCV47hp/J5ETPYUvHz/m3u?output=hls";
-
-  const options = {
-    rejectUnauthorized: false // ignora el error SSL del origen
-  };
-
-  https.get(url, options, (resp) => {
-    let data = "";
-    resp.on("data", chunk => data += chunk);
-    resp.on("end", () => {
-      res.setHeader("Content-Type", "text/plain");
-      res.send(data); // devuelve el M3U completo
-    });
-  }).on("error", (err) => {
-    res.status(500).send("Error al obtener M3U: " + err.message);
-  });
-});
-
-app.listen(process.env.PORT || 10000, () => console.log("Proxy M3U activo"));
-
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -40,7 +18,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const CONFIG = {
   xtreamUser: process.env.XTREAM_USER || "demo",
   xtreamPass: process.env.XTREAM_PASS || "demo",
-  port: process.env.PORT || 10000,
+  port: process.env.PORT || 3000,
   accountsFile: path.join(__dirname, "accounts.json"),
   adminsFile: path.join(__dirname, "admins.json"),
   settingsFile: path.join(__dirname, "settings.json"),
