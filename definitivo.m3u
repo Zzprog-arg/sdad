@@ -1,143 +1,143 @@
 #EXTM3U x-tvg-url="https://www.open-epg.com/files/argentina1.xml"
 #EXTINF:-1 tvg-id="AMERICA TV.ar" tvg-logo="https://i.ibb.co/gLk2psqY/250px-Am-rica-TV-Nuevo-logo-Junio-2020.webp" group-title="ARGENTINA",AMÉRICA TV HD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHadTcfWhz4YMnsUIqmANRQ0%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA2i7h2zhxKy33MV6uSI_MRh%2Fm3u8
 #EXTINF:-1 tvg-id="AMERICA TV.ar" tvg-name="AMERICA SD" tvg-logo="http://descargas.podzone.net/logos/-america.png" group-title="ARGENTINA",AMERICA SD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHZZfpXEuXAG0snn_QeFPba4%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA2VoDN0xPzX_8A15OeQ-ojp%2Fm3u8
 #EXTINF:-1 tvg-id="C5N.ar" tvg-logo="https://i.ibb.co/rfTL5TKT/250px-C5-N-2017-Alternate-svg.webp" group-title="ARGENTINA",C5N
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlQPYAyqXSnMeNlZzLMgDdnK-vhZD8kIgsa2_HxaoNI_f
+http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/1155832.m3u8
 #EXTINF:-1 tvg-id="C5N.ar" tvg-name="C5N" tvg-logo="http://descargas.podzone.net/logos/-C5N.png" group-title="ARGENTINA",C5N
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/17901.m3u8
 #EXTINF:-1 tvg-id="Canal 26.ar" tvg-logo="https://i.ibb.co/KpCqGXcp/250px-Canal-26-logo-2022-svg.webp" group-title="ARGENTINA",CANAL 26
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6DuFDsz0pJadAhLBjPvZtsQ8UWg4tz2CO3orqVA1qkwH%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPipwq49I47OVnz9cKRN9DlGxPygv1BdpVhOAoJw707M-%2Fm3u8
 #EXTINF:-1 tvg-id="13C.cl" tvg-name="CIUDAD MAGAZINE" tvg-logo="http://descargas.podzone.net/logos/-ciudad-magazine.png" group-title="ARGENTINA",CIUDAD MAGAZINE
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6C2Rt2qGGqwfWbbI0RZNpcgyJqQnAV9sfia_r3Jb8FEE%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPhLdeN197RUgGOLKEfhsl3mRbJ95tt3WpoISGwwRT1mx%2Fm3u8
 #EXTINF:-1 tvg-id="" tvg-name="LN+" tvg-logo="http://descargas.podzone.net/logos/-LN+.png" group-title="ARGENTINA",LN+
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/7976.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="ORBE 21" tvg-logo="http://descargas.podzone.net/logos/-ORBE21.png" group-title="ARGENTINA",ORBE 21
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlbi3k7ORXsWm61-CCOXWFfrmSibkSddm284Lf2Lw9JDA
+http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/1161240.m3u8
 #EXTINF:-1 tvg-id="volver.ar" tvg-name="VOLVER" tvg-logo="http://descargas.podzone.net/logos/-volver.png" group-title="ARGENTINA",VOLVER
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlV0E0tbYf0AUUTTWnuDNlczJBSW1bbdVusHWVcLmW1z-
+http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/7978.m3u8
 #EXTINF:-1 tvg-id="encuentro.ar" tvg-name="ENCUENTRO" tvg-logo="http://descargas.podzone.net/logos/-encuentro.png" group-title="ARGENTINA",ENCUENTRO
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/7974.m3u8
 #EXTINF:-1 tvg-id="CRONICA TV.ar" tvg-logo="https://i.ibb.co/qYnR5FRD/image.webp" group-title="ARGENTINA",CRÓNICA TV
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6Hz1WVg9v4L7rHQB7GQsOOFT0IlanC7MpEnJlFNWcH1N%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPlU29AI7zkR4HLAC5kuquVsGh7oM1s0NPr38oEiQtOb4%2Fm3u8
 #EXTINF:-1 tvg-id="DXTV.ar" tvg-logo="https://i.ibb.co/4gtScLSs/250px-Deportv-svg.webp" group-title="ARGENTINA",DEPORTV HD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlQPYAyqXSnMeNlZzLMgDdnJDIhF9fvebrc9GX9C-7NHb
+http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/29348.m3u8
 #EXTINF:-1 tvg-id="EL NUEVE.ar" tvg-logo="https://i.ibb.co/c77mhxW/Canal-9-2015.webp" group-title="ARGENTINA",EL NUEVE
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6FG8MgEV2NbkjQW1ncSnXY2-DbcdXc0mPIyeV49TlLyJ%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPgVTCn6sUAz5cwhdJRB-IUVucTBsv8l8g7kbStIotHuA%2Fm3u8
 #EXTINF:-1 tvg-id="EL NUEVE.ar" tvg-name="EL NUEVE" tvg-logo="http://descargas.podzone.net/logos/-el-nueve.png" group-title="ARGENTINA",EL NUEVE
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6Ke7p2zKy-dtmi6Kr_JyWEjnRxuDoIj3qokALcl8k8dU%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPoocTzE8wsqZfp3PZITTdufXUxxyIa9sCu5GFzj1y4bI%2Fm3u8
 #EXTINF:-1 tvg-id="GARAGE.ar" tvg-logo="https://i.ibb.co/ymq83CBs/download.jpg" group-title="ARGENTINA",GARAGE TV FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlQxXxrRC3bsRUP434PnNGoifSMz-b-xNNq2e-Zeu7oUU
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPs-hVe3NdDLcw0vxfEFxFRQyu4wnm4dPkA0oUrXggaRv%2Fm3u8
 #EXTINF:-1 tvg-id="" tvg-name="CINE AR" tvg-logo="http://descargas.podzone.net/logos/-cine-AR.png" group-title="ARGENTINA",CINE AR
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6FG8MgEV2NbkjQW1ncSnXY0UHx-9qgBiPx5_66FaRXji%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPgVTCn6sUAz5cwhdJRB-IUWkUR7quNDyXgfuOU3jzzPm%2Fm3u8
 #EXTINF:-1 tvg-id="NET TV.ar" tvg-logo="https://i.ibb.co/fdjvC2N0/250px-Net-TV-logo.webp" group-title="ARGENTINA",NET TV
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6DKYrNrbrsI1UaGeRBwOp1hINa4gIqHtIK0NZ4S9AZ6p%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPnfq_jDsB9WHuT6YDxmfVumjBikNnB1F6I6SgUs6dczs%2Fm3u8
 #EXTINF:-1 tvg-id="NET TV.ar" tvg-name="NET TV" tvg-logo="http://descargas.podzone.net/logos/-NET-tv.png" group-title="ARGENTINA",NET TV
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/23229.m3u8
 #EXTINF:-1 tvg-id="TELEFE.ar" tvg-logo="https://i.ibb.co/nqTRZTxX/250px-Telefe-nuevo-logo.webp" group-title="ARGENTINA",TELEFÉ
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlU7clO5gS8i3YvpYqQk_92t5FjjTeNTh-dI1YS8VnlHn
+http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/51071.m3u8
 #EXTINF:-1 tvg-id="TELEFE.ar" tvg-name="TELEFE " tvg-logo="http://descargas.podzone.net/logos/-telefe.png" group-title="ARGENTINA",TELEFE
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/1155824.m3u8
 #EXTINF:-1 tvg-id="TELEMAX.ar" tvg-logo="https://i.ibb.co/W4XcdM1t/250px-Telemax-Argentina-2018.webp" group-title="ARGENTINA",TELEMAX
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6HmT2rBe-yG2XvNOiZGninQct0Dy-7PaAreV_ddCA3rR%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPiBd-eUX95het8FFJv2NPwqiGeuCioP-LE_BioUsCsIR%2Fm3u8
 #EXTINF:-1 tvg-id="TV PUBLICA.ar" tvg-logo="https://i.ibb.co/KpszndV7/512px-TVP-Televisi-n-P-blica-2021-svg.webp" group-title="ARGENTINA",TV PÚBLICA HD -
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6DKYrNrbrsI1UaGeRBwOp1hyqPbJdZ9rt5fxB6DMIm9y%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPnfq_jDsB9WHuT6YDxmfVumAg4_sBFqNgH410v7AKIK4%2Fm3u8
 #EXTINF:-1 tvg-id="TV Publica.ar" tvg-name="TV PUBLICA " tvg-logo="http://descargas.podzone.net/logos/-tv-publica.png" group-title="ARGENTINA",TV PUBLICA
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6DKYrNrbrsI1UaGeRBwOp1hLLFdaIyXmpgysoK8LfmjE%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPnfq_jDsB9WHuT6YDxmfVukukw2msmhwlWuwZs36Kcm8%2Fm3u8
 #EXTINF:-1 tvg-id="A24.ar" tvg-logo="https://i.ibb.co/3Zf95gr/250px-A24-2025-svg.webp" group-title="ARGENTINA",A24 -
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/51073.m3u8
 #EXTINF:-1 tvg-id="TN.ar" tvg-logo="https://i.ibb.co/6xSzL5t/250px-TN-todo-noticias-logo-svg.webp" group-title="ARGENTINA",TN -
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/18766.m3u8
 #EXTINF:-1 tvg-id="TYC SPORTS.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TYC SPORTS  FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6G5CNWzcSa8QyDA9Gd2lZWgDmL4yrw4t3NCs8meLu9x3%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPhet26Ozbdi-s8ca81PA6HiMmDiPvpNdhGBUJXmPdfgQ%2Fm3u8
 #EXTINF:-1 tvg-id="TYC SPORTS.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TyC Sport SD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6G5CNWzcSa8QyDA9Gd2lZWhYd1Vw0MYePT7Am7oZfVAv%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPhet26Ozbdi-s8ca81PA6Hj-LuqFid6JoyalrDoGRUbW%2Fm3u8
 #EXTINF:-1 tvg-id="TYC SPORTS.ar" tvg-logo="https://i.ibb.co/9HkD0s7r/download.png" group-title="TyC Sport",TYC SPORTS INT HD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6D40PD5pSgwQb7cpXtm1OGpAHuRXKtFKfFZCQuCqWrZx%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPgxAxfydyQP6-ulmTj55ReYC_v3IU5VRixqZD6BgkP97%2Fm3u8
 #EXTINF:-1 tvg-id="ESPN.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6Mha39_SzOz8O_K0fSzGJUTxU_n2T-D2GvmyqMOppJ3v%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPoyxEDlee0DutahBqtuWHMK4J5DsELjbhtWMpHtYVg-3%2Fm3u8
 #EXTINF:-1 tvg-id="ESPN 2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN 2 --
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6Mha39_SzOz8O_K0fSzGJUR22s7_rRgB59sx2iUuiCsy%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPoyxEDlee0DutahBqtuWHMLN-614qTbSLRoI6sbX92MB%2Fm3u8
 #EXTINF:-1 tvg-id="ESPN PREMIUM.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN PREMIUM
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6Mha39_SzOz8O_K0fSzGJUS9F09OrKOQMhinA7VQhe_2%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPoyxEDlee0DutahBqtuWHMLX7VZX3tLQ-nfiInI6f52y%2Fm3u8
 #EXTINF:-1 tvg-id="ESPN PREMIUM.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg" group-title="ESPN",ESPN PREMIUM OP2
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlQPYAyqXSnMeNlZzLMgDdnL5A0C0cSCDMdQCfGB0vmDP
+http://195.66.210.10:80/Bluefox102/XYXNA/215252
 #EXTINF:-1 tvg-id="Fox Sports Premium.ar" tvg-name="ESPN PREMIUM" tvg-logo="http://descargas.podzone.net/logos2/-ESPN-PREMIUM.png" group-title="ARGENTINA",ESPN PREMIUM
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6ASVDtJXTHmQempF9P2oiQdO_dDavWs5I5CQacNzGrk-%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPuWZsCUvWpP-pzNbVzZ2wLlU_m-Jt_duYc3LwWQUMjnw%2Fm3u8
 #EXTINF:-1 tvg-id="FOX SPORTS.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 1 ARG
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6D40PD5pSgwQb7cpXtm1OGqpzaPLdTnZ2Xe1kCo0SqPo%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPgxAxfydyQP6-ulmTj55ReYXCIcHAYGDw0_RCSaN6_w3%2Fm3u8
 #EXTINF:-1 tvg-id="FOX SPORTS 2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 2 ARG HD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6FdlwLxUDQnj7NmMWCubNNDT6Y7RXgWdpX-BG6rBKhjp%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPnt2n8DYWMWDymv0V5BQ5tsTxTgVLGBoqb1RDPMYFGyj%2Fm3u8
 #EXTINF:-1 tvg-id="FOX SPORTS 3.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="FOX SPORT",FOX SPORTS 3 FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6FdlwLxUDQnj7NmMWCubNNBwiDAB4vQkdcA6RWz0sTul%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPnt2n8DYWMWDymv0V5BQ5tukXl1waGi7UwclG4UorEfl%2Fm3u8
 #EXTINF:-1 tvg-id="TNT SPORTS PREMIUM.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="TNT SPORTS",TNT Sports Premium
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6D40PD5pSgwQb7cpXtm1OGp8FXDPzPLImXi8ol43z4id%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPgxAxfydyQP6-ulmTj55ReZnSJcXU4WlvBRKovV-ojW7%2Fm3u8
 #EXTINF:-1 tvg-id="TNT.Sports.Premium.OP2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="TNT SPORTS",TNT Sports Premium OP2
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6D40PD5pSgwQb7cpXtm1OGrYMWeQJ1y3Sl_m3QvePlNA%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPgxAxfydyQP6-ulmTj55Rebq5wRb_sWAzuMCEaV7BAoU%2Fm3u8
 #EXTINF:-1 tvg-id="TNTSports.ar" tvg-name="TNT SPORTS" tvg-logo="http://descargas.podzone.net/logos/-TNT-sports.png" group-title="ARGENTINA",TNT SPORTS
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHb4cMYvkJUUJZLBzD5gHnw9%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA22ri_XuCfUOCWqGwTwjbDN%2Fm3u8
 #EXTINF:-1 tvg-id="DIRECTV.SPORTS.1.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS 1
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6Mha39_SzOz8O_K0fSzGJUTyW1cV-L9bAUGNd60XFVPT%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPoyxEDlee0DutahBqtuWHMLTkf__6A1-5GeRohstqIF-%2Fm3u8
 #EXTINF:-1 tvg-id="DIRECTV.SPORTS.2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS 2
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6FdlwLxUDQnj7NmMWCubNNCzE_M6Y0KsVpGu1iUIYz6G%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPnt2n8DYWMWDymv0V5BQ5tt3dnyMMPIde63wglqky8fV%2Fm3u8
 #EXTINF:-1 tvg-id="DIRECTV.SPORTS.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS +
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6FLL39BTLmlGryL8IUHF7pnGaDya_pT7B_C4XYLK_fLo%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPkkAP9Y6tF61GjzcwaIM5ecRStR3Lu_BlfVK-SwRlQF6%2Fm3u8
 #EXTINF:-1 tvg-id="DIRECTV.SPORTS.OP2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DIRECTV SPORTS OP2
 http://195.66.210.10:80/Bluefox102/XYXNA/456659
 #EXTINF:-1 tvg-id="DSPORTS.OP2.ar" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/67/Fox_Sports_logo.svg" group-title="DSPORTS",DSPORTS + OP2
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GKSawsISKGPhZ05P1ocHC8H-PoYIsOdvnGZ58m9qFs7%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPnmd_q-kb87W4aQbV0ShdblbziCh-RtWk1dvYTYcfC00%2Fm3u8
 #EXTINF:-1 tvg-id="DISCOVERY CHANNEL.ar" tvg-name="- DISCOVERY EN ESPAÑOL" tvg-logo="http://descargas.podzone.net/logos/-discovery-en-espanol.png" group-title="ENTRETENIMIENTO",- DISCOVERY EN ESPAÑOL
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHbeSyoQUsy_OYFq9LHxJedp%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA1Q_T61iXc9-G4oniiUAuzw%2Fm3u8
 #EXTINF:-1 tvg-id="DISCOVERY CHANNEL.ar" tvg-name=" DISCOVERY CHANNEL FHD" tvg-logo="http://descargas.podzone.net/logos/-discovery-channel.png" group-title="ENTRETENIMIENTO", DISCOVERY CHANNEL FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6OU8waNk9wPYWJgpahv4zqn0DX6msyTcToL3W45LGMFD%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPrM95gbRF7bcQfrOcnthmQsnhdfyTF-QtlwwOT7zM1ck%2Fm3u8
 #EXTINF:-1 tvg-id="DISCOVERY CHANNEL.ar" tvg-name=" DISCOVERY CHANNEL" tvg-logo="http://descargas.podzone.net/logos/-discovery-channel.png" group-title="ENTRETENIMIENTO", DISCOVERY CHANNEL
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlcDyzDhAXW3sftZU75ZyMOfKDV_DaGcDRk4C9DBptmIk
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPi7m8J48hdeOW-yHQ1QVkHNdNOuo0rQ_1AExmF0PcOrW%2Fm3u8
 #EXTINF:-1 tvg-id="ID - INVESTIGATION DISCOVERY.ar" tvg-name=" DISCOVERY ID FHD" tvg-logo="http://descargas.podzone.net/logos/-discovery-ID.png" group-title="ENTRETENIMIENTO", DISCOVERY ID FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHb6HlRrrLuXoKDp21ETL6uh%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA2uWj8Paqm0Y5h_OptVheHt%2Fm3u8
 #EXTINF:-1 tvg-id="ID - INVESTIGATION DISCOVERY.ar" tvg-name=" DISCOVERY ID" tvg-logo="http://descargas.podzone.net/logos/-discovery-ID.png" group-title="ENTRETENIMIENTO", DISCOVERY ID
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHYvu1wsA-3KvzBCFLgM0pj8%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA004AIzEqzcpna7BVyM4UeD%2Fm3u8
 #EXTINF:-1 tvg-id="DISCOVERY HOME and GARDEN.ar" tvg-name=" DISCOVERY HOME & HEALTH FHD" tvg-logo="http://descargas.podzone.net/logos/-discovery-home-&-health.png" group-title="ENTRETENIMIENTO", DISCOVERY HOME & HEALTH FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlewHFUoMuDLTCdY66iHNnNAq3iMjxeCldCD1_5T71I21
+http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/4070.m3u8
 #EXTINF:-1 tvg-id="DISCOVERY HOME and GARDEN.ar" tvg-name=" DISCOVERY HOME & HEALTH" tvg-logo="http://descargas.podzone.net/logos/-discovery-home-&-health.png" group-title="ENTRETENIMIENTO", DISCOVERY HOME & HEALTH
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/1155816.m3u8
 #EXTINF:-1 tvg-id="DISCOVERY THEATER.ar" tvg-name=" DISCOVERY THEATER FHD" tvg-logo="http://descargas.podzone.net/logos/-discovery-theater.png" group-title="ENTRETENIMIENTO", DISCOVERY THEATER FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6LH4nlw69CzypqOYOWagoZAecpAzeL32aWFexVC8bbUc%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPmJUBnuzmv7WC62BYLAtho8wE1zc4W1BrI-6H94T7HRm%2Fm3u8
 #EXTINF:-1 tvg-id="DISCOVERY THEATER.ar" tvg-name=" DISCOVERY THEATER" tvg-logo="http://descargas.podzone.net/logos/-discovery-theater.png" group-title="ENTRETENIMIENTO", DISCOVERY THEATER
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6LH4nlw69CzypqOYOWagoZCEtblLnOdYaw2WbjCIxKOa%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPmJUBnuzmv7WC62BYLAtho82MvEBuauqPfEIkzJPstIg%2Fm3u8
 #EXTINF:-1 tvg-id="DISCOVERY WORLD.ar" tvg-name=" - DISCOVERY WORLD FHD" tvg-logo="http://descargas.podzone.net/logos/-discovery-world.png" group-title="ENTRETENIMIENTO", - DISCOVERY WORLD FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6LH4nlw69CzypqOYOWagoZDGyoAFWnBYRuivVdqy9g1Q%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPmJUBnuzmv7WC62BYLAtho-xCtpfeAYGOvamm1edPKQ2%2Fm3u8
 #EXTINF:-1 tvg-id="DISCOVERY WORLD.ar" tvg-name=" DISCOVERY WORLD" tvg-logo="http://descargas.podzone.net/logos/-discovery-world.png" group-title="ENTRETENIMIENTO", DISCOVERY WORLD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6LH4nlw69CzypqOYOWagoZCbUHDjKaahuhCxS1wLk-AO%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPmJUBnuzmv7WC62BYLAtho9kBlArGxpbR8RYo0DMQ3Qn%2Fm3u8
 #EXTINF:-1 tvg-id="DISCOVERY SCIENCE.ar" tvg-name=" DISCOVERY SCIENCE" tvg-logo="http://descargas.podzone.net/logos/-discovery-science.png" group-title="ENTRETENIMIENTO", DISCOVERY SCIENCE
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHbo4dAmTWUzsp2eIdph_mHa%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA16LBMeKLgvShcwm8aCrFfZ%2Fm3u8
 #EXTINF:-1 tvg-id="13C.cl" tvg-name=" DISCOVERY TLC" tvg-logo="http://descargas.podzone.net/logos/-discovery-TLC.png" group-title="ENTRETENIMIENTO", DISCOVERY TLC
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlSLBn48TMaNhQiimG0gYmVSpaNbnoc4jZ5lOMm_rwSRy
+http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/1155820.m3u8
 #EXTINF:-1 tvg-id="AnimalPlanet.ar" tvg-name=" ANIMAL PLANET FHD" tvg-logo="http://descargas.podzone.net/logos/-animal-planet.png" group-title="ENTRETENIMIENTO", ANIMAL PLANET FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHbcspQfg4RtZ3ZHQN0eZDY6%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA0dhjvfsoudlNh0WJPx_fDX%2Fm3u8
 #EXTINF:-1 tvg-id="AnimalPlanet.ar" tvg-name=" ANIMAL PLANET" tvg-logo="http://descargas.podzone.net/logos/-animal-planet.png" group-title="ENTRETENIMIENTO", ANIMAL PLANET
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/1155797.m3u8
 #EXTINF:-1 tvg-id="HISTORY CHANNEL.ar" tvg-name=" HISTORY CHANEL FHD" tvg-logo="http://descargas.podzone.net/logos/-history.png" group-title="ENTRETENIMIENTO", HISTORY CHANEL FHD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHYTG_ieTia4QB6PaWYvUUII%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA3gLhQY8Wye4F4nO0Qfns6G%2Fm3u8
 #EXTINF:-1 tvg-id="HISTORY CHANNEL.ar" tvg-name=" HISTORY CHANEL HD" tvg-logo="http://descargas.podzone.net/logos/-history.png" group-title="ENTRETENIMIENTO", HISTORY CHANEL HD
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/1155804.m3u8
 #EXTINF:-1 tvg-id="HISTORY 2.ar" tvg-name=" H2" tvg-logo="http://descargas.podzone.net/logos/-H2-(history2).png" group-title="ENTRETENIMIENTO", H2
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/4005.m3u8
 #EXTINF:-1 tvg-id="NAT GEO.ar" tvg-name=" NATGEO WILD" tvg-logo="https://variety.com/wp-content/uploads/2014/03/nat_geo_wild.jpg?w=1000&h=563&crop=1" group-title="ENTRETENIMIENTO", NATGEO WILD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHbCfFxtUjRCSraXDE1HeJuM%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA2b83L3qLfZfokb-huBzmXO%2Fm3u8
 #EXTINF:-1 tvg-id="NAT GEO.ar" tvg-name=" NATGEO FHD" tvg-logo="http://descargas.podzone.net/logos/-NATGEO.png" group-title="ENTRETENIMIENTO", NATGEO FHD
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/4097.m3u8
 #EXTINF:-1 tvg-id="NAT GEO.ar" tvg-name=" NATGEO" tvg-logo="http://descargas.podzone.net/logos/-NATGEO.png" group-title="ENTRETENIMIENTO", NATGEO
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/4126.m3u8
 #EXTINF:-1 tvg-id="FilmAndArts.ar" tvg-name=" FILM & ARTS" tvg-logo="http://descargas.podzone.net/logos/-film-&-arts.png" group-title="ENTRETENIMIENTO", FILM & ARTS
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FS_PjYWqDQ27SwK1JxOdxlZXJU8kOzu2NCz0tL60AaW6m8WjDtKlrHhTj_Igde02G
+http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/3966.m3u8
 #EXTINF:-1 tvg-id="TLC.ar" tvg-name=" TLC FHD" tvg-logo="http://descargas.podzone.net/logos2/-TLC.png" group-title="ENTRETENIMIENTO", TLC FHD
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/4074.m3u8
 #EXTINF:-1 tvg-id="" tvg-name=" HGTV HD" tvg-logo="http://descargas.podzone.net/logos/-HGTV.png" group-title="ENTRETENIMIENTO", HGTV HD
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6GN5VAylrV-acAypcbrMLHa-LYkRitLad9fzTLuhFXDw%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPg_DZpmvXym0hQFUZdarJA191dV4vZVYe3baPk39xtR4%2Fm3u8
 #EXTINF:-1 tvg-id="" tvg-name=" HISPAN TV" tvg-logo="http://descargas.podzone.net/logos/-hispan-tv.png" group-title="ENTRETENIMIENTO", HISPAN TV
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/33481.m3u8
 #EXTINF:-1 tvg-id="RTEspanol.ru" tvg-name=" RT ESPAÑOL" tvg-logo="http://descargas.podzone.net/logos/-RT-espanol.png" group-title="ENTRETENIMIENTO", RT ESPAÑOL
 http://tv.nousiptv.com:8080/live/marcosmarv/8854marcos/1155802.m3u8
 #EXTINF:-1 tvg-id="13C.cl" tvg-name=" DW EN ESPANOL" tvg-logo="http://descargas.podzone.net/logos/-DW-en-espanol.png" group-title="ENTRETENIMIENTO", DW EN ESPANOL
-http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2FYPID3LJxuBqvDAKiA4Sa6NXDYBs1vwgoiL66xgTf99nt13LXsZyLbPDnRGsu2KPp%2Fm3u8
+http://sdad-3.onrender.com/proxy?u=https%3A%2F%2F213.111.152.253%3A443%2Fplay%2F12FngM_YhuHLDVAKiIlmPs-hVe3NdDLcw0vxfEFxFRRYnrGH6jPUMgV1nAWDJUvY%2Fm3u8
