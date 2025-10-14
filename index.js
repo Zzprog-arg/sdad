@@ -353,6 +353,46 @@ app.get("/player_api.php", async (req,res)=>{
   }catch(e){ res.status(500).json({ error: e.message }); }
 });
 
+  // Proxy para obtener la M3U remota ignorando certificado inválido
+app.get("/fetchm3u", async (req, res) => {
+  // URL que te pasó el proveedor
+  const remote = "https://zona593.live:8443/playlist/mBPhCV47hp/J5ETPYUvHz/m3u?output=hls";
+
+  try {
+    const u = new URL(remote);
+    const options = {
+      hostname: u.hostname,
+      port: u.port || 443,
+      path: u.pathname + u.search,
+      method: "GET",
+      // IMPORTANTE: permitimos certificado no verificado en la conexión saliente
+      rejectUnauthorized: false,
+      headers: {
+        // opcional: añade un user-agent si el servidor lo requiere
+        "User-Agent": "Mozilla/5.0 (Node-Proxy)"
+      }
+    };
+
+    const proxyReq = https.request(options, proxyRes => {
+      // Forward status & headers (puedes filtrar si hace falta)
+      res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
+      proxyRes.pipe(res);
+    });
+
+    proxyReq.on("error", (err) => {
+      console.error("Error proxy fetchm3u:", err);
+      if (!res.headersSent) res.status(502).send("Error al obtener M3U remota: " + err.message);
+    });
+
+    proxyReq.end();
+  } catch (e) {
+    console.error("Error /fetchm3u:", e);
+    res.status(500).send("Error interno: " + e.message);
+  }
+});
+
+
+
 app.options("/*", (req,res)=>{
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
