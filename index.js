@@ -29,7 +29,7 @@ app.get("/fetchm3u", (req, res) => {
   });
 });
 
-app.listen(process.env.PORT || 3000, () => console.log("Proxy M3U activo"));
+app.listen(process.env.PORT || 10000, () => console.log("Proxy M3U activo"));
 
 
 
