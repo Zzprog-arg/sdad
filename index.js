@@ -612,7 +612,8 @@ app.get("/player_api_vod.php", async (req, res) => {
 
           // decide si es movie según group-title o según regla (ajusta esto)
           const group = (attrs["group-title"] || attrs["group"] || path.basename(info.filename, path.extname(info.filename))).trim();
-          const isMovie = /CINE|PEL(I|Í)CULAS|MOVIES|FILM/i.test(group); // regla: contiene CINE/PELÍCULAS/MOVIES/FILM
+          const isMovie = /CINE|PEL(I|Í)CULAS|MOVIES|FILM|VOD/i.test(group);
+                                                                   // regla: contiene CINE/PELÍCULAS/MOVIES/FILM + VOD
 
           if (!isMovie) continue;
 
