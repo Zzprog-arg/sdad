@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fsSync from "fs";
 import https from "https";
+import http from "http";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -317,7 +318,7 @@ app.get("/player_api.php", async (req,res)=>{
           const idx = after.indexOf(",");
           let metaPart = after, title = "";
           if(idx>=0){ metaPart = after.substring(0, idx); title = after.substring(idx+1).trim(); }
-          const re = /([a-zA-Z0-9\-]+)\s*=\s*"([^"]*)"/g;
+          const re = /([a-zA-Z0-9\-]+)\s*=\s*"([^\"]*)"/g;
           const attrs = {}; let m;
           while((m = re.exec(metaPart)) !== null){ attrs[m[1]] = m[2]; }
           let url = "";
@@ -353,45 +354,133 @@ app.get("/player_api.php", async (req,res)=>{
   }catch(e){ res.status(500).json({ error: e.message }); }
 });
 
-  // Proxy para obtener la M3U remota ignorando certificado inválido
-app.get("/fetchm3u", async (req, res) => {
-  // URL que te pasó el proveedor
-  const remote = "https://zona593.live:8443/playlist/mBPhCV47hp/J5ETPYUvHz/m3u?output=hls";
+// --- BEGIN: proxy + m3u rewrite endpoints ---
+// Proxy simple that takes ?u=<url-encoded> and forwards the stream.
+app.get("/proxy", (req, res) => {
+  const u = req.query.u;
+  if(!u) return res.status(400).send("Missing 'u' param");
+  let remote;
+  try { remote = decodeURIComponent(u); } catch(e){ return res.status(400).send("Bad url encode"); }
+
+  if(!(remote.startsWith("http://") || remote.startsWith("https://"))) return res.status(400).send("Invalid URL protocol");
 
   try {
-    const u = new URL(remote);
+    const parsed = new URL(remote);
+    const client = parsed.protocol === "https:" ? https : http;
+    const options = {
+      hostname: parsed.hostname,
+      port: parsed.port || (parsed.protocol === "https:" ? 443 : 80),
+      path: parsed.pathname + parsed.search,
+      method: "GET",
+      rejectUnauthorized: false,
+      headers: {
+        "User-Agent": "Node-Proxy",
+        "Accept": "*/*"
+      }
+    };
+
+    const proxyReq = client.request(options, proxyRes => {
+      const headersToForward = Object.assign({}, proxyRes.headers);
+      delete headersToForward["content-disposition"];
+      res.writeHead(proxyRes.statusCode || 200, headersToForward);
+      proxyRes.pipe(res);
+    });
+
+    proxyReq.on("error", err => {
+      console.error("Proxy error:", err.message);
+      if(!res.headersSent) res.status(502).send("Proxy error: " + err.message);
+    });
+
+    proxyReq.end();
+
+  } catch (err) {
+    console.error("Proxy exception:", err);
+    return res.status(500).send("Proxy internal error");
+  }
+});
+
+// Endpoint that fetches the remote M3U and rewrites stream URLs to pass through /proxy
+app.get("/fetchm3u", async (req, res) => {
+  try {
+    const remoteM3U = "https://zona593.live:8443/playlist/mBPhCV47hp/J5ETPYUvHz/m3u?output=hls";
+
+    const u = new URL(remoteM3U);
+    const client = u.protocol === "https:" ? https : http;
     const options = {
       hostname: u.hostname,
       port: u.port || 443,
       path: u.pathname + u.search,
       method: "GET",
-      // IMPORTANTE: permitimos certificado no verificado en la conexión saliente
       rejectUnauthorized: false,
-      headers: {
-        // opcional: añade un user-agent si el servidor lo requiere
-        "User-Agent": "Mozilla/5.0 (Node-Proxy)"
-      }
+      headers: { "User-Agent": "Node-FetchM3U" }
     };
 
-    const proxyReq = https.request(options, proxyRes => {
-      // Forward status & headers (puedes filtrar si hace falta)
-      res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
-      proxyRes.pipe(res);
+    const chunks = [];
+    const reqRemote = client.request(options, resp => {
+      resp.on("data", c => chunks.push(c));
+      resp.on("end", () => {
+        try {
+          const raw = Buffer.concat(chunks).toString("utf8").replace(/^\uFEFF/, "");
+          const lines = raw.split(/\r?\n/);
+          const outLines = lines.map(line => {
+            const t = line.trim();
+            if(!t) return "";
+            if(t.startsWith("#")) return t;
+            if(t.startsWith("http://") || t.startsWith("https://")) {
+              return `${req.protocol}://${req.get("host")}/proxy?u=${encodeURIComponent(t)}`;
+            }
+            if(t.startsWith("/")) {
+              const abs = `${u.protocol}//${u.hostname}${t}`;
+              return `${req.protocol}://${req.get("host")}/proxy?u=${encodeURIComponent(abs)}`;
+            }
+            return t;
+          });
+          const out = outLines.join("\n");
+          res.setHeader("Content-Type", "application/x-mpegurl; charset=utf-8");
+          res.send(out);
+        } catch (e) {
+          console.error("Error procesando M3U:", e);
+          res.status(500).send("Error procesando M3U");
+        }
+      });
     });
 
-    proxyReq.on("error", (err) => {
-      console.error("Error proxy fetchm3u:", err);
-      if (!res.headersSent) res.status(502).send("Error al obtener M3U remota: " + err.message);
+    reqRemote.on("error", err => {
+      console.error("Error fetch remote M3U:", err.message);
+      res.status(502).send("No se pudo obtener M3U remota: " + err.message);
     });
 
-    proxyReq.end();
+    reqRemote.end();
+
   } catch (e) {
-    console.error("Error /fetchm3u:", e);
-    res.status(500).send("Error interno: " + e.message);
+    console.error("fetchm3u exception:", e);
+    res.status(500).send("Error interno");
   }
 });
 
-
+// Serve local definitivo.m3u but rewrite internal URLs to go through proxy as well
+app.get("/definitivo.m3u", async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, "definitivo.m3u");
+    const txt = await fs.readFile(filePath, "utf8");
+    const lines = txt.replace(/^\uFEFF/, "").split(/\r?\n/);
+    const outLines = lines.map(line => {
+      const t = line.trim();
+      if(!t) return "";
+      if(t.startsWith("#")) return t;
+      if(t.startsWith("http://") || t.startsWith("https://")) {
+        return `${req.protocol}://${req.get("host")}/proxy?u=${encodeURIComponent(t)}`;
+      }
+      return t;
+    });
+    res.setHeader("Content-Type", "application/x-mpegurl; charset=utf-8");
+    res.send(outLines.join("\n"));
+  } catch (err) {
+    console.error("Error sirviendo definitivo.m3u:", err.message);
+    res.status(404).send("Archivo no encontrado");
+  }
+});
+// --- END: proxy + m3u rewrite endpoints ---
 
 app.options("/*", (req,res)=>{
   res.setHeader("Access-Control-Allow-Origin", "*");
