@@ -1,5 +1,4 @@
 #EXTM3U x-tvg-url="https://www.open-epg.com/files/argentina1.xml"
-#EXT-X-SESSION-DATA:DATA-ID="com.xui.1_5_5r2"
 #EXTINF:-1 tvg-id="AMERICA TV.ar" tvg-logo="https://i.ibb.co/gLk2psqY/250px-Am-rica-TV-Nuevo-logo-Junio-2020.webp" group-title="ARGENTINA",AMÉRICA TV HD
 https://213.111.152.253:443/play/rNk1dFNPjAH8hhb27_xOqMrciY0PWP-6SNJuqxaidrk-wdJOF2rKn6PRMcHZekxu/m3u8
 #EXTINF:-1 tvg-id="AMERICA TV.ar" tvg-name="AMERICA SD" tvg-logo="http://descargas.podzone.net/logos/-america.png" group-title="ARGENTINA",AMERICA SD
