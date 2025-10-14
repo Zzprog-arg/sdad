@@ -567,6 +567,152 @@ app.get("/asd.m3u", async (req, res) => {
 });
 // --- END: improved proxy + m3u rewrite endpoints ---
 
+// --- BEGIN: Xtream-style VOD (Movies) API ---
+// Usage:
+//  /player_api_vod.php?action=get_vod_categories&username=demo&password=demo
+//  /player_api_vod.php?action=get_vod&category_id=1&username=demo&password=demo
+//  /player_api_vod.php?action=get_vod_info&movie_id=the_id&username=demo&password=demo
+
+app.get("/player_api_vod.php", async (req, res) => {
+  const username = req.query.username || "";
+  const password = req.query.password || "";
+  const action = req.query.action || "";
+
+  // opcional: proteger por credenciales legacy si quieres
+  // if (!isLegacyCredentials(username, password)) return res.status(401).json({ error: "Invalid username/password" });
+
+  try {
+    // Read all local M3U files
+    const map = await readAvailableM3Us();
+    const items = []; // will hold { movie_id, name, stream_icon, category, url, container_extension, description }
+
+    for (const info of map.values()) {
+      const lines = info.content.replace(/\r/g, "").split("\n");
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        if (line.startsWith("#EXTINF")) {
+          // parse metadata
+          const after = line.substring(8).trim();
+          const idx = after.indexOf(",");
+          const metaPart = idx >= 0 ? after.substring(0, idx) : after;
+          const title = idx >= 0 ? after.substring(idx + 1).trim() : metaPart || "Sin título";
+
+          // parse attributes like tvg-logo, group-title, tvg-id
+          const re = /([a-zA-Z0-9\-_]+)\s*=\s*"([^"]*)"/g;
+          const attrs = {}; let m;
+          while ((m = re.exec(metaPart)) !== null) { attrs[m[1]] = m[2]; }
+
+          // next non-comment line is url
+          let url = "";
+          for (let j = i + 1; j < lines.length; j++) {
+            if (lines[j] && !lines[j].startsWith("#")) { url = lines[j].trim(); i = j; break; }
+          }
+          if (!url) continue;
+
+          // decide si es movie según group-title o según regla (ajusta esto)
+          const group = (attrs["group-title"] || attrs["group"] || path.basename(info.filename, path.extname(info.filename))).trim();
+          const isMovie = /CINE|PEL(I|Í)CULAS|MOVIES|FILM/i.test(group); // regla: contiene CINE/PELÍCULAS/MOVIES/FILM
+
+          if (!isMovie) continue;
+
+          // build movie_id (unique)
+          const baseId = attrs["tvg-id"] || title;
+          const movie_id = baseId.toString().replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_\-]/g, "");
+
+          // decide container extension from url
+          const lower = url.toLowerCase();
+          let container_extension = "m3u8";
+          if (lower.includes(".mp4")) container_extension = "mp4";
+          else if (lower.includes(".mkv")) container_extension = "mp4";
+          else if (lower.includes(".m3u8")) container_extension = "m3u8";
+          else if (lower.includes(".ts")) container_extension = "ts";
+
+          // ensure URL goes through proxy
+          let direct_url = url;
+          if (url.startsWith("http://") || url.startsWith("https://")) {
+            direct_url = `${req.protocol}://${req.get("host")}/proxy?u=${encodeURIComponent(url)}`;
+          }
+
+          items.push({
+            movie_id,
+            name: title,
+            stream_icon: attrs["tvg-logo"] || "",
+            category: group || "Películas",
+            direct_url,
+            container_extension,
+            added: new Date().toISOString(),
+            description: attrs["description"] || ""
+          });
+        }
+      }
+    }
+
+    // get categories
+    if (action === "get_vod_categories") {
+      const cats = Array.from(new Set(items.map(it => it.category || "Películas")));
+      const out = cats.map((c, i) => ({ category_id: i + 1, category_name: c }));
+      return res.json(out);
+    }
+
+    // get_vod: returns list of movies for a category
+    if (action === "get_vod") {
+      const categoryId = req.query.category_id || null;
+      let filtered = items;
+      if (categoryId) {
+        const num = Number(categoryId);
+        if (!Number.isNaN(num)) {
+          const cats = Array.from(new Set(items.map(it => it.category || "Películas")));
+          const name = cats[num - 1];
+          filtered = items.filter(it => it.category === name);
+        } else {
+          filtered = items.filter(it => it.category === categoryId);
+        }
+      }
+
+      const out = filtered.map(it => ({
+        movie_id: it.movie_id,
+        name: it.name,
+        stream_icon: it.stream_icon,
+        added: it.added,
+        rating: "",
+        container_extension: it.container_extension,
+        direct_source: it.direct_url
+      }));
+      return res.json(out);
+    }
+
+    // get_vod_info: return detail for one movie (some clients call this)
+    if (action === "get_vod_info") {
+      const movie_id = req.query.movie_id || req.query.id || "";
+      if (!movie_id) return res.status(400).json({ error: "movie_id required" });
+      const it = items.find(x => x.movie_id === movie_id);
+      if (!it) return res.status(404).json({ error: "not found" });
+      // format similar to Xtream's movie info
+      const infoOut = {
+        movie_id: it.movie_id,
+        name: it.name,
+        stream_icon: it.stream_icon,
+        added: it.added,
+        container_extension: it.container_extension,
+        rating: "",
+        description: it.description || "",
+        direct_source: it.direct_url
+      };
+      return res.json(infoOut);
+    }
+
+    return res.status(400).json({ error: "Unsupported action" });
+  } catch (e) {
+    console.error("player_api_vod error:", e);
+    return res.status(500).json({ error: e.message });
+  }
+});
+// --- END: Xtream-style VOD (Movies) API ---
+
+
+
+
 app.options("/*", (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
