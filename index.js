@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const CONFIG = {
   xtreamUser: process.env.XTREAM_USER || "demo",
   xtreamPass: process.env.XTREAM_PASS || "demo",
-  port: process.env.PORT || 3000,
+  port: process.env.PORT || 10000,
   accountsFile: path.join(__dirname, "accounts.json"),
   adminsFile: path.join(__dirname, "admins.json"),
   settingsFile: path.join(__dirname, "settings.json"),
