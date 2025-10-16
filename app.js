@@ -1,501 +1,861 @@
-import TVNavigation from "./navigation.js";
-import M3UParser from "./m3u-parser.js";
+import TVNavigation from "./navigation.js"
+import M3UParser from "./m3u-parser.js"
 
-const REMOTE_PLAYLIST_URL = "https://cdn.jsdelivr.net/gh/Zzprog-arg/sdad@main/playlist.m3u";
-const PLAYLIST_IDB_KEY = "playlist-local";
+// --- Config: reemplaza esta URL por la de tu backend (jsDelivr o GitHub Pages recomendado) ---
+const REMOTE_PLAYLIST_URL = "https://raw.githubusercontent.com/Zzprog-arg/sdad/refs/heads/main/playlist.m3u"
+const PLAYLIST_IDB_KEY = "playlist-local"
 
 class NetflisApp {
   constructor() {
-    this.navigation = new TVNavigation();
-    this.parser = new M3UParser();
-    this.allCategories = [];
-    this.currentCategory = null;
-    this.currentContentType = "tv";
-    this.isLoggedIn = false;
-    this.username = "";
-    this.init();
+    this.navigation = new TVNavigation()
+    this.allCategories = []
+    this.categories = []
+    this.currentCategory = null
+    this.currentContentType = null
+    this.currentSeries = null
+    this.isLoggedIn = false
+    this.uploadScreenSetup = false
+    this.categoryLogos = new Map()
+    this.watchProgress = this.loadWatchProgress()
+    this.username = ""
+    this.init()
+    this.setupBackHandler()
+    this.setupGlobalBackHandler()
   }
 
   init() {
-    this.cacheEls();
-    this.bindUI();
-    this.showSplashThenStart();
-    this.setupGlobalBackHandler();
+    this.loadCategoryLogos()
+    this.showSplashScreen()
   }
 
-  cacheEls() {
-    this.screens = {
-      splash: document.getElementById("splash-screen"),
-      login: document.getElementById("login-screen"),
-      upload: document.getElementById("upload-screen"),
-      contentType: document.getElementById("content-type-screen"),
-      categories: document.getElementById("categories-screen"),
-      movies: document.getElementById("movies-screen"),
-      episodes: document.getElementById("episodes-screen"),
-      player: document.getElementById("player-screen"),
-    };
-    this.loadingEl = document.getElementById("loading");
-    this.loginForm = document.getElementById("login-form");
-    this.usernameInput = document.getElementById("username");
-    this.passwordInput = document.getElementById("password");
-    this.loginError = document.getElementById("login-error");
-    this.uploadStatus = document.getElementById("upload-status");
-    this.updateBtn = document.getElementById("update-playlist-btn");
-    this.userProfileBtn = document.getElementById("user-profile-btn");
-    this.video = document.getElementById("video-player");
-  }
-
-  bindUI() {
-    if (this.loginForm) {
-      this.loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        this.handleLogin();
-      });
-    }
-    if (this.updateBtn) {
-      this.updateBtn.addEventListener("click", () => this.forceUpdatePlaylist());
-      this.updateBtn.style.display = "none";
-    }
-    if (this.userProfileBtn) {
-      this.userProfileBtn.addEventListener("click", () => this.showUserProfile());
-    }
-    // back from player close button
-    const closeBtn = document.getElementById("close-player");
-    if (closeBtn) closeBtn.addEventListener("click", () => this.closePlayer());
-  }
-
-  showSplashThenStart() {
-    setTimeout(() => {
-      const savedLogin = localStorage.getItem("netflis_logged_in");
-      const savedUsername = localStorage.getItem("netflis_username");
-      if (savedLogin === "true" && savedUsername) {
-        this.isLoggedIn = true;
-        this.username = savedUsername;
-        this.updateUserDisplay();
-        this.loadPlaylistFromBackend(); // auto
-      } else {
-        this.showScreen("login");
-      }
-    }, 1000);
-  }
-
-  showScreen(name) {
-    Object.values(this.screens).forEach((el) => el && el.classList.remove("active"));
-    const el = this.screens[name];
-    if (el) el.classList.add("active");
-  }
-
-  // ---------------- IndexedDB helpers ----------------
   openIDB() {
     return new Promise((resolve, reject) => {
-      const req = indexedDB.open("playlist-db", 1);
+      const req = indexedDB.open("playlist-db", 1)
       req.onupgradeneeded = (e) => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains("files")) db.createObjectStore("files");
-      };
-      req.onsuccess = (e) => resolve(e.target.result);
-      req.onerror = (e) => reject(e.target.error);
-    });
+        const db = e.target.result
+        if (!db.objectStoreNames.contains("files")) {
+          db.createObjectStore("files")
+        }
+      }
+      req.onsuccess = (e) => resolve(e.target.result)
+      req.onerror = (e) => reject(e.target.error)
+    })
   }
 
   async idbPut(key, value) {
-    const db = await this.openIDB();
+    const db = await this.openIDB()
     return new Promise((res, rej) => {
-      const tx = db.transaction("files", "readwrite");
-      tx.objectStore("files").put(value, key);
-      tx.oncomplete = () => res();
-      tx.onerror = (e) => rej(e.target.error);
-    });
+      const tx = db.transaction("files", "readwrite")
+      tx.objectStore("files").put(value, key)
+      tx.oncomplete = () => res()
+      tx.onerror = (e) => rej(e.target.error)
+    })
   }
 
   async idbGet(key) {
-    const db = await this.openIDB();
+    const db = await this.openIDB()
     return new Promise((res, rej) => {
-      const tx = db.transaction("files", "readonly");
-      const req = tx.objectStore("files").get(key);
-      req.onsuccess = () => res(req.result);
-      req.onerror = (e) => rej(e.target.error);
-    });
+      const tx = db.transaction("files", "readonly")
+      const req = tx.objectStore("files").get(key)
+      req.onsuccess = () => res(req.result)
+      req.onerror = (e) => rej(e.target.error)
+    })
   }
 
   async idbDelete(key) {
-    const db = await this.openIDB();
+    const db = await this.openIDB()
     return new Promise((res, rej) => {
-      const tx = db.transaction("files", "readwrite");
-      tx.objectStore("files").delete(key);
-      tx.oncomplete = () => res();
-      tx.onerror = (e) => rej(e.target.error);
-    });
+      const tx = db.transaction("files", "readwrite")
+      tx.objectStore("files").delete(key)
+      tx.oncomplete = () => res()
+      tx.onerror = (e) => rej(e.target.error)
+    })
   }
-  // ---------------------------------------------------
 
-  async handleLogin() {
-    const u = this.usernameInput.value.trim();
-    const p = this.passwordInput.value.trim();
+  loadWatchProgress() {
+    const saved = localStorage.getItem("netflis_watch_progress")
+    return saved ? JSON.parse(saved) : {}
+  }
 
-    // Simple demo auth — replace if needed
-    if (u === "miuser" && p === "mipass") {
-      this.isLoggedIn = true;
-      this.username = u;
-      localStorage.setItem("netflis_logged_in", "true");
-      localStorage.setItem("netflis_username", u);
-      this.updateUserDisplay();
-      this.loadPlaylistFromBackend();
-    } else {
-      this.loginError.textContent = "Usuario o contraseña incorrectos";
-      this.passwordInput.value = "";
+  saveWatchProgress() {
+    localStorage.setItem("netflis_watch_progress", JSON.stringify(this.watchProgress))
+  }
+
+  updateProgress(seriesName, season, episode, currentTime) {
+    const key = `${seriesName}_S${season}E${episode}`
+    this.watchProgress[key] = {
+      seriesName,
+      season,
+      episode,
+      currentTime,
+      timestamp: Date.now(),
     }
+    this.saveWatchProgress()
   }
 
-  updateUserDisplay() {
-    if (this.userProfileBtn) this.userProfileBtn.textContent = this.username || "Usuario";
+  getLastWatched(seriesName) {
+    const seriesProgress = Object.values(this.watchProgress)
+      .filter((p) => p.seriesName === seriesName)
+      .sort((a, b) => b.timestamp - a.timestamp)
+
+    return seriesProgress[0] || null
   }
 
-  showLoading(show) {
-    if (!this.loadingEl) return;
-    this.loadingEl.classList.toggle("active", !!show);
-  }
-
-  // ---------------- Playlist load flow ----------------
-  async loadPlaylistFromIndexedDB() {
+  async loadCategoryLogos() {
     try {
-      return await this.idbGet(PLAYLIST_IDB_KEY);
-    } catch (e) {
-      console.warn("idb get error", e);
-      return null;
+      const response = await fetch("./category-logos.json")
+      if (response.ok) {
+        const data = await response.json()
+        data.categories.forEach((cat) => {
+          this.categoryLogos.set(cat.name, cat.logo)
+        })
+      }
+    } catch (error) {
+      console.log("[v0] No se pudieron cargar los logos de categorías:", error)
     }
+  }
+
+  setupBackHandler() {
+    window.addEventListener("navigation-back", () => {
+      this.handleBack()
+    })
+  }
+
+  showSplashScreen() {
+    setTimeout(() => {
+      const savedLogin = localStorage.getItem("netflis_logged_in")
+      const savedUsername = localStorage.getItem("netflis_username")
+      if (savedLogin === "true" && savedUsername) {
+        this.isLoggedIn = true
+        this.username = savedUsername
+        this.loadPlaylistFromBackend()
+      } else {
+        this.showScreen("login")
+        this.setupLoginScreen()
+      }
+    }, 1000)
   }
 
   async downloadPlaylistToIndexedDB(remoteUrl = REMOTE_PLAYLIST_URL) {
-    this.showLoading(true);
+    this.showLoading(true)
     try {
-      const res = await fetch(remoteUrl);
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const text = await res.text();
-      await this.idbPut(PLAYLIST_IDB_KEY, text);
-      console.log("Saved playlist, chars:", text.length);
-      return text;
+      const resp = await fetch(remoteUrl)
+      if (!resp.ok) throw new Error("Error HTTP " + resp.status)
+      const text = await resp.text()
+      await this.idbPut(PLAYLIST_IDB_KEY, text)
+      console.log("Playlist guardada en IndexedDB (tamaño chars):", text.length)
+      return text
     } finally {
-      this.showLoading(false);
+      this.showLoading(false)
+    }
+  }
+
+  async loadPlaylistFromIndexedDB() {
+    try {
+      const local = await this.idbGet(PLAYLIST_IDB_KEY)
+      if (local) {
+        console.log("Cargando playlist desde IndexedDB (local)")
+        return local
+      }
+      return null
+    } catch (e) {
+      console.warn("Error leyendo IndexedDB:", e)
+      return null
     }
   }
 
   async clearLocalPlaylist() {
     try {
-      await this.idbDelete(PLAYLIST_IDB_KEY);
-      console.log("Cleared playlist");
+      await this.idbDelete(PLAYLIST_IDB_KEY)
+      console.log("Playlist local eliminada")
     } catch (e) {
-      console.warn(e);
+      console.warn("No se pudo borrar playlist local", e)
     }
   }
 
   async loadPlaylistFromBackend() {
-    this.showLoading(true);
+    this.showLoading(true)
+
     try {
-      // 1. local
-      const local = await this.loadPlaylistFromIndexedDB();
-      if (local) {
-        this.allCategories = this.parser.parse(local);
-        if (this.allCategories && this.allCategories.length) {
-          this.showContentTypeScreen();
-          return;
+      // 1) Intentar cargar local desde IndexedDB
+      const localText = await this.loadPlaylistFromIndexedDB()
+      if (localText) {
+        const parser = new M3UParser()
+        this.allCategories = parser.parse(localText)
+
+        if (this.allCategories.length === 0) {
+          throw new Error("No se encontraron categorías en el archivo (local)")
         }
+        setTimeout(() => {
+          this.showContentTypeScreen()
+        }, 500)
+        return
       }
 
-      // 2. embedded file (if packaged)
+      // 2) Intentar cargar archivo embebido en la app ('playlist.txt' si existe)
       try {
-        const r = await fetch("./playlist.txt");
-        if (r.ok) {
-          const txt = await r.text();
-          this.allCategories = this.parser.parse(txt);
-          if (this.allCategories && this.allCategories.length) {
-            this.showContentTypeScreen();
-            return;
+        const response = await fetch("./playlist.txt")
+        if (response.ok) {
+          const text = await response.text()
+          const parser = new M3UParser()
+          this.allCategories = parser.parse(text)
+          if (this.allCategories.length === 0) {
+            throw new Error("No se encontraron categorías en el archivo (embebido)")
           }
+          setTimeout(() => {
+            this.showContentTypeScreen()
+          }, 500)
+          return
         }
-      } catch (e) { /* ignore */ }
-
-      // 3. download remote and save
-      const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL);
-      this.allCategories = this.parser.parse(remoteText);
-      if (this.allCategories && this.allCategories.length) {
-        this.showContentTypeScreen();
-        return;
+      } catch (e) {
+        console.warn("No se encontró playlist embebida o hubo error:", e)
       }
 
-      throw new Error("No categories found after loading");
-    } catch (e) {
-      console.error("Load playlist failed", e);
-      alert("No se pudo cargar la playlist. Revisa REMOTE_PLAYLIST_URL o empaqueta playlist.txt");
-      this.showScreen("upload");
+      // 3) Descargar automáticamente desde REMOTE_PLAYLIST_URL y guardar en IndexedDB
+      try {
+        const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL)
+        const parser = new M3UParser()
+        this.allCategories = parser.parse(remoteText)
+        if (this.allCategories.length === 0) {
+          throw new Error("No se encontraron categorías en el archivo (remoto)")
+        }
+        setTimeout(() => {
+          this.showContentTypeScreen()
+        }, 500)
+        return
+      } catch (e) {
+        console.warn("No se pudo descargar desde remoto:", e)
+      }
+
+      throw new Error("No se pudo cargar la playlist desde local ni remoto")
+    } catch (error) {
+      console.error("Error al cargar playlist:", error)
+      alert(
+        "No se pudo cargar la playlist.\n\n" +
+          "Verifica que REMOTE_PLAYLIST_URL esté bien configurada en app.js o que playlist.txt esté incluida en la app.",
+      )
+      this.showScreen("upload")
+      this.setupUploadScreen()
     } finally {
-      this.showLoading(false);
+      this.showLoading(false)
     }
   }
 
-  async forceUpdatePlaylist() {
-    if (!this.isLoggedIn) {
-      alert("Debes iniciar sesión para actualizar la lista.");
-      return;
+  setupLoginScreen() {
+    const form = document.getElementById("login-form")
+    const usernameInput = document.getElementById("username")
+    const passwordInput = document.getElementById("password")
+    const loginError = document.getElementById("login-error")
+    const inputs = [usernameInput, passwordInput]
+    let currentInputIndex = 0
+
+    const focusInput = (index) => {
+      inputs.forEach((input) => input.classList.remove("focused"))
+      inputs[index].classList.add("focused")
+      inputs[index].focus()
     }
-    const ok = confirm("¿Deseas actualizar la lista ahora? Se eliminará la copia local y se descargará la nueva versión.");
-    if (!ok) return;
-    this.showLoading(true);
+
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault()
+        currentInputIndex = (currentInputIndex + 1) % inputs.length
+        focusInput(currentInputIndex)
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault()
+        currentInputIndex = (currentInputIndex - 1 + inputs.length) % inputs.length
+        focusInput(currentInputIndex)
+      }
+    }
+
+    inputs.forEach((input, index) => {
+      input.addEventListener("focus", () => {
+        currentInputIndex = index
+        focusInput(index)
+      })
+      input.addEventListener("keydown", handleKeyDown)
+    })
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault()
+
+      const username = usernameInput.value.trim()
+      const password = passwordInput.value.trim()
+
+      if (username === "miuser" && password === "mipass") {
+        this.isLoggedIn = true
+        this.username = username
+        localStorage.setItem("netflis_logged_in", "true")
+        localStorage.setItem("netflis_username", username)
+        loginError.textContent = ""
+        this.loadPlaylistFromBackend()
+      } else {
+        loginError.textContent = "Usuario o contraseña incorrectos"
+        passwordInput.value = ""
+        focusInput(1)
+      }
+    })
+
+    focusInput(0)
+  }
+
+  setupUploadScreen() {
+    if (this.uploadScreenSetup) return
+    this.uploadScreenSetup = true
+    const status = document.getElementById("upload-status")
+    if (status) {
+      status.textContent = "La playlist se descargará automáticamente. Si falla, revisa configuración."
+    }
+  }
+
+  async handleFileUpload(file) {
+    if (!file) return
+
+    this.showLoading(true)
+    document.getElementById("upload-status").textContent = "Procesando archivo..."
+
     try {
-      await this.clearLocalPlaylist();
-      const txt = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL);
-      this.allCategories = this.parser.parse(txt);
-      if (this.allCategories && this.allCategories.length) {
-        this.showContentTypeScreen();
-        this.uploadStatus && (this.uploadStatus.textContent = "Lista actualizada.");
+      this.allCategories = await M3UParser.loadFromFile(file)
+
+      if (this.allCategories.length === 0) {
+        throw new Error("No se encontraron categorías en el archivo")
       }
-    } catch (e) {
-      console.error(e);
-      alert("Error actualizando playlist: " + (e.message || e));
+
+      document.getElementById("upload-status").textContent =
+        `✓ ${this.allCategories.length} categorías cargadas correctamente`
+
+      setTimeout(() => {
+        this.showContentTypeScreen()
+      }, 800)
+    } catch (error) {
+      console.error("Error al cargar archivo:", error)
+      document.getElementById("upload-status").textContent = `✗ Error: ${error.message}`
     } finally {
-      this.showLoading(false);
+      this.showLoading(false)
     }
   }
 
-  // ---------------- UI screens ----------------
   showContentTypeScreen() {
-    this.showScreen("contentType");
-    // enable update button
-    if (this.updateBtn) this.updateBtn.style.display = "inline-block";
-    this.updateUserDisplay();
-    // small counts preview
-    const tvc = document.getElementById("tv-count");
-    const mvc = document.getElementById("movies-count");
-    const sc = document.getElementById("series-count");
-    const counts = this.calculateContentTypeCounts();
-    if (tvc) tvc.textContent = `${counts.tv} canales`;
-    if (mvc) mvc.textContent = `${counts.movies} películas`;
-    if (sc) sc.textContent = `${counts.series} series`;
-    // wire cards
-    const cards = document.querySelectorAll(".content-type-card");
+    this.showScreen("content-type")
+
+    const counts = this.calculateContentTypeCounts()
+
+    document.getElementById("tv-count").textContent = `${counts.tv} canales`
+    document.getElementById("movies-count").textContent = `${counts.movies} películas`
+    document.getElementById("series-count").textContent = `${counts.series} series`
+
+    const userBtn = document.getElementById("user-profile-btn")
+    userBtn.textContent = this.username
+
+    const cards = document.querySelectorAll(".content-type-card")
+
     cards.forEach((card) => {
-      card.onclick = () => {
-        const type = card.getAttribute("data-type");
-        this.selectContentType(type);
-      };
-    });
+      card.addEventListener("click", () => {
+        const type = card.getAttribute("data-type")
+        this.selectContentType(type)
+      })
+    })
+
+    userBtn.addEventListener("click", () => {
+      this.showUserProfile()
+    })
+
+    this.navigation.setItems([...Array.from(cards), userBtn], 4, false)
+  }
+
+  showUserProfile() {
+    const modal = document.getElementById("user-profile-modal")
+    modal.classList.add("active")
+
+    const usernameDisplay = document.getElementById("profile-username")
+    const logoutBtn = document.getElementById("profile-logout-btn")
+    const closeBtn = document.getElementById("close-profile-btn")
+
+    usernameDisplay.textContent = this.username
+
+    const handleLogout = () => {
+      const confirmLogout = confirm("¿Deseas cerrar sesión?")
+      if (confirmLogout) {
+        localStorage.removeItem("netflis_logged_in")
+        localStorage.removeItem("netflis_username")
+        this.isLoggedIn = false
+        this.username = ""
+        modal.classList.remove("active")
+        this.showScreen("login")
+        this.setupLoginScreen()
+      }
+    }
+
+    const handleClose = () => {
+      modal.classList.remove("active")
+      this.showContentTypeScreen()
+    }
+
+    logoutBtn.onclick = handleLogout
+    closeBtn.onclick = handleClose
+
+    this.navigation.setItems([logoutBtn, closeBtn], 2, true)
+
+    const handleModalKeys = (e) => {
+      if (e.key === "Escape" || e.key === "Backspace" || e.key === "Delete") {
+        e.preventDefault()
+        handleClose()
+        window.removeEventListener("keydown", handleModalKeys)
+      }
+    }
+    window.addEventListener("keydown", handleModalKeys)
   }
 
   calculateContentTypeCounts() {
-    const counts = { tv: 0, movies: 0, series: 0 };
-    (this.allCategories || []).forEach((c) => {
-      (c.movies || []).forEach((m) => {
-        counts[m.contentType] = (counts[m.contentType] || 0) + 1;
-      });
-    });
-    return counts;
+    const counts = { tv: 0, movies: 0, series: 0 }
+
+    this.allCategories.forEach((category) => {
+      category.movies.forEach((movie) => {
+        counts[movie.contentType]++
+      })
+    })
+
+    return counts
   }
 
   selectContentType(type) {
-    this.currentContentType = type;
-    this.categories = (this.allCategories || []).map((category) => {
-      const movies = (category.movies || []).filter((m) => m.contentType === type);
-      if (!movies.length) return null;
-      return { name: category.name, count: movies.length, movies };
-    }).filter(Boolean);
-    this.showCategoriesScreen();
+    this.currentContentType = type
+
+    this.categories = this.allCategories
+      .map((category) => {
+        const filteredMovies = category.movies.filter((movie) => movie.contentType === type)
+
+        if (filteredMovies.length === 0) return null
+
+        return {
+          name: category.name,
+          count: filteredMovies.length,
+          movies: filteredMovies,
+        }
+      })
+      .filter((cat) => cat !== null)
+
+    this.showCategoriesScreen()
   }
 
   showCategoriesScreen() {
-    this.showScreen("categories");
-    const container = document.getElementById("categories-container");
-    const totalCategories = document.getElementById("total-categories");
-    container.innerHTML = "";
-    if (totalCategories) totalCategories.textContent = `${this.categories.length} categorías`;
-    this.categories.forEach((cat) => {
-      const card = document.createElement("div");
-      card.className = "category-card";
-      card.innerHTML = `
-        <div class="category-backdrop"></div>
-        <div class="category-content">
-          <div class="category-icon">🎬</div>
-          <div class="category-name">${cat.name}</div>
-          <div class="category-count">${cat.count} items</div>
-        </div>`;
-      card.onclick = () => this.showMoviesScreen(cat);
-      container.appendChild(card);
-    });
+    this.showScreen("categories")
+
+    const container = document.getElementById("categories-container")
+    const totalCategories = document.getElementById("total-categories")
+    const contentTypeLabel = document.getElementById("content-type-label")
+
+    const typeLabels = {
+      tv: "📺 Canales de TV",
+      movies: "🎬 Películas",
+      series: "📺 Series",
+    }
+    contentTypeLabel.textContent = typeLabels[this.currentContentType] || ""
+
+    container.innerHTML = ""
+    totalCategories.textContent = `${this.categories.length} categorías`
+
+    this.categories.forEach((category) => {
+      const card = this.createCategoryCard(category)
+      container.appendChild(card)
+    })
+
+    const cards = container.querySelectorAll(".category-card")
+    const columns = Math.floor(window.innerWidth / 270)
+    this.navigation.setItems(Array.from(cards), columns)
+  }
+
+  createCategoryCard(category) {
+    const card = document.createElement("div")
+    card.className = "category-card"
+
+    const categoryLogo = this.categoryLogos.get(category.name)
+    const logoHTML = categoryLogo
+      ? `<img src="${categoryLogo}" alt="${category.name}" class="category-logo-img">`
+      : `<div class="category-icon">🎬</div>`
+
+    card.innerHTML = `
+      <div class="category-backdrop"></div>
+      <div class="category-content">
+        ${logoHTML}
+        <div class="category-name">${category.name}</div>
+        <div class="category-count">${category.count} ${this.getContentLabel()}</div>
+      </div>
+    `
+
+    card.addEventListener("click", () => {
+      this.showMoviesScreen(category)
+    })
+
+    return card
+  }
+
+  getContentLabel() {
+    const labels = {
+      tv: "canales",
+      movies: "películas",
+      series: "series",
+    }
+    return labels[this.currentContentType] || "items"
   }
 
   showMoviesScreen(category) {
-    this.currentCategory = category;
-    this.showScreen("movies");
-    document.getElementById("category-title").textContent = category.name;
-    document.getElementById("total-movies").textContent = `${category.count} items`;
-    const carousel = document.getElementById("movies-carousel");
-    carousel.innerHTML = "";
-    category.movies.forEach((m) => {
-      const card = document.createElement("div");
-      card.className = "movie-card";
-      card.innerHTML = `<div class="movie-poster">${m.logo ? `<img src="${m.logo}">` : "📺"}</div>
-        <div class="movie-info"><div class="movie-title">${m.title}</div><div class="movie-meta">${m.category || ""}</div></div>`;
-      card.onclick = () => this.playMovie(m);
-      carousel.appendChild(card);
-    });
+    this.currentCategory = category
+    this.showScreen("movies")
+
+    const categoryTitle = document.getElementById("category-title")
+    const totalMovies = document.getElementById("total-movies")
+    const carousel = document.getElementById("movies-carousel")
+    const backBtn = document.getElementById("back-to-categories")
+
+    categoryTitle.textContent = category.name
+    carousel.innerHTML = ""
+
+    if (this.currentContentType === "series") {
+      const seriesMap = this.groupSeriesByName(category.movies)
+      totalMovies.textContent = `${seriesMap.size} series disponibles`
+
+      const row = document.createElement("div")
+      row.className = "carousel-row"
+
+      seriesMap.forEach((episodes, seriesName) => {
+        const card = this.createSeriesCard(seriesName, episodes)
+        row.appendChild(card)
+      })
+
+      carousel.appendChild(row)
+      const cards = row.querySelectorAll(".movie-card")
+      this.navigation.setItems(Array.from(cards), cards.length, true)
+    } else {
+      totalMovies.textContent = `${category.count} ${this.getContentLabel()} disponibles`
+
+      const row = document.createElement("div")
+      row.className = "carousel-row"
+
+      category.movies.forEach((movie) => {
+        const card = this.createMovieCard(movie)
+        row.appendChild(card)
+      })
+
+      carousel.appendChild(row)
+      const cards = row.querySelectorAll(".movie-card")
+      this.navigation.setItems(Array.from(cards), cards.length, true)
+    }
+
+    backBtn.onclick = () => {
+      this.showCategoriesScreen()
+    }
+  }
+
+  groupSeriesByName(movies) {
+    const seriesMap = new Map()
+
+    movies.forEach((movie) => {
+      const seriesName = movie.seriesName || movie.title
+      if (!seriesMap.has(seriesName)) {
+        seriesMap.set(seriesName, [])
+      }
+      seriesMap.get(seriesName).push(movie)
+    })
+
+    seriesMap.forEach((episodes, seriesName) => {
+      episodes.sort((a, b) => {
+        if (a.season !== b.season) return a.season - b.season
+        return a.episode - b.episode
+      })
+    })
+
+    return seriesMap
+  }
+
+  createSeriesCard(seriesName, episodes) {
+    const card = document.createElement("div")
+    card.className = "movie-card"
+
+    const firstEpisode = episodes[0]
+    const posterContent = firstEpisode.logo ? `<img src="${firstEpisode.logo}" alt="${seriesName}">` : "📺"
+
+    const episodeCount = episodes.length
+
+    card.innerHTML = `
+      <div class="movie-poster">${posterContent}</div>
+      <div class="movie-info">
+        <div class="movie-title">${seriesName}</div>
+        <div class="movie-meta">${episodeCount} episodios</div>
+      </div>
+    `
+
+    card.addEventListener("click", () => {
+      this.showEpisodesScreen(seriesName, episodes)
+    })
+
+    return card
   }
 
   showEpisodesScreen(seriesName, episodes) {
-    this.showScreen("episodes");
-    document.getElementById("series-title").textContent = seriesName;
-    document.getElementById("total-episodes").textContent = `${episodes.length} episodios disponibles`;
-    const container = document.getElementById("episodes-container");
-    container.innerHTML = "";
-    episodes.forEach((ep) => {
-      const card = document.createElement("div");
-      card.className = "episode-card";
-      card.innerHTML = `<div class="episode-poster">${ep.logo ? `<img src="${ep.logo}">` : "📺"}</div>
-        <div class="episode-info"><div class="episode-number">T${ep.season} E${ep.episode}</div><div class="episode-title">${ep.episodeTitle || ep.title}</div></div>`;
-      card.onclick = () => this.playMovie(ep);
-      container.appendChild(card);
-    });
+    this.currentSeries = { name: seriesName, episodes }
+    this.showScreen("episodes")
+
+    const seriesTitle = document.getElementById("series-title")
+    const totalEpisodes = document.getElementById("total-episodes")
+    const episodesContainer = document.getElementById("episodes-container")
+    const backBtn = document.getElementById("back-to-series")
+    const continueBtn = document.getElementById("continue-watching-btn")
+
+    seriesTitle.textContent = seriesName
+    totalEpisodes.textContent = `${episodes.length} episodios disponibles`
+    episodesContainer.innerHTML = ""
+
+    const lastWatched = this.getLastWatched(seriesName)
+
+    if (lastWatched) {
+      continueBtn.style.display = "block"
+      continueBtn.onclick = () => {
+        const episode = episodes.find((ep) => ep.season === lastWatched.season && ep.episode === lastWatched.episode)
+        if (episode) {
+          this.playMovie(episode, lastWatched.currentTime)
+        }
+      }
+    } else {
+      continueBtn.style.display = "none"
+    }
+
+    episodes.forEach((episode) => {
+      const card = this.createEpisodeCard(episode)
+      episodesContainer.appendChild(card)
+    })
+
+    const cards = episodesContainer.querySelectorAll(".episode-card")
+    const allItems = continueBtn.style.display === "block" ? [continueBtn, ...Array.from(cards)] : Array.from(cards)
+
+    const columns = Math.floor(window.innerWidth / 320)
+    this.navigation.setItems(allItems, columns)
+
+    backBtn.onclick = () => {
+      this.showMoviesScreen(this.currentCategory)
+    }
   }
 
-  // ---------------- Playback ----------------
-  async playMovie(movie, startTime = 0) {
-    this.showScreen("player");
-    const video = this.video;
-    const title = document.getElementById("player-title");
-    const cat = document.getElementById("player-category");
-    title.textContent = movie.episodeTitle || movie.title || "";
-    cat.textContent = movie.category || "";
-    video.src = movie.url;
-    try {
-      await video.load?.();
-    } catch(e){/* ignore */}
-    // try autoplay + fullscreen
-    try {
-      await video.play();
-      try {
-        if (video.requestFullscreen) video.requestFullscreen();
-        else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-        else if (video.mozRequestFullScreen) video.mozRequestFullScreen();
-        else if (video.msRequestFullscreen) video.msRequestFullscreen();
-      } catch (fsErr) {
-        console.debug("Fullscreen denied:", fsErr && fsErr.message);
-        // Fallback: aplicar "CSS fullscreen" (clase) para simular fullscreen cuando requestFullscreen() está bloqueado
+  createEpisodeCard(episode) {
+    const card = document.createElement("div")
+    card.className = "episode-card"
+
+    const posterContent = episode.logo ? `<img src="${episode.logo}" alt="${episode.episodeTitle}">` : "📺"
+
+    const episodeLabel = `T${episode.season} E${episode.episode}`
+
+    card.innerHTML = `
+      <div class="episode-poster">${posterContent}</div>
+      <div class="episode-info">
+        <div class="episode-number">${episodeLabel}</div>
+        <div class="episode-title">${episode.episodeTitle}</div>
+      </div>
+    `
+
+    card.addEventListener("click", () => {
+      this.playMovie(episode)
+    })
+
+    return card
+  }
+
+  createMovieCard(movie) {
+    const card = document.createElement("div")
+    card.className = "movie-card"
+
+    const posterContent = movie.logo ? `<img src="${movie.logo}" alt="${movie.title}">` : "🎥"
+
+    card.innerHTML = `
+      <div class="movie-poster">${posterContent}</div>
+      <div class="movie-info">
+        <div class="movie-title">${movie.title}</div>
+        <div class="movie-meta">${movie.category}</div>
+      </div>
+    `
+
+    card.addEventListener("click", () => {
+      this.playMovie(movie)
+    })
+
+    return card
+  }
+
+  playMovie(movie, startTime = 0) {
+    this.showScreen("player")
+
+    const video = document.getElementById("video-player")
+    const playerTitle = document.getElementById("player-title")
+    const playerCategory = document.getElementById("player-category")
+    const closeBtn = document.getElementById("close-player")
+
+    playerTitle.textContent = movie.episodeTitle || movie.title
+    playerCategory.textContent = movie.category
+
+    video.src = movie.url
+    video.load()
+
+    if (startTime > 0) {
+      video.currentTime = startTime
+    }
+
+    video
+      .play()
+      .then(() => {
         try {
-          this._cssFullscreen = true;
-          document.documentElement.classList.add("css-fullscreen");
-        } catch(e) { /* ignore */ }
+          if (video.requestFullscreen) video.requestFullscreen()
+          else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen()
+          else if (video.mozRequestFullScreen) video.mozRequestFullScreen()
+          else if (video.msRequestFullscreen) video.msRequestFullscreen()
+        } catch (e) {
+          console.debug("Fullscreen no permitido:", e && e.message)
+        }
+      })
+      .catch((error) => {
+        console.error("Error al reproducir:", error)
+        alert("Error al reproducir el video. Verifica la URL.")
+      })
+
+    let progressInterval
+    if (movie.contentType === "series") {
+      progressInterval = setInterval(() => {
+        if (!video.paused && video.currentTime > 0) {
+          this.updateProgress(movie.seriesName, movie.season, movie.episode, video.currentTime)
+        }
+      }, 10000)
+    }
+
+    closeBtn.onclick = () => {
+      if (progressInterval) clearInterval(progressInterval)
+      this.closePlayer()
+    }
+
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        if (progressInterval) clearInterval(progressInterval)
+        this.closePlayer()
+        window.removeEventListener("keydown", handleEsc)
       }
-    } catch (playErr) {
-      console.error("Play error", playErr);
-      alert("Error al reproducir el video. Verifica la URL.");
     }
-    if (startTime && video.duration) {
-      try { video.currentTime = startTime; } catch(e){}
-    }
+    window.addEventListener("keydown", handleEsc)
+
+    this.navigation.currentScreen = "player"
   }
 
   async closePlayer() {
-    // try exit fullscreen first
-    await this.exitFullscreenIfNeeded().catch(()=>{});
-    const video = this.video;
-    // remove CSS fullscreen if it was used
-    try { if (this._cssFullscreen) { document.documentElement.classList.remove('css-fullscreen'); this._cssFullscreen = false; } } catch(e){}
-    try { video.pause(); } catch(e) {}
-    try { video.removeAttribute('src'); video.load && video.load(); } catch(e){}
-    // go back to episodes or movies depending
+    const video = document.getElementById("video-player")
+    await this.exitFullscreenIfNeeded().catch(() => {})
+    video.pause()
+    video.src = ""
+
     if (this.currentContentType === "series" && this.currentSeries) {
-      this.showEpisodesScreen(this.currentSeries.name, this.currentSeries.episodes);
+      this.showEpisodesScreen(this.currentSeries.name, this.currentSeries.episodes)
     } else {
-      this.showMoviesScreen(this.currentCategory);
+      this.showMoviesScreen(this.currentCategory)
     }
   }
 
+  handleBack() {
+    const currentScreen = this.navigation.currentScreen
+
+    switch (currentScreen) {
+      case "content-type":
+        break
+      case "categories":
+        this.showContentTypeScreen()
+        break
+      case "movies":
+        this.showCategoriesScreen()
+        break
+      case "episodes":
+        this.showMoviesScreen(this.currentCategory)
+        break
+      case "player":
+        this.closePlayer()
+        break
+    }
+  }
+
+  showScreen(screenName) {
+    document.querySelectorAll(".screen").forEach((screen) => {
+      screen.classList.remove("active")
+    })
+
+    const screen = document.getElementById(`${screenName}-screen`)
+    if (screen) {
+      screen.classList.add("active")
+      this.navigation.currentScreen = screenName
+    }
+  }
+
+  showLoading(show) {
+    const loading = document.getElementById("loading")
+    loading.classList.toggle("active", show)
+  }
+
   isInFullscreen() {
-    return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+    return !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    )
   }
 
   async exitFullscreenIfNeeded() {
     try {
       if (this.isInFullscreen()) {
-        if (document.exitFullscreen) await document.exitFullscreen();
-        else if (document.webkitExitFullscreen) await document.webkitExitFullscreen();
-        else if (document.mozCancelFullScreen) await document.mozCancelFullScreen();
-        else if (document.msExitFullscreen) await document.msExitFullscreen();
-        return true;
+        if (document.exitFullscreen) await document.exitFullscreen()
+        else if (document.webkitExitFullscreen) await document.webkitExitFullscreen()
+        else if (document.mozCancelFullScreen) await document.mozCancelFullScreen()
+        else if (document.msExitFullscreen) await document.msExitFullscreen()
+        return true
       }
-    } catch(e) {
-      console.debug("exit fullscreen error", e && e.message);
+    } catch (e) {
+      console.debug("Error al salir de fullscreen:", e && e.message)
     }
-    if (document.documentElement.classList.contains('css-fullscreen')) {
-      document.documentElement.classList.remove('css-fullscreen');
-      this._cssFullscreen = false;
-      return true;
-    }
-    return false;
+    return false
   }
 
   setupGlobalBackHandler() {
-    window.addEventListener('keydown', async (e) => {
-      const key = e.key;
-      const code = e.keyCode || e.which;
-      const isBackKey = (
-        key === 'Back' ||
-        key === 'Backspace' ||
-        key === 'BrowserBack' ||
-        key === 'SoftLeft' ||
-        key === 'MediaBack' ||
-        key === 'Escape' ||
-        key === 'Delete' ||
+    window.addEventListener("keydown", async (e) => {
+      const key = e.key
+      const code = e.keyCode || e.which
+      const isBackKey =
+        key === "Back" ||
+        key === "Backspace" ||
+        key === "BrowserBack" ||
+        key === "SoftLeft" ||
+        key === "MediaBack" ||
+        key === "Escape" ||
+        key === "Delete" ||
         code === 4 ||
         code === 8 ||
         code === 27 ||
         code === 46 ||
         code === 10009
-      );
-      if (!isBackKey) return;
-      const video = this.video;
-      // if playing and fullscreen => exit fullscreen
-      if (video && !video.paused && this.isInFullscreen()) {
-        e.preventDefault();
-        const exited = await this.exitFullscreenIfNeeded();
-        if (exited) return;
-      }
-      // if playing but not fullscreen => stop player
-      if (video && !video.paused) {
-        e.preventDefault();
-        this.closePlayer();
-        return;
-      }
-      // default: app navigation back
-      e.preventDefault();
-      this.handleBack();
-    }, {passive:false});
-  }
 
-  handleBack() {
-    const current = this.navigation.currentScreen;
-    switch (current) {
-      case 'player':
-        this.closePlayer();
-        break;
-      case 'episodes':
-        this.showMoviesScreen(this.currentCategory);
-        break;
-      case 'movies':
-        this.showCategoriesScreen();
-        break;
-      case 'categories':
-        this.showContentTypeScreen();
-        break;
-      case 'content-type':
-        // do nothing on main screen
-        break;
-      default:
-        // show content type as fallback
-        this.showContentTypeScreen();
-        break;
-    }
+      if (!isBackKey) return
+
+      const video = document.getElementById("video-player")
+      if (video && !video.paused && this.isInFullscreen()) {
+        e.preventDefault()
+        const exited = await this.exitFullscreenIfNeeded()
+        if (exited) {
+          return
+        }
+      }
+
+      if (video && !video.paused) {
+        e.preventDefault()
+        this.closePlayer()
+        return
+      }
+
+      e.preventDefault()
+      this.handleBack()
+    })
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  window.app = new NetflisApp();
-});
+  new NetflisApp()
+})
