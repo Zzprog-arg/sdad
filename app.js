@@ -1,6 +1,10 @@
 import TVNavigation from "./navigation.js"
 import M3UParser from "./m3u-parser.js"
 
+// --- Config: reemplaza esta URL por la de tu backend (jsDelivr o GitHub Pages recomendado) ---
+const REMOTE_PLAYLIST_URL = "https://raw.githubusercontent.com/Zzprog-arg/sdad/refs/heads/main/playlist.m3u";
+const PLAYLIST_IDB_KEY = "playlist-local";
+// https://cdn.jsdelivr.net/gh/Zzprog-arg/sdad@main/
 class NetflisApp {
   constructor() {
     this.navigation = new TVNavigation()
@@ -22,6 +26,52 @@ class NetflisApp {
     this.loadCategoryLogos()
     this.showSplashScreen()
   }
+
+  // ---------------- IndexedDB helpers ----------------
+  openIDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open("playlist-db", 1)
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result
+        if (!db.objectStoreNames.contains("files")) {
+          db.createObjectStore("files")
+        }
+      }
+      req.onsuccess = (e) => resolve(e.target.result)
+      req.onerror = (e) => reject(e.target.error)
+    })
+  }
+
+  async idbPut(key, value) {
+    const db = await this.openIDB()
+    return new Promise((res, rej) => {
+      const tx = db.transaction("files", "readwrite")
+      tx.objectStore("files").put(value, key)
+      tx.oncomplete = () => res()
+      tx.onerror = (e) => rej(e.target.error)
+    })
+  }
+
+  async idbGet(key) {
+    const db = await this.openIDB()
+    return new Promise((res, rej) => {
+      const tx = db.transaction("files", "readonly")
+      const req = tx.objectStore("files").get(key)
+      req.onsuccess = () => res(req.result)
+      req.onerror = (e) => rej(e.target.error)
+    })
+  }
+
+  async idbDelete(key) {
+    const db = await this.openIDB()
+    return new Promise((res, rej) => {
+      const tx = db.transaction("files", "readwrite")
+      tx.objectStore("files").delete(key)
+      tx.oncomplete = () => res()
+      tx.onerror = (e) => rej(e.target.error)
+    })
+  }
+  // ---------------------------------------------------
 
   loadWatchProgress() {
     const saved = localStorage.getItem("netflis_watch_progress")
@@ -73,58 +123,132 @@ class NetflisApp {
   }
 
   showSplashScreen() {
+    // Reducimos el splash a 1s y luego arrancamos la carga automática
     setTimeout(() => {
       const savedLogin = localStorage.getItem("netflis_logged_in")
       const savedUsername = localStorage.getItem("netflis_username")
       if (savedLogin === "true" && savedUsername) {
         this.isLoggedIn = true
         this.username = savedUsername
-        this.loadPlaylistFromBackend()
-      } else {
-        this.showScreen("login")
-        this.setupLoginScreen()
       }
-    }, 2500)
+      // Siempre intentamos cargar la playlist automáticamente sin botones
+      this.loadPlaylistFromBackend()
+    }, 1000)
   }
 
-  async loadPlaylistFromBackend() {
+  // ---------------- descarga en IndexedDB ----------------
+  async downloadPlaylistToIndexedDB(remoteUrl = REMOTE_PLAYLIST_URL) {
     this.showLoading(true)
-
     try {
-      const response = await fetch("./playlist.txt")
-
-      if (!response.ok) {
-        throw new Error("No se pudo cargar el archivo playlist.m3u")
-      }
-
-      const text = await response.text()
-
-      const parser = new M3UParser()
-      this.allCategories = parser.parse(text)
-
-      if (this.allCategories.length === 0) {
-        throw new Error("No se encontraron categorías en el archivo")
-      }
-
-      setTimeout(() => {
-        this.showContentTypeScreen()
-      }, 500)
-    } catch (error) {
-      console.error("Error al cargar playlist:", error)
-      alert(
-        "No se encontró playlist.m3u o hay un error de CORS.\n\n" +
-          "Asegúrate de:\n" +
-          "1. Tener el archivo playlist.m3u en la misma carpeta\n" +
-          "2. Estar usando un servidor local (no abrir con file://)\n\n" +
-          "Puedes cargar un archivo manualmente.",
-      )
-      this.showScreen("upload")
-      this.setupUploadScreen()
+      const resp = await fetch(remoteUrl)
+      if (!resp.ok) throw new Error("Error HTTP " + resp.status)
+      const text = await resp.text()
+      // Guardar texto en IndexedDB
+      await this.idbPut(PLAYLIST_IDB_KEY, text)
+      console.log("Playlist guardada en IndexedDB (tamaño chars):", text.length)
+      return text
     } finally {
       this.showLoading(false)
     }
   }
 
+  async loadPlaylistFromIndexedDB() {
+    try {
+      const local = await this.idbGet(PLAYLIST_IDB_KEY)
+      if (local) {
+        console.log("Cargando playlist desde IndexedDB (local)")
+        return local
+      }
+      return null
+    } catch (e) {
+      console.warn("Error leyendo IndexedDB:", e)
+      return null
+    }
+  }
+
+  async clearLocalPlaylist() {
+    try {
+      await this.idbDelete(PLAYLIST_IDB_KEY)
+      console.log("Playlist local eliminada")
+    } catch (e) {
+      console.warn("No se pudo borrar playlist local", e)
+    }
+  }
+  // -------------------------------------------------------
+
+  async loadPlaylistFromBackend() {
+    this.showLoading(true)
+
+    try {
+      // 1) Intentar cargar local desde IndexedDB
+      const localText = await this.loadPlaylistFromIndexedDB()
+      if (localText) {
+        const parser = new M3UParser()
+        this.allCategories = parser.parse(localText)
+
+        if (this.allCategories.length === 0) {
+          throw new Error("No se encontraron categorías en el archivo (local)")
+        }
+        setTimeout(() => {
+          this.showContentTypeScreen()
+        }, 500)
+        return
+      }
+
+      // 2) Intentar cargar archivo embebido en la app ('playlist.txt' si existe)
+      try {
+        const response = await fetch("./playlist.txt")
+        if (response.ok) {
+          const text = await response.text()
+          const parser = new M3UParser()
+          this.allCategories = parser.parse(text)
+          if (this.allCategories.length === 0) {
+            throw new Error("No se encontraron categorías en el archivo (embebido)")
+          }
+          setTimeout(() => {
+            this.showContentTypeScreen()
+          }, 500)
+          return
+        } else {
+          console.log("playlist.txt no encontrado embebido (status:", response.status, ")")
+        }
+      } catch (e) {
+        console.warn("No se encontró playlist embebida o hubo error:", e)
+      }
+
+      // 3) Descargar automáticamente desde REMOTE_PLAYLIST_URL y guardar en IndexedDB
+      try {
+        const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL)
+        const parser = new M3UParser()
+        this.allCategories = parser.parse(remoteText)
+        if (this.allCategories.length === 0) {
+          throw new Error("No se encontraron categorías en el archivo (remoto)")
+        }
+        setTimeout(() => {
+          this.showContentTypeScreen()
+        }, 500)
+        return
+      } catch (e) {
+        console.warn("No se pudo descargar desde remoto:", e)
+      }
+
+      // Si llegamos acá, no encontramos la playlist
+      throw new Error("No se pudo cargar la playlist desde local ni remoto")
+    } catch (error) {
+      console.error("Error al cargar playlist:", error)
+      // Mostrar error simple y no ofrecer opciones: solo indicar instrucción
+      alert(
+        "No se pudo cargar la playlist.\n\n" +
+          "Verifica que REMOTE_PLAYLIST_URL esté bien configurada en app.js o que playlist.txt esté incluida en la app."
+      )
+      // mostramos la pantalla de carga mínima para informar al usuario
+      this.showScreen("upload")
+    } finally {
+      this.showLoading(false)
+    }
+  }
+
+  // The rest of the class remains the same (UI, navigation, player, etc.)
   setupLoginScreen() {
     const form = document.getElementById("login-form")
     const usernameInput = document.getElementById("username")
@@ -182,23 +306,20 @@ class NetflisApp {
     focusInput(0)
   }
 
+  // (UI functions unchanged)...
   setupUploadScreen() {
+    // Mantener la pantalla como informativa solamente (sin botones ni acciones)
     if (this.uploadScreenSetup) return
     this.uploadScreenSetup = true
-
-    const uploadBtn = document.getElementById("upload-btn")
-    const fileInput = document.getElementById("file-input")
-
-    uploadBtn.addEventListener("click", () => {
-      fileInput.click()
-    })
-
-    fileInput.addEventListener("change", (e) => {
-      this.handleFileUpload(e.target.files[0])
-    })
+    // No se registran listeners: la app descarga automáticamente
+    const status = document.getElementById("upload-status")
+    if (status) {
+      status.textContent = "La playlist se descargará automáticamente. Si falla, revisa configuración."
+    }
   }
 
   async handleFileUpload(file) {
+    // No usado en el flujo automático, pero lo dejamos por compatibilidad
     if (!file) return
 
     this.showLoading(true)
@@ -244,10 +365,6 @@ class NetflisApp {
         const type = card.getAttribute("data-type")
         this.selectContentType(type)
       })
-    })
-
-    userBtn.addEventListener("click", () => {
-      this.showUserProfile()
     })
 
     this.navigation.setItems([...Array.from(cards), userBtn], 4, false)
