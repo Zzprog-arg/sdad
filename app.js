@@ -91,7 +91,7 @@ class NetflisApp {
     this.showLoading(true)
 
     try {
-      const response = await fetch("./playlist.m3u")
+      const response = await fetch("https://cdn.jsdelivr.net/gh/Zzprog-arg/sdad/playlist.m3u")
 
       if (!response.ok) {
         throw new Error("No se pudo cargar el archivo playlist.m3u")
