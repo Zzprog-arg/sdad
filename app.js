@@ -752,7 +752,6 @@ video.play().then(() => {
 
   closePlayer() {
     const video = document.getElementById("video-player")
-    await this.exitFullscreenIfNeeded().catch(()=>{})
     video.pause()
     video.src = ""
 
