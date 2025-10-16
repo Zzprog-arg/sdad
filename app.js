@@ -20,6 +20,9 @@ class NetflisApp {
     this.username = ""
     this.init()
     this.setupBackHandler()
+    this.setupBackHandler()
+    this.setupGlobalBackHandler()
+
   }
 
   init() {
@@ -705,10 +708,21 @@ class NetflisApp {
       video.currentTime = startTime
     }
 
-    video.play().catch((error) => {
-      console.error("Error al reproducir:", error)
-      alert("Error al reproducir el video. Verifica la URL.")
-    })
+   // intentar entrar en fullscreen automáticamente (si el webview lo permite)
+video.play().then(() => {
+  try {
+    if (video.requestFullscreen) video.requestFullscreen();
+    else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+    else if (video.mozRequestFullScreen) video.mozRequestFullScreen();
+    else if (video.msRequestFullscreen) video.msRequestFullscreen();
+  } catch (e) {
+    console.debug('Fullscreen no permitido:', e && e.message);
+  }
+}).catch((error) => {
+  console.error("Error al reproducir:", error);
+  alert("Error al reproducir el video. Verifica la URL.")
+})
+
 
     let progressInterval
     if (movie.contentType === "series") {
@@ -738,6 +752,7 @@ class NetflisApp {
 
   closePlayer() {
     const video = document.getElementById("video-player")
+    await this.exitFullscreenIfNeeded().catch(()=>{})
     video.pause()
     video.src = ""
 
@@ -786,6 +801,74 @@ class NetflisApp {
     loading.classList.toggle("active", show)
   }
 }
+
+  // ---------------- Fullscreen & Back handling ----------------
+  isInFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement)
+  }
+
+  async exitFullscreenIfNeeded() {
+    try {
+      if (this.isInFullscreen()) {
+        if (document.exitFullscreen) await document.exitFullscreen()
+        else if (document.webkitExitFullscreen) await document.webkitExitFullscreen()
+        else if (document.mozCancelFullScreen) await document.mozCancelFullScreen()
+        else if (document.msExitFullscreen) await document.msExitFullscreen()
+        return true
+      }
+    } catch (e) {
+      console.debug('Error al salir de fullscreen:', e && e.message)
+    }
+    return false
+  }
+
+  // Global key handler to support TV remotes: Back/Backspace/Delete/Escape and common keyCodes (4, 8, 27, 46, 10009)
+  setupGlobalBackHandler() {
+    window.addEventListener('keydown', async (e) => {
+      const key = e.key
+      const code = e.keyCode || e.which
+      const isBackKey = (
+        key === 'Back' ||
+        key === 'Backspace' ||
+        key === 'BrowserBack' ||
+        key === 'SoftLeft' ||
+        key === 'MediaBack' ||
+        key === 'Escape' ||
+        key === 'Delete' ||
+        code === 4 ||    // Android KEYCODE_BACK
+        code === 8 ||    // Backspace
+        code === 27 ||   // Escape
+        code === 46 ||   // Delete
+        code === 10009   // Tizen Back
+      )
+
+      if (!isBackKey) return
+
+      // If a video is playing and we're fullscreen, exit fullscreen first
+      const video = document.getElementById('video-player')
+      if (video && !video.paused && this.isInFullscreen()) {
+        e.preventDefault()
+        const exited = await this.exitFullscreenIfNeeded()
+        if (exited) {
+          // left fullscreen, keep playing (or you could pause here if prefieres)
+          return
+        }
+      }
+
+      // If video is playing but not fullscreen, use back to stop player
+      if (video && !video.paused) {
+        e.preventDefault()
+        this.closePlayer()
+        return
+      }
+
+      // Otherwise use the app's normal back handling
+      e.preventDefault()
+      this.handleBack()
+    })
+  }
+  // ------------------------------------------------------------
+
 
 document.addEventListener("DOMContentLoaded", () => {
   new NetflisApp()
