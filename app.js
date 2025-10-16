@@ -1,4 +1,3 @@
-// Aplicación principal estilo Netflix
 import TVNavigation from "./navigation.js"
 import M3UParser from "./m3u-parser.js"
 
