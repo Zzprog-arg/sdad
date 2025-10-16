@@ -91,7 +91,7 @@ class NetflisApp {
     this.showLoading(true)
 
     try {
-      const response = await fetch("./playlis.txt")
+      const response = await fetch("./playlist.txt")
 
       if (!response.ok) {
         throw new Error("No se pudo cargar el archivo playlist.m3u")
