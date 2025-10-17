@@ -633,6 +633,38 @@ body {
   margin-top: 1rem;
 }
 
+.category-search-input {
+  width: 100%;
+  max-width: 500px;
+  background: rgba(47, 47, 47, 0.8);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  color: var(--text-white);
+  padding: 12px 20px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s;
+  margin: 20px 0;
+  display: block;
+}
+
+.category-search-input::placeholder {
+  color: var(--netflix-gray-light);
+}
+
+.category-search-input:hover {
+  background: rgba(47, 47, 47, 1);
+  border-color: var(--netflix-gray-light);
+}
+
+.category-search-input:focus,
+.category-search-input.focused {
+  background: rgba(47, 47, 47, 1);
+  border-color: var(--netflix-red);
+  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.3);
+  transform: scale(1.02);
+}
+
 .category-card {
   position: relative;
   background: var(--netflix-gray);
