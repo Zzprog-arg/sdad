@@ -133,7 +133,7 @@ class NetflisApp {
         this.showScreen("login")
         this.setupLoginScreen()
       }
-    }, 1000)
+    }, 2500)
   }
 
   async downloadPlaylistToIndexedDB(remoteUrl = REMOTE_PLAYLIST_URL) {
