@@ -16,18 +16,58 @@
   --gold: #ffd700;
 }
 
+/* Agregar escalado responsive para mantener proporciones */
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 1400px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1200px) {
+  html {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 992px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 576px) {
+  html {
+    font-size: 10px;
+  }
+}
+
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   background: var(--netflix-black);
   color: var(--text-white);
   overflow: hidden;
   line-height: 1.4;
+  /* Asegurar que el body mantenga proporciones */
+  min-height: 100vh;
+  min-width: 100vw;
 }
 
 #app {
   width: 100vw;
   height: 100vh;
   position: relative;
+  /* Agregar overflow para pantallas pequeñas */
+  overflow: auto;
 }
 
 .screen {
@@ -55,11 +95,11 @@ body {
 }
 
 .netflix-logo {
-  font-size: 80px;
+  font-size: 5rem;
   font-weight: 900;
   color: var(--netflix-red);
-  letter-spacing: 6px;
-  text-shadow: 0 0 30px rgba(229, 9, 20, 0.8);
+  letter-spacing: 0.375rem;
+  text-shadow: 0 0 1.875rem rgba(229, 9, 20, 0.8);
   display: flex;
 }
 
@@ -114,24 +154,24 @@ body {
 
 .login-container {
   background: rgba(0, 0, 0, 0.85);
-  padding: 40px 50px 30px;
+  padding: 2.5rem 3.125rem 1.875rem;
   border-radius: 4px;
-  max-width: 400px;
-  width: 100%;
+  max-width: 25rem;
+  width: 90%;
 }
 
 .login-title {
-  font-size: 36px;
+  font-size: 2.25rem;
   font-weight: 700;
   color: var(--netflix-red);
-  margin-bottom: 20px;
-  letter-spacing: 2px;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.125rem;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .login-input {
@@ -139,8 +179,8 @@ body {
   border: none;
   border-radius: 4px;
   color: var(--text-white);
-  padding: 14px 18px;
-  font-size: 15px;
+  padding: 0.875rem 1.125rem;
+  font-size: 0.9375rem;
   outline: none;
   transition: all 0.3s;
 }
@@ -164,11 +204,19 @@ body {
   font-weight: 700;
   cursor: pointer;
   margin-top: 16px;
-  transition: background 0.3s;
+  transition: all 0.3s;
+  border: 2px solid transparent;
 }
 
 .login-button:hover {
   background: var(--netflix-red-dark);
+}
+
+.login-button.focused {
+  background: var(--netflix-red-dark);
+  border-color: var(--text-white);
+  box-shadow: 0 0 0 2px var(--netflix-red);
+  transform: scale(1.05);
 }
 
 .login-error {
@@ -480,17 +528,18 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 30px;
-  margin-top: 50px;
-  padding: 30px 0;
+  gap: 1.875rem;
+  margin-top: 3.125rem;
+  padding: 1.875rem 0;
+  flex-wrap: wrap;
 }
 
 .content-type-card {
   position: relative;
   background: var(--netflix-gray);
   border-radius: 10px;
-  width: 220px;
-  height: 260px;
+  width: 13.75rem;
+  height: 16.25rem;
   cursor: pointer;
   transition: all 0.3s;
   border: 3px solid transparent;
@@ -499,7 +548,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 25px;
+  padding: 1.5625rem;
   text-align: center;
 }
 
@@ -566,7 +615,7 @@ body {
   justify-content: center;
   gap: 35px;
   margin-top: 50px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--netflix-gray-light);
 }
 
@@ -579,16 +628,16 @@ body {
 /* Optimizado grid de categorías para TV Box */
 #categories-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .category-card {
   position: relative;
   background: var(--netflix-gray);
   border-radius: 6px;
-  height: 140px;
+  height: 8.75rem;
   cursor: pointer;
   transition: all 0.3s;
   border: 3px solid transparent;
@@ -697,8 +746,8 @@ body {
 
 /* Optimizado cards de películas para TV Box */
 .movie-card {
-  min-width: 220px;
-  max-width: 220px;
+  min-width: 13.75rem;
+  max-width: 13.75rem;
   background: var(--netflix-gray);
   border-radius: 6px;
   overflow: hidden;
@@ -783,9 +832,9 @@ body {
 /* Optimizado grid de episodios para TV Box */
 .episodes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .episode-card {
@@ -882,9 +931,15 @@ body {
 
 #video-player {
   width: 100%;
-  max-width: 1400px;
+  max-width: 87.5rem;
   max-height: 80vh;
   background: #000;
+}
+
+@media (max-width: 768px) {
+  #video-player {
+    max-height: 60vh;
+  }
 }
 
 .player-info {
@@ -962,94 +1017,63 @@ body {
 
 @media (max-width: 768px) {
   .netflix-nav {
-    padding: 12px 16px;
+    padding: 0.75rem 1rem;
   }
 
   .nav-logo {
-    font-size: 22px;
+    font-size: 1.375rem;
   }
 
   .content-wrapper {
-    padding: 0 16px 25px;
+    padding: 0 1rem 1.5625rem;
   }
 
   .content-type-grid {
     flex-direction: column;
-    gap: 25px;
+    gap: 1.5625rem;
   }
 
   .content-type-card {
-    width: 200px;
-    height: 240px;
-  }
-
-  .content-type-icon {
-    font-size: 60px;
-  }
-
-  .content-type-name {
-    font-size: 20px;
-  }
-
-  .content-type-count {
-    font-size: 14px;
-  }
-
-  .content-type-help {
-    flex-direction: column;
-    gap: 12px;
+    width: 12.5rem;
+    height: 15rem;
   }
 
   #categories-container {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+    gap: 0.75rem;
   }
 
   .category-card {
-    height: 120px;
-  }
-
-  .category-logo-img {
-    width: 50px;
-    height: 50px;
-  }
-
-  .category-icon {
-    font-size: 40px;
-  }
-
-  .category-name {
-    font-size: 18px;
-  }
-
-  .category-count {
-    font-size: 12px;
+    height: 7.5rem;
   }
 
   .movie-card {
-    min-width: 180px;
-    max-width: 180px;
+    min-width: 11.25rem;
+    max-width: 11.25rem;
   }
 
   .episodes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .content-type-card {
+    width: 11.25rem;
+    height: 13.75rem;
   }
 
-  .continue-watching-btn {
-    padding: 14px 28px;
-    font-size: 18px;
+  #categories-container {
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   }
 
-  .profile-modal-content {
-    padding: 25px 16px;
+  .movie-card {
+    min-width: 10rem;
+    max-width: 10rem;
   }
 
-  .profile-username {
-    font-size: 22px;
-  }
-
-  .membership-text {
-    font-size: 18px;
+  .episodes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   }
 }
