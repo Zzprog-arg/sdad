@@ -560,17 +560,17 @@ class NetflisApp {
 
         totalMovies.textContent = `${filteredSeries.size} series disponibles`
 
-        const row = document.createElement("div")
-        row.className = "carousel-row"
+        const grid = document.createElement("div")
+        grid.className = "series-grid"
 
         filteredSeries.forEach((episodes, seriesName) => {
           const card = this.createSeriesCard(seriesName, episodes)
-          row.appendChild(card)
+          grid.appendChild(card)
         })
 
-        carousel.appendChild(row)
-        const cards = row.querySelectorAll(".movie-card")
-        this.navigation.setItems([searchInput, ...Array.from(cards)], cards.length, true)
+        carousel.appendChild(grid)
+        const cards = grid.querySelectorAll(".movie-card")
+        this.navigation.setItems([searchInput, ...Array.from(cards)], 4, false)
       } else {
         const filteredMovies = category.movies.filter((movie) =>
           movie.title.toLowerCase().includes(this.currentSearchQuery),
@@ -578,17 +578,17 @@ class NetflisApp {
 
         totalMovies.textContent = `${filteredMovies.length} ${this.getContentLabel()} disponibles`
 
-        const row = document.createElement("div")
-        row.className = "carousel-row"
+        const grid = document.createElement("div")
+        grid.className = "movies-grid"
 
         filteredMovies.forEach((movie) => {
           const card = this.createMovieCard(movie)
-          row.appendChild(card)
+          grid.appendChild(card)
         })
 
-        carousel.appendChild(row)
-        const cards = row.querySelectorAll(".movie-card")
-        this.navigation.setItems([searchInput, ...Array.from(cards)], cards.length, true)
+        carousel.appendChild(grid)
+        const cards = grid.querySelectorAll(".movie-card")
+        this.navigation.setItems([searchInput, ...Array.from(cards)], 4, false)
       }
     }
 
@@ -604,7 +604,6 @@ class NetflisApp {
       searchInput.classList.remove("focused")
     })
 
-    // Renderizar contenido inicial
     renderFilteredContent()
 
     backBtn.onclick = () => {
@@ -699,8 +698,7 @@ class NetflisApp {
           ? [searchInput, continueBtn, ...Array.from(cards)]
           : [searchInput, ...Array.from(cards)]
 
-      const columns = Math.floor(window.innerWidth / 320)
-      this.navigation.setItems(allItems, columns)
+      this.navigation.setItems(allItems, 4, false)
     }
 
     searchInput.addEventListener("input", (e) => {
@@ -715,7 +713,6 @@ class NetflisApp {
       searchInput.classList.remove("focused")
     })
 
-    // Renderizar episodios iniciales
     renderFilteredEpisodes()
 
     backBtn.onclick = () => {
