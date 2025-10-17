@@ -635,33 +635,38 @@ body {
 
 .category-search-input {
   width: 100%;
-  max-width: 500px;
-  background: rgba(47, 47, 47, 0.8);
-  border: 2px solid transparent;
-  border-radius: 8px;
+  max-width: 600px;
+  background: linear-gradient(135deg, rgba(47, 47, 47, 0.6) 0%, rgba(20, 20, 20, 0.8) 100%);
+  border: 2px solid rgba(229, 9, 20, 0.3);
+  border-radius: 12px;
   color: var(--text-white);
-  padding: 12px 20px;
-  font-size: 16px;
+  padding: 16px 24px;
+  font-size: 18px;
+  font-weight: 500;
   outline: none;
   transition: all 0.3s;
   margin: 20px 0;
   display: block;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
 }
 
 .category-search-input::placeholder {
   color: var(--netflix-gray-light);
+  font-weight: 400;
 }
 
 .category-search-input:hover {
-  background: rgba(47, 47, 47, 1);
-  border-color: var(--netflix-gray-light);
+  background: linear-gradient(135deg, rgba(47, 47, 47, 0.8) 0%, rgba(20, 20, 20, 0.9) 100%);
+  border-color: rgba(229, 9, 20, 0.5);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.2);
 }
 
 .category-search-input:focus,
 .category-search-input.focused {
-  background: rgba(47, 47, 47, 1);
+  background: linear-gradient(135deg, rgba(47, 47, 47, 1) 0%, rgba(20, 20, 20, 1) 100%);
   border-color: var(--netflix-red);
-  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.3);
+  box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.3), 0 8px 25px rgba(229, 9, 20, 0.4);
   transform: scale(1.02);
 }
 
@@ -756,30 +761,40 @@ body {
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
 }
 
-.carousel-container {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
+.series-grid,
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 10px 0;
+  width: 100%;
 }
 
-.carousel-row {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 8px 0;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
+@media (max-width: 1400px) {
+  .series-grid,
+  .movies-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-.carousel-row::-webkit-scrollbar {
-  display: none;
+@media (max-width: 992px) {
+  .series-grid,
+  .movies-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-/* Optimizado cards de películas para TV Box */
+@media (max-width: 576px) {
+  .series-grid,
+  .movies-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
 .movie-card {
-  min-width: 13.75rem;
-  max-width: 13.75rem;
+  width: 100%;
+  min-width: auto;
+  max-width: none;
   background: var(--netflix-gray);
   border-radius: 6px;
   overflow: hidden;
@@ -864,9 +879,27 @@ body {
 /* Optimizado grid de episodios para TV Box */
 .episodes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   margin-top: 1rem;
+}
+
+@media (max-width: 1400px) {
+  .episodes-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .episodes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .episodes-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 .episode-card {
