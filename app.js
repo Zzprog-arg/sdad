@@ -245,34 +245,61 @@ class NetflisApp {
     const form = document.getElementById("login-form")
     const usernameInput = document.getElementById("username")
     const passwordInput = document.getElementById("password")
+    const loginButton = document.querySelector(".login-button")
     const loginError = document.getElementById("login-error")
-    const inputs = [usernameInput, passwordInput]
-    let currentInputIndex = 0
 
-    const focusInput = (index) => {
-      inputs.forEach((input) => input.classList.remove("focused"))
-      inputs[index].classList.add("focused")
-      inputs[index].focus()
+    const items = [usernameInput, passwordInput, loginButton]
+    let currentIndex = 0
+
+    const focusItem = (index) => {
+      items.forEach((item) => item.classList.remove("focused"))
+      items[index].classList.add("focused")
+      if (items[index].tagName === "INPUT") {
+        items[index].focus()
+      }
     }
 
     const handleKeyDown = (e) => {
       if (e.key === "ArrowDown") {
         e.preventDefault()
-        currentInputIndex = (currentInputIndex + 1) % inputs.length
-        focusInput(currentInputIndex)
+        currentIndex = (currentIndex + 1) % items.length
+        focusItem(currentIndex)
       } else if (e.key === "ArrowUp") {
         e.preventDefault()
-        currentInputIndex = (currentInputIndex - 1 + inputs.length) % inputs.length
-        focusInput(currentInputIndex)
+        currentIndex = (currentIndex - 1 + items.length) % items.length
+        focusItem(currentIndex)
+      } else if (e.key === "Enter") {
+        e.preventDefault()
+        if (currentIndex === 2) {
+          // Estamos en el botón
+          loginButton.click()
+        } else {
+          // Estamos en un input, hacer submit del formulario
+          form.dispatchEvent(new Event("submit"))
+        }
       }
     }
 
-    inputs.forEach((input, index) => {
-      input.addEventListener("focus", () => {
-        currentInputIndex = index
-        focusInput(index)
-      })
-      input.addEventListener("keydown", handleKeyDown)
+    items.forEach((item, index) => {
+      if (item.tagName === "INPUT") {
+        item.addEventListener("focus", () => {
+          currentIndex = index
+          focusItem(index)
+        })
+      }
+      item.addEventListener("keydown", handleKeyDown)
+    })
+
+    passwordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault()
+        form.dispatchEvent(new Event("submit"))
+      }
+    })
+
+    loginButton.addEventListener("click", (e) => {
+      e.preventDefault()
+      form.dispatchEvent(new Event("submit"))
     })
 
     form.addEventListener("submit", (e) => {
@@ -291,11 +318,12 @@ class NetflisApp {
       } else {
         loginError.textContent = "Usuario o contraseña incorrectos"
         passwordInput.value = ""
-        focusInput(1)
+        currentIndex = 1
+        focusItem(1)
       }
     })
 
-    focusInput(0)
+    focusItem(0)
   }
 
   setupUploadScreen() {
