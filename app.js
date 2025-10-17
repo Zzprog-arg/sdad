@@ -18,6 +18,7 @@ class NetflisApp {
     this.categoryLogos = new Map()
     this.watchProgress = this.loadWatchProgress()
     this.username = ""
+    this.currentSearchQuery = ""
     this.init()
     this.setupBackHandler()
     this.setupGlobalBackHandler()
@@ -528,48 +529,86 @@ class NetflisApp {
 
   showMoviesScreen(category) {
     this.currentCategory = category
+    this.currentSearchQuery = ""
     this.showScreen("movies")
 
     const categoryTitle = document.getElementById("category-title")
     const totalMovies = document.getElementById("total-movies")
     const carousel = document.getElementById("movies-carousel")
     const backBtn = document.getElementById("back-to-categories")
+    const searchInput = document.getElementById("category-search")
 
     categoryTitle.textContent = category.name
     carousel.innerHTML = ""
 
-    if (this.currentContentType === "series") {
-      const seriesMap = this.groupSeriesByName(category.movies)
-      totalMovies.textContent = `${seriesMap.size} series disponibles`
+    searchInput.value = ""
+    searchInput.style.display = "block"
 
-      const row = document.createElement("div")
-      row.className = "carousel-row"
+    const renderFilteredContent = (query = "") => {
+      carousel.innerHTML = ""
+      this.currentSearchQuery = query.toLowerCase()
 
-      seriesMap.forEach((episodes, seriesName) => {
-        const card = this.createSeriesCard(seriesName, episodes)
-        row.appendChild(card)
-      })
+      if (this.currentContentType === "series") {
+        const seriesMap = this.groupSeriesByName(category.movies)
 
-      carousel.appendChild(row)
-      const cards = row.querySelectorAll(".movie-card")
-      this.navigation.setItems(Array.from(cards), cards.length, true)
-    } else {
-      totalMovies.textContent = `${category.count} ${this.getContentLabel()} disponibles`
+        const filteredSeries = new Map()
+        seriesMap.forEach((episodes, seriesName) => {
+          if (seriesName.toLowerCase().includes(this.currentSearchQuery)) {
+            filteredSeries.set(seriesName, episodes)
+          }
+        })
 
-      const row = document.createElement("div")
-      row.className = "carousel-row"
+        totalMovies.textContent = `${filteredSeries.size} series disponibles`
 
-      category.movies.forEach((movie) => {
-        const card = this.createMovieCard(movie)
-        row.appendChild(card)
-      })
+        const row = document.createElement("div")
+        row.className = "carousel-row"
 
-      carousel.appendChild(row)
-      const cards = row.querySelectorAll(".movie-card")
-      this.navigation.setItems(Array.from(cards), cards.length, true)
+        filteredSeries.forEach((episodes, seriesName) => {
+          const card = this.createSeriesCard(seriesName, episodes)
+          row.appendChild(card)
+        })
+
+        carousel.appendChild(row)
+        const cards = row.querySelectorAll(".movie-card")
+        this.navigation.setItems([searchInput, ...Array.from(cards)], cards.length, true)
+      } else {
+        const filteredMovies = category.movies.filter((movie) =>
+          movie.title.toLowerCase().includes(this.currentSearchQuery),
+        )
+
+        totalMovies.textContent = `${filteredMovies.length} ${this.getContentLabel()} disponibles`
+
+        const row = document.createElement("div")
+        row.className = "carousel-row"
+
+        filteredMovies.forEach((movie) => {
+          const card = this.createMovieCard(movie)
+          row.appendChild(card)
+        })
+
+        carousel.appendChild(row)
+        const cards = row.querySelectorAll(".movie-card")
+        this.navigation.setItems([searchInput, ...Array.from(cards)], cards.length, true)
+      }
     }
 
+    searchInput.addEventListener("input", (e) => {
+      renderFilteredContent(e.target.value)
+    })
+
+    searchInput.addEventListener("focus", () => {
+      searchInput.classList.add("focused")
+    })
+
+    searchInput.addEventListener("blur", () => {
+      searchInput.classList.remove("focused")
+    })
+
+    // Renderizar contenido inicial
+    renderFilteredContent()
+
     backBtn.onclick = () => {
+      searchInput.style.display = "none"
       this.showCategoriesScreen()
     }
   }
@@ -621,6 +660,7 @@ class NetflisApp {
 
   showEpisodesScreen(seriesName, episodes) {
     this.currentSeries = { name: seriesName, episodes }
+    this.currentSearchQuery = ""
     this.showScreen("episodes")
 
     const seriesTitle = document.getElementById("series-title")
@@ -628,37 +668,58 @@ class NetflisApp {
     const episodesContainer = document.getElementById("episodes-container")
     const backBtn = document.getElementById("back-to-series")
     const continueBtn = document.getElementById("continue-watching-btn")
+    const searchInput = document.getElementById("episode-search")
 
     seriesTitle.textContent = seriesName
-    totalEpisodes.textContent = `${episodes.length} episodios disponibles`
     episodesContainer.innerHTML = ""
 
-    const lastWatched = this.getLastWatched(seriesName)
+    searchInput.value = ""
+    searchInput.style.display = "block"
 
-    if (lastWatched) {
-      continueBtn.style.display = "block"
-      continueBtn.onclick = () => {
-        const episode = episodes.find((ep) => ep.season === lastWatched.season && ep.episode === lastWatched.episode)
-        if (episode) {
-          this.playMovie(episode, lastWatched.currentTime)
-        }
-      }
-    } else {
-      continueBtn.style.display = "none"
+    const renderFilteredEpisodes = (query = "") => {
+      episodesContainer.innerHTML = ""
+      this.currentSearchQuery = query.toLowerCase()
+
+      const filteredEpisodes = episodes.filter(
+        (episode) =>
+          episode.episodeTitle.toLowerCase().includes(this.currentSearchQuery) ||
+          `T${episode.season} E${episode.episode}`.toLowerCase().includes(this.currentSearchQuery),
+      )
+
+      totalEpisodes.textContent = `${filteredEpisodes.length} episodios disponibles`
+
+      filteredEpisodes.forEach((episode) => {
+        const card = this.createEpisodeCard(episode)
+        episodesContainer.appendChild(card)
+      })
+
+      const cards = episodesContainer.querySelectorAll(".episode-card")
+      const allItems =
+        continueBtn.style.display === "block"
+          ? [searchInput, continueBtn, ...Array.from(cards)]
+          : [searchInput, ...Array.from(cards)]
+
+      const columns = Math.floor(window.innerWidth / 320)
+      this.navigation.setItems(allItems, columns)
     }
 
-    episodes.forEach((episode) => {
-      const card = this.createEpisodeCard(episode)
-      episodesContainer.appendChild(card)
+    searchInput.addEventListener("input", (e) => {
+      renderFilteredEpisodes(e.target.value)
     })
 
-    const cards = episodesContainer.querySelectorAll(".episode-card")
-    const allItems = continueBtn.style.display === "block" ? [continueBtn, ...Array.from(cards)] : Array.from(cards)
+    searchInput.addEventListener("focus", () => {
+      searchInput.classList.add("focused")
+    })
 
-    const columns = Math.floor(window.innerWidth / 320)
-    this.navigation.setItems(allItems, columns)
+    searchInput.addEventListener("blur", () => {
+      searchInput.classList.remove("focused")
+    })
+
+    // Renderizar episodios iniciales
+    renderFilteredEpisodes()
 
     backBtn.onclick = () => {
+      searchInput.style.display = "none"
       this.showMoviesScreen(this.currentCategory)
     }
   }
