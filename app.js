@@ -848,6 +848,61 @@ class NetflisApp {
       this.handleBack()
     })
   }
+
+  createCategorySection(category) {
+    const section = document.createElement("div")
+    section.className = "category-section"
+
+    // Header de la categoría
+    const header = document.createElement("div")
+    header.className = "category-header"
+
+    const title = document.createElement("h2")
+    title.className = "category-title"
+
+    const categoryLogo = this.categoryLogos.get(category.name)
+    if (categoryLogo) {
+      const logoImg = document.createElement("img")
+      logoImg.src = categoryLogo
+      logoImg.alt = category.name
+      logoImg.className = "category-logo-inline"
+      title.appendChild(logoImg)
+    }
+
+    const titleText = document.createElement("span")
+    titleText.textContent = category.name
+    title.appendChild(titleText)
+
+    const count = document.createElement("span")
+    count.className = "category-count-inline"
+    count.textContent = ` ${category.count} ${this.getContentLabel()}`
+    title.appendChild(count)
+
+    header.appendChild(title)
+    section.appendChild(header)
+
+    // Carrusel de contenido
+    const carousel = document.createElement("div")
+    carousel.className = "category-carousel"
+
+    if (this.currentContentType === "series") {
+      // Para series, agrupar por nombre
+      const seriesMap = this.groupSeriesByName(category.movies)
+      seriesMap.forEach((episodes, seriesName) => {
+        const card = this.createSeriesCard(seriesName, episodes)
+        carousel.appendChild(card)
+      })
+    } else {
+      // Para películas y TV, mostrar cada item
+      category.movies.forEach((movie) => {
+        const card = this.createMovieCard(movie)
+        carousel.appendChild(card)
+      })
+    }
+
+    section.appendChild(carousel)
+    return section
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
