@@ -763,6 +763,28 @@ body {
   border-left: 3px solid var(--gold);
 }
 
+.profile-refresh-btn {
+  width: 100%;
+  background: rgba(0, 217, 255, 0.2);
+  color: var(--neon-blue);
+  border: 2px solid var(--neon-blue);
+  padding: 0.875rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 0.75rem;
+}
+
+.profile-refresh-btn:hover,
+.profile-refresh-btn.focused {
+  background: rgba(0, 217, 255, 0.4);
+  border-color: var(--text-white);
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+}
+
 .profile-logout-btn {
   width: 100%;
   background: var(--netflix-red);
