@@ -469,18 +469,10 @@ class NetflisApp {
     section.appendChild(carousel)
 
     const cards = carousel.querySelectorAll(".movie-card")
-    header.addEventListener("click", () => {
-      this.navigation.setItems(Array.from(cards), cards.length, true)
-      if (cards.length > 0) {
-        cards[0].scrollIntoView({ behavior: "smooth", block: "center", inline: "center" })
-      }
-    })
-
-    // Auto-focus en el primer card cuando se crea
     if (cards.length > 0) {
       setTimeout(() => {
         const allCards = document.querySelectorAll(".movie-card")
-        this.navigation.setItems(Array.from(allCards), 5, false)
+        this.navigation.setItems(Array.from(allCards), allCards.length, true)
       }, 100)
     }
 
