@@ -1,7 +1,8 @@
+// Aplicación principal estilo Netflix
 import TVNavigation from "./navigation.js"
 import M3UParser from "./m3u-parser.js"
 
-const REMOTE_PLAYLIST_URL = "https://raw.githubusercontent.com/Zzprog-arg/sdad/refs/heads/main/playlist.m3u"
+const REMOTE_PLAYLIST_URL = "./playlist.m3u"
 const PLAYLIST_IDB_KEY = "playlist-local"
 
 class NetflisApp {
@@ -177,23 +178,6 @@ class NetflisApp {
     this.showLoading(true)
 
     try {
-      try {
-        console.log("Descargando playlist actualizada desde remoto...")
-        const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL)
-        const parser = new M3UParser()
-        this.allCategories = parser.parse(remoteText)
-        if (this.allCategories.length > 0) {
-          console.log("Playlist actualizada desde remoto exitosamente")
-          setTimeout(() => {
-            this.showMainScreen()
-          }, 500)
-          return
-        }
-      } catch (e) {
-        console.warn("No se pudo descargar desde remoto, intentando con local:", e)
-      }
-
-      // Si falla el remoto, intentar cargar desde IndexedDB local
       const localText = await this.loadPlaylistFromIndexedDB()
       if (localText) {
         const parser = new M3UParser()
@@ -208,7 +192,6 @@ class NetflisApp {
         return
       }
 
-      // Si no hay local, intentar con playlist embebida
       try {
         const response = await fetch("./playlist.txt")
         if (response.ok) {
@@ -227,7 +210,22 @@ class NetflisApp {
         console.warn("No se encontró playlist embebida o hubo error:", e)
       }
 
-      throw new Error("No se pudo cargar la playlist desde ninguna fuente")
+      try {
+        const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL)
+        const parser = new M3UParser()
+        this.allCategories = parser.parse(remoteText)
+        if (this.allCategories.length === 0) {
+          throw new Error("No se encontraron categorías en el archivo (remoto)")
+        }
+        setTimeout(() => {
+          this.showMainScreen()
+        }, 500)
+        return
+      } catch (e) {
+        console.warn("No se pudo descargar desde remoto:", e)
+      }
+
+      throw new Error("No se pudo cargar la playlist desde local ni remoto")
     } catch (error) {
       console.error("Error al cargar playlist:", error)
       alert(
@@ -271,10 +269,8 @@ class NetflisApp {
       } else if (e.key === "Enter") {
         e.preventDefault()
         if (currentIndex === 2) {
-          // Estamos en el botón
           loginButton.click()
         } else {
-          // Estamos en un input, hacer submit del formulario
           form.dispatchEvent(new Event("submit"))
         }
       }
@@ -379,7 +375,6 @@ class NetflisApp {
       searchInput.classList.remove("focused")
     })
 
-    // Seleccionar TV por defecto
     this.currentContentType = "tv"
     tabs[0].classList.add("active")
     this.renderCategoriesForType("tv")
@@ -448,53 +443,21 @@ class NetflisApp {
     const searchInput = document.getElementById("global-search")
     const userBtn = document.getElementById("user-profile-btn")
 
-    // Nivel 0: Header (tabs, search, user)
     const headerItems = [...tabs, searchInput, userBtn]
 
-    // Niveles 1+: Cada categoría es un nivel
     const categoryLevels = []
     const categorySections = document.querySelectorAll(".category-section")
 
     categorySections.forEach((section) => {
-      const cards = Array.from(section.querySelectorAll(".movie-card"))
+      const cards = Array.from(section.querySelectorAll(".movie-card, .show-all-card"))
       if (cards.length > 0) {
         categoryLevels.push(cards)
       }
     })
 
-    // Combinar todos los niveles
     const allLevels = [headerItems, ...categoryLevels]
 
     this.navigation.setMultiLevelItems(allLevels)
-  }
-
-  async refreshPlaylist() {
-    const confirmRefresh = confirm("¿Deseas actualizar la lista de contenido?")
-    if (!confirmRefresh) return
-
-    this.showLoading(true)
-    try {
-      console.log("Refrescando playlist desde remoto...")
-      const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL)
-      const parser = new M3UParser()
-      this.allCategories = parser.parse(remoteText)
-
-      if (this.allCategories.length === 0) {
-        throw new Error("No se encontraron categorías en el archivo actualizado")
-      }
-
-      alert("✓ Lista actualizada correctamente")
-
-      // Cerrar el modal y recargar la pantalla principal
-      const modal = document.getElementById("user-profile-modal")
-      modal.classList.remove("active")
-      this.showMainScreen()
-    } catch (error) {
-      console.error("Error al refrescar playlist:", error)
-      alert("✗ Error al actualizar la lista. Intenta nuevamente.")
-    } finally {
-      this.showLoading(false)
-    }
   }
 
   showUserProfile() {
@@ -502,14 +465,16 @@ class NetflisApp {
     modal.classList.add("active")
 
     const usernameDisplay = document.getElementById("profile-username")
-    const refreshBtn = document.getElementById("profile-refresh-btn") // Nuevo botón
     const logoutBtn = document.getElementById("profile-logout-btn")
     const closeBtn = document.getElementById("close-profile-btn")
+    const refreshBtn = document.getElementById("profile-refresh-btn")
 
     usernameDisplay.textContent = this.username
 
-    const handleRefresh = () => {
-      this.refreshPlaylist()
+    const handleRefresh = async () => {
+      await this.clearLocalPlaylist()
+      alert("Lista actualizada. Recargando...")
+      location.reload()
     }
 
     const handleLogout = () => {
@@ -530,7 +495,7 @@ class NetflisApp {
       this.showMainScreen()
     }
 
-    refreshBtn.onclick = handleRefresh // Agregar handler
+    refreshBtn.onclick = handleRefresh
     logoutBtn.onclick = handleLogout
     closeBtn.onclick = handleClose
 
@@ -716,6 +681,109 @@ class NetflisApp {
     return card
   }
 
+  createShowAllCard(category) {
+    const card = document.createElement("div")
+    card.className = "show-all-card movie-card"
+
+    card.innerHTML = `
+      <div class="show-all-content">
+        <div class="show-all-icon">📋</div>
+        <div class="show-all-text">Mostrar todo</div>
+        <div class="show-all-count">${category.count} ${this.getContentLabel()}</div>
+      </div>
+    `
+
+    card.addEventListener("click", () => {
+      this.showFullCategoryScreen(category)
+    })
+
+    return card
+  }
+
+  showFullCategoryScreen(category) {
+    this.currentCategory = category
+    this.currentSearchQuery = ""
+    this.showScreen("movies")
+
+    const categoryTitle = document.getElementById("category-title")
+    const totalMovies = document.getElementById("total-movies")
+    const carousel = document.getElementById("movies-carousel")
+    const backBtn = document.getElementById("back-to-categories")
+    const searchInput = document.getElementById("category-search")
+
+    categoryTitle.textContent = category.name
+    totalMovies.textContent = `${category.count} ${this.getContentLabel()} disponibles`
+    carousel.innerHTML = ""
+
+    searchInput.value = ""
+    searchInput.style.display = "block"
+
+    searchInput.addEventListener("focus", () => {
+      searchInput.classList.add("focused")
+    })
+
+    searchInput.addEventListener("blur", () => {
+      searchInput.classList.remove("focused")
+    })
+
+    const renderFilteredContent = (query = "") => {
+      carousel.innerHTML = ""
+      this.currentSearchQuery = query.toLowerCase()
+
+      if (this.currentContentType === "series") {
+        const seriesMap = this.groupSeriesByName(category.movies)
+        const filteredSeries = Array.from(seriesMap.entries()).filter(([seriesName]) =>
+          seriesName.toLowerCase().includes(this.currentSearchQuery),
+        )
+
+        totalMovies.textContent = `${filteredSeries.length} series disponibles`
+
+        const row = document.createElement("div")
+        row.className = "carousel-row"
+
+        filteredSeries.forEach(([seriesName, episodes]) => {
+          const card = this.createSeriesCard(seriesName, episodes)
+          row.appendChild(card)
+        })
+
+        carousel.appendChild(row)
+
+        const cards = row.querySelectorAll(".movie-card")
+        this.navigation.setItems([searchInput, ...Array.from(cards)], cards.length, true)
+      } else {
+        const filteredMovies = category.movies.filter((movie) =>
+          movie.title.toLowerCase().includes(this.currentSearchQuery),
+        )
+
+        totalMovies.textContent = `${filteredMovies.length} ${this.getContentLabel()} disponibles`
+
+        const row = document.createElement("div")
+        row.className = "carousel-row"
+
+        filteredMovies.forEach((movie) => {
+          const card = this.createMovieCard(movie)
+          row.appendChild(card)
+        })
+
+        carousel.appendChild(row)
+
+        const cards = row.querySelectorAll(".movie-card")
+        this.navigation.setItems([searchInput, ...Array.from(cards)], cards.length, true)
+      }
+    }
+
+    searchInput.addEventListener("input", (e) => {
+      renderFilteredContent(e.target.value)
+    })
+
+    renderFilteredContent()
+
+    backBtn.onclick = () => {
+      searchInput.style.display = "none"
+      this.showMainScreen()
+    }
+  }
+
   playMovie(movie, startTime = 0) {
     this.showScreen("player")
 
@@ -786,7 +854,7 @@ class NetflisApp {
     if (this.currentContentType === "series" && this.currentSeries) {
       this.showEpisodesScreen(this.currentSeries.name, this.currentSeries.episodes)
     } else if (this.currentCategory) {
-      this.showMoviesScreen(this.currentCategory)
+      this.showFullCategoryScreen(this.currentCategory)
     } else {
       this.showMainScreen()
     }
@@ -802,7 +870,7 @@ class NetflisApp {
         this.showMainScreen()
         break
       case "episodes":
-        this.showMoviesScreen(this.currentCategory)
+        this.showFullCategoryScreen(this.currentCategory)
         break
       case "player":
         this.closePlayer()
@@ -895,7 +963,6 @@ class NetflisApp {
     const section = document.createElement("div")
     section.className = "category-section"
 
-    // Header de la categoría
     const header = document.createElement("div")
     header.className = "category-header"
 
@@ -923,23 +990,36 @@ class NetflisApp {
     header.appendChild(title)
     section.appendChild(header)
 
-    // Carrusel de contenido
     const carousel = document.createElement("div")
     carousel.className = "category-carousel"
 
     if (this.currentContentType === "series") {
-      // Para series, agrupar por nombre
       const seriesMap = this.groupSeriesByName(category.movies)
-      seriesMap.forEach((episodes, seriesName) => {
+      const seriesArray = Array.from(seriesMap.entries())
+
+      const limitedSeries = seriesArray.slice(0, 5)
+
+      limitedSeries.forEach(([seriesName, episodes]) => {
         const card = this.createSeriesCard(seriesName, episodes)
         carousel.appendChild(card)
       })
+
+      if (seriesArray.length > 5) {
+        const showAllCard = this.createShowAllCard(category)
+        carousel.appendChild(showAllCard)
+      }
     } else {
-      // Para películas y TV, mostrar cada item
-      category.movies.forEach((movie) => {
+      const limitedMovies = category.movies.slice(0, 5)
+
+      limitedMovies.forEach((movie) => {
         const card = this.createMovieCard(movie)
         carousel.appendChild(card)
       })
+
+      if (category.movies.length > 5) {
+        const showAllCard = this.createShowAllCard(category)
+        carousel.appendChild(showAllCard)
+      }
     }
 
     section.appendChild(carousel)
