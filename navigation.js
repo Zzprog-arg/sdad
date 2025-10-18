@@ -1,31 +1,49 @@
+// Sistema de navegación con teclado para TV Box
 class TVNavigation {
   constructor() {
     this.currentScreen = "upload"
     this.focusedIndex = 0
     this.items = []
     this.columns = 0
-    this.isHorizontal = true
-    this.navigationLevels = [] // Array de arrays de items
-    this.currentLevel = 0
     this.setupKeyboardListeners()
   }
 
   setupKeyboardListeners() {
     document.addEventListener("keydown", (e) => {
-      const activeElement = document.activeElement
-      if (activeElement && (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA")) {
-        if (e.key === "Backspace" || e.key === "Delete") {
-          // Permitir que el input maneje el borrado normalmente
-          return
-        }
-      }
-
       this.handleKeyPress(e)
     })
   }
 
+  isBackKey(e) {
+    // Teclas comunes de "volver atrás" en TV Box y controles remotos
+    const backKeys = [
+      "Escape", // Teclado estándar
+      "Backspace", // Teclado y algunos controles
+      "Back", // Algunos controles remotos
+      "BrowserBack", // Navegadores
+      "GoBack", // Algunos dispositivos
+    ]
+
+    const backKeyCodes = [
+      27, // Escape
+      8, // Backspace
+      461, // Back en Android TV
+      10009, // Return/Back en Samsung TV
+      166, // MediaBack
+      4, // Back en algunos dispositivos Android
+    ]
+
+    return backKeys.includes(e.key) || backKeyCodes.includes(e.keyCode)
+  }
+
   handleKeyPress(e) {
     const key = e.key
+
+    if (this.isBackKey(e)) {
+      e.preventDefault()
+      this.back()
+      return
+    }
 
     switch (key) {
       case "ArrowUp":
@@ -48,15 +66,6 @@ class TVNavigation {
         e.preventDefault()
         this.select()
         break
-      case "Escape":
-        e.preventDefault()
-        this.back()
-        break
-      case "Delete":
-      case "Backspace":
-        e.preventDefault()
-        this.back()
-        break
       case " ":
         if (this.currentScreen === "player") {
           e.preventDefault()
@@ -66,90 +75,24 @@ class TVNavigation {
     }
   }
 
-  setMultiLevelItems(levels) {
-    this.navigationLevels = levels
-    this.currentLevel = 0
-    this.focusedIndex = 0
-    this.items = levels[0] || []
-    this.updateFocus()
-  }
-
-  setItems(items, columns = 4, horizontal = false) {
+  setItems(items, columns = 4) {
     this.items = items
     this.columns = columns
-    this.isHorizontal = horizontal
     this.focusedIndex = 0
-    this.navigationLevels = []
-    this.currentLevel = 0
     this.updateFocus()
   }
 
   moveUp() {
-    if (this.navigationLevels.length > 0) {
-      // Navegación multi-nivel
-      if (this.currentLevel > 0) {
-        // Subir al nivel anterior
-        this.currentLevel--
-        this.items = this.navigationLevels[this.currentLevel]
-        this.focusedIndex = Math.min(this.focusedIndex, this.items.length - 1)
-        this.updateFocus()
-      }
-      return
-    }
-
-    if (this.isHorizontal) {
-      if (this.focusedIndex > 0) {
-        this.focusedIndex--
-        this.updateFocus()
-      }
-    } else {
-      const currentRow = Math.floor(this.focusedIndex / this.columns)
-      const currentCol = this.focusedIndex % this.columns
-
-      if (currentRow > 0) {
-        const newIndex = (currentRow - 1) * this.columns + currentCol
-        if (newIndex < this.items.length) {
-          this.focusedIndex = newIndex
-        } else {
-          this.focusedIndex = Math.min((currentRow - 1) * this.columns + this.columns - 1, this.items.length - 1)
-        }
-        this.updateFocus()
-      }
+    if (this.focusedIndex >= this.columns) {
+      this.focusedIndex -= this.columns
+      this.updateFocus()
     }
   }
 
   moveDown() {
-    if (this.navigationLevels.length > 0) {
-      // Navegación multi-nivel
-      if (this.currentLevel < this.navigationLevels.length - 1) {
-        // Bajar al siguiente nivel
-        this.currentLevel++
-        this.items = this.navigationLevels[this.currentLevel]
-        this.focusedIndex = Math.min(this.focusedIndex, this.items.length - 1)
-        this.updateFocus()
-      }
-      return
-    }
-
-    if (this.isHorizontal) {
-      if (this.focusedIndex < this.items.length - 1) {
-        this.focusedIndex++
-        this.updateFocus()
-      }
-    } else {
-      const currentRow = Math.floor(this.focusedIndex / this.columns)
-      const currentCol = this.focusedIndex % this.columns
-      const totalRows = Math.ceil(this.items.length / this.columns)
-
-      if (currentRow < totalRows - 1) {
-        const newIndex = (currentRow + 1) * this.columns + currentCol
-        if (newIndex < this.items.length) {
-          this.focusedIndex = newIndex
-        } else {
-          this.focusedIndex = this.items.length - 1
-        }
-        this.updateFocus()
-      }
+    if (this.focusedIndex + this.columns < this.items.length) {
+      this.focusedIndex += this.columns
+      this.updateFocus()
     }
   }
 
@@ -168,15 +111,10 @@ class TVNavigation {
   }
 
   updateFocus() {
-    // Remover focus de todos los items en todos los niveles
-    if (this.navigationLevels.length > 0) {
-      this.navigationLevels.forEach((level) => {
-        level.forEach((item) => item.classList.remove("focused"))
-      })
-    } else {
-      this.items.forEach((item) => item.classList.remove("focused"))
-    }
+    // Remover focus de todos los items
+    this.items.forEach((item) => item.classList.remove("focused"))
 
+    // Agregar focus al item actual
     if (this.items[this.focusedIndex]) {
       this.items[this.focusedIndex].classList.add("focused")
       this.scrollIntoView(this.items[this.focusedIndex])
@@ -187,7 +125,6 @@ class TVNavigation {
     element.scrollIntoView({
       behavior: "smooth",
       block: "center",
-      inline: "center",
     })
   }
 
@@ -210,6 +147,15 @@ class TVNavigation {
         video.pause()
       }
     }
+  }
+
+  calculateColumns() {
+    const grid = document.querySelector(".grid")
+    if (!grid) return 4
+
+    const gridWidth = grid.offsetWidth
+    const cardWidth = 280 + 25 // card width + gap
+    return Math.floor(gridWidth / cardWidth) || 4
   }
 }
 
