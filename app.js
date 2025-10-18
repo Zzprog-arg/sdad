@@ -551,6 +551,19 @@ class NetflisApp {
     return seriesMap
   }
 
+  getContentLabel() {
+    switch (this.currentContentType) {
+      case "tv":
+        return "canales"
+      case "movies":
+        return "películas"
+      case "series":
+        return "series"
+      default:
+        return "items"
+    }
+  }
+
   createSeriesCard(seriesName, episodes) {
     const card = document.createElement("div")
     card.className = "movie-card"
