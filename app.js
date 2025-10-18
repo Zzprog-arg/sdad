@@ -1,7 +1,7 @@
 import TVNavigation from "./navigation.js"
 import M3UParser from "./m3u-parser.js"
 
-const REMOTE_PLAYLIST_URL = "./playlist.m3u"
+const REMOTE_PLAYLIST_URL = "https://raw.githubusercontent.com/Zzprog-arg/sdad/refs/heads/main/playlist.m3u"
 const PLAYLIST_IDB_KEY = "playlist-local"
 
 class NetflisApp {
@@ -177,6 +177,23 @@ class NetflisApp {
     this.showLoading(true)
 
     try {
+      try {
+        console.log("Descargando playlist actualizada desde remoto...")
+        const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL)
+        const parser = new M3UParser()
+        this.allCategories = parser.parse(remoteText)
+        if (this.allCategories.length > 0) {
+          console.log("Playlist actualizada desde remoto exitosamente")
+          setTimeout(() => {
+            this.showMainScreen()
+          }, 500)
+          return
+        }
+      } catch (e) {
+        console.warn("No se pudo descargar desde remoto, intentando con local:", e)
+      }
+
+      // Si falla el remoto, intentar cargar desde IndexedDB local
       const localText = await this.loadPlaylistFromIndexedDB()
       if (localText) {
         const parser = new M3UParser()
@@ -191,6 +208,7 @@ class NetflisApp {
         return
       }
 
+      // Si no hay local, intentar con playlist embebida
       try {
         const response = await fetch("./playlist.txt")
         if (response.ok) {
@@ -209,22 +227,7 @@ class NetflisApp {
         console.warn("No se encontró playlist embebida o hubo error:", e)
       }
 
-      try {
-        const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL)
-        const parser = new M3UParser()
-        this.allCategories = parser.parse(remoteText)
-        if (this.allCategories.length === 0) {
-          throw new Error("No se encontraron categorías en el archivo (remoto)")
-        }
-        setTimeout(() => {
-          this.showMainScreen()
-        }, 500)
-        return
-      } catch (e) {
-        console.warn("No se pudo descargar desde remoto:", e)
-      }
-
-      throw new Error("No se pudo cargar la playlist desde local ni remoto")
+      throw new Error("No se pudo cargar la playlist desde ninguna fuente")
     } catch (error) {
       console.error("Error al cargar playlist:", error)
       alert(
@@ -465,15 +468,49 @@ class NetflisApp {
     this.navigation.setMultiLevelItems(allLevels)
   }
 
+  async refreshPlaylist() {
+    const confirmRefresh = confirm("¿Deseas actualizar la lista de contenido?")
+    if (!confirmRefresh) return
+
+    this.showLoading(true)
+    try {
+      console.log("Refrescando playlist desde remoto...")
+      const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL)
+      const parser = new M3UParser()
+      this.allCategories = parser.parse(remoteText)
+
+      if (this.allCategories.length === 0) {
+        throw new Error("No se encontraron categorías en el archivo actualizado")
+      }
+
+      alert("✓ Lista actualizada correctamente")
+
+      // Cerrar el modal y recargar la pantalla principal
+      const modal = document.getElementById("user-profile-modal")
+      modal.classList.remove("active")
+      this.showMainScreen()
+    } catch (error) {
+      console.error("Error al refrescar playlist:", error)
+      alert("✗ Error al actualizar la lista. Intenta nuevamente.")
+    } finally {
+      this.showLoading(false)
+    }
+  }
+
   showUserProfile() {
     const modal = document.getElementById("user-profile-modal")
     modal.classList.add("active")
 
     const usernameDisplay = document.getElementById("profile-username")
+    const refreshBtn = document.getElementById("profile-refresh-btn") // Nuevo botón
     const logoutBtn = document.getElementById("profile-logout-btn")
     const closeBtn = document.getElementById("close-profile-btn")
 
     usernameDisplay.textContent = this.username
+
+    const handleRefresh = () => {
+      this.refreshPlaylist()
+    }
 
     const handleLogout = () => {
       const confirmLogout = confirm("¿Deseas cerrar sesión?")
@@ -493,10 +530,11 @@ class NetflisApp {
       this.showMainScreen()
     }
 
+    refreshBtn.onclick = handleRefresh // Agregar handler
     logoutBtn.onclick = handleLogout
     closeBtn.onclick = handleClose
 
-    this.navigation.setItems([logoutBtn, closeBtn], 2, true)
+    this.navigation.setItems([refreshBtn, logoutBtn, closeBtn], 3, true)
 
     const handleModalKeys = (e) => {
       if (e.key === "Escape" || e.key === "Backspace" || e.key === "Delete") {
