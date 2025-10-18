@@ -455,6 +455,49 @@ body {
   text-overflow: ellipsis;
 }
 
+/* Estilos para la card "Mostrar todo" */
+.show-all-card {
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.2) 0%, rgba(20, 20, 20, 0.9) 100%);
+  border: 2px dashed rgba(229, 9, 20, 0.5);
+}
+
+.show-all-card:hover {
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.4) 0%, rgba(20, 20, 20, 1) 100%);
+  border-color: var(--netflix-red);
+}
+
+.show-all-card.focused {
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.6) 0%, rgba(20, 20, 20, 1) 100%);
+  border-color: var(--text-white);
+}
+
+.show-all-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.show-all-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.show-all-text {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-white);
+}
+
+.show-all-count {
+  font-size: 14px;
+  color: var(--text-gray);
+}
+
 /* Episodes Grid */
 .episodes-grid {
   display: grid;
@@ -937,42 +980,59 @@ body {
 }
 
 #upload-status {
-  margin-top: 1.125rem;
-  font-size: 0.875rem;
+  margin-top: 1.25rem;
+  font-size: 1rem;
   color: var(--text-gray);
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
-  .episodes-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+/* Carousel Container */
+.carousel-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-@media (max-width: 992px) {
-  .netflix-nav-main {
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
+.carousel-row {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--netflix-red) rgba(255, 255, 255, 0.05);
+}
 
-  .nav-tabs {
-    order: 2;
-    width: 100%;
-    justify-content: center;
-  }
+.carousel-row::-webkit-scrollbar {
+  height: 6px;
+}
 
+.carousel-row::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.carousel-row::-webkit-scrollbar-thumb {
+  background: var(--netflix-red);
+  border-radius: 3px;
+}
+
+.carousel-row::-webkit-scrollbar-thumb:hover {
+  background: var(--netflix-red-dark);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
   .episodes-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-}
 
-@media (max-width: 768px) {
-  .episodes-grid {
-    grid-template-columns: 1fr;
+  .nav-tabs {
+    gap: 0.5rem;
   }
 
-  .category-carousel .movie-card {
-    min-width: 8rem;
-    max-width: 8rem;
+  .nav-tab {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
   }
 }
