@@ -2,7 +2,7 @@
 import TVNavigation from "./navigation.js"
 import M3UParser from "./m3u-parser.js"
 
-const REMOTE_PLAYLIST_URL = "./playlist.m3u"
+const REMOTE_PLAYLIST_URL = "https://raw.githubusercontent.com/tu-usuario/tu-repo/main/playlist.m3u"
 const PLAYLIST_IDB_KEY = "playlist-local"
 
 class NetflisApp {
@@ -178,13 +178,31 @@ class NetflisApp {
     this.showLoading(true)
 
     try {
+      console.log("[v0] Intentando cargar desde URL remota:", REMOTE_PLAYLIST_URL)
+      try {
+        const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL)
+        const parser = new M3UParser()
+        this.allCategories = parser.parse(remoteText)
+        if (this.allCategories.length === 0) {
+          throw new Error("No se encontraron categorías en el archivo remoto")
+        }
+        console.log("[v0] Playlist cargada exitosamente desde URL remota")
+        setTimeout(() => {
+          this.showMainScreen()
+        }, 500)
+        return
+      } catch (e) {
+        console.warn("[v0] No se pudo descargar desde remoto, intentando cache local:", e)
+      }
+
       const localText = await this.loadPlaylistFromIndexedDB()
       if (localText) {
+        console.log("[v0] Usando playlist desde cache local (IndexedDB)")
         const parser = new M3UParser()
         this.allCategories = parser.parse(localText)
 
         if (this.allCategories.length === 0) {
-          throw new Error("No se encontraron categorías en el archivo (local)")
+          throw new Error("No se encontraron categorías en el cache local")
         }
         setTimeout(() => {
           this.showMainScreen()
@@ -193,44 +211,33 @@ class NetflisApp {
       }
 
       try {
+        console.log("[v0] Intentando cargar archivo embebido ./playlist.txt")
         const response = await fetch("./playlist.txt")
         if (response.ok) {
           const text = await response.text()
           const parser = new M3UParser()
           this.allCategories = parser.parse(text)
           if (this.allCategories.length === 0) {
-            throw new Error("No se encontraron categorías en el archivo (embebido)")
+            throw new Error("No se encontraron categorías en el archivo embebido")
           }
+          console.log("[v0] Playlist cargada desde archivo embebido")
           setTimeout(() => {
             this.showMainScreen()
           }, 500)
           return
         }
       } catch (e) {
-        console.warn("No se encontró playlist embebida o hubo error:", e)
+        console.warn("[v0] No se encontró playlist embebida:", e)
       }
 
-      try {
-        const remoteText = await this.downloadPlaylistToIndexedDB(REMOTE_PLAYLIST_URL)
-        const parser = new M3UParser()
-        this.allCategories = parser.parse(remoteText)
-        if (this.allCategories.length === 0) {
-          throw new Error("No se encontraron categorías en el archivo (remoto)")
-        }
-        setTimeout(() => {
-          this.showMainScreen()
-        }, 500)
-        return
-      } catch (e) {
-        console.warn("No se pudo descargar desde remoto:", e)
-      }
-
-      throw new Error("No se pudo cargar la playlist desde local ni remoto")
+      throw new Error("No se pudo cargar la playlist desde ninguna fuente")
     } catch (error) {
-      console.error("Error al cargar playlist:", error)
+      console.error("[v0] Error al cargar playlist:", error)
       alert(
         "No se pudo cargar la playlist.\n\n" +
-          "Verifica que REMOTE_PLAYLIST_URL esté bien configurada en app.js o que playlist.txt esté incluida en la app.",
+          "Verifica que REMOTE_PLAYLIST_URL esté configurada correctamente en app.js.\n" +
+          "URL actual: " +
+          REMOTE_PLAYLIST_URL,
       )
       this.showScreen("upload")
       this.setupUploadScreen()
