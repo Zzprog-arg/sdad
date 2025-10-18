@@ -637,9 +637,13 @@ class NetflisApp {
     const posterContent = episode.logo ? `<img src="${episode.logo}" alt="${episode.episodeTitle}">` : "📺"
 
     const episodeLabel = `T${episode.season} E${episode.episode}`
+    const episodeBadge = `T${episode.season} | E${episode.episode}`
 
     card.innerHTML = `
-      <div class="episode-poster">${posterContent}</div>
+      <div class="episode-poster">
+        ${posterContent}
+        <div class="episode-badge">${episodeBadge}</div>
+      </div>
       <div class="episode-info">
         <div class="episode-number">${episodeLabel}</div>
         <div class="episode-title">${episode.episodeTitle}</div>
