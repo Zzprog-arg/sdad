@@ -368,6 +368,14 @@ class NetflisApp {
     const tabs = document.querySelectorAll(".nav-tab")
     const searchInput = document.getElementById("global-search")
 
+    searchInput.addEventListener("focus", () => {
+      searchInput.classList.add("focused")
+    })
+
+    searchInput.addEventListener("blur", () => {
+      searchInput.classList.remove("focused")
+    })
+
     // Seleccionar TV por defecto
     this.currentContentType = "tv"
     tabs[0].classList.add("active")
@@ -393,8 +401,6 @@ class NetflisApp {
     userBtn.addEventListener("click", () => {
       this.showUserProfile()
     })
-
-    this.navigation.setItems([...Array.from(tabs), searchInput, userBtn], 5, true)
   }
 
   renderCategoriesForType(type) {
@@ -430,53 +436,33 @@ class NetflisApp {
       const categorySection = this.createCategorySection(category)
       container.appendChild(categorySection)
     })
+
+    this.setupMainScreenNavigation()
   }
 
-  createCategorySection(category) {
-    const section = document.createElement("div")
-    section.className = "category-section"
+  setupMainScreenNavigation() {
+    const tabs = Array.from(document.querySelectorAll(".nav-tab"))
+    const searchInput = document.getElementById("global-search")
+    const userBtn = document.getElementById("user-profile-btn")
 
-    const categoryLogo = this.categoryLogos.get(category.name)
-    const logoHTML = categoryLogo
-      ? `<img src="${categoryLogo}" alt="${category.name}" class="category-logo-inline">`
-      : ""
+    // Nivel 0: Header (tabs, search, user)
+    const headerItems = [...tabs, searchInput, userBtn]
 
-    const header = document.createElement("div")
-    header.className = "category-header"
-    header.innerHTML = `
-      ${logoHTML}
-      <h3 class="category-title">${category.name}</h3>
-      <span class="category-count-inline">${category.count} ${this.getContentLabel()}</span>
-    `
+    // Niveles 1+: Cada categoría es un nivel
+    const categoryLevels = []
+    const categorySections = document.querySelectorAll(".category-section")
 
-    const carousel = document.createElement("div")
-    carousel.className = "category-carousel"
+    categorySections.forEach((section) => {
+      const cards = Array.from(section.querySelectorAll(".movie-card"))
+      if (cards.length > 0) {
+        categoryLevels.push(cards)
+      }
+    })
 
-    if (this.currentContentType === "series") {
-      const seriesMap = this.groupSeriesByName(category.movies)
-      seriesMap.forEach((episodes, seriesName) => {
-        const card = this.createSeriesCard(seriesName, episodes)
-        carousel.appendChild(card)
-      })
-    } else {
-      category.movies.forEach((movie) => {
-        const card = this.createMovieCard(movie)
-        carousel.appendChild(card)
-      })
-    }
+    // Combinar todos los niveles
+    const allLevels = [headerItems, ...categoryLevels]
 
-    section.appendChild(header)
-    section.appendChild(carousel)
-
-    const cards = carousel.querySelectorAll(".movie-card")
-    if (cards.length > 0) {
-      setTimeout(() => {
-        const allCards = document.querySelectorAll(".movie-card")
-        this.navigation.setItems(Array.from(allCards), allCards.length, true)
-      }, 100)
-    }
-
-    return section
+    this.navigation.setMultiLevelItems(allLevels)
   }
 
   showUserProfile() {
@@ -598,6 +584,14 @@ class NetflisApp {
     searchInput.value = ""
     searchInput.style.display = "block"
 
+    searchInput.addEventListener("focus", () => {
+      searchInput.classList.add("focused")
+    })
+
+    searchInput.addEventListener("blur", () => {
+      searchInput.classList.remove("focused")
+    })
+
     const renderFilteredEpisodes = (query = "") => {
       episodesContainer.innerHTML = ""
       this.currentSearchQuery = query.toLowerCase()
@@ -626,14 +620,6 @@ class NetflisApp {
 
     searchInput.addEventListener("input", (e) => {
       renderFilteredEpisodes(e.target.value)
-    })
-
-    searchInput.addEventListener("focus", () => {
-      searchInput.classList.add("focused")
-    })
-
-    searchInput.addEventListener("blur", () => {
-      searchInput.classList.remove("focused")
     })
 
     renderFilteredEpisodes()
