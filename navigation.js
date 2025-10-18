@@ -5,11 +5,21 @@ class TVNavigation {
     this.items = []
     this.columns = 0
     this.isHorizontal = true
+    this.navigationLevels = [] // Array de arrays de items
+    this.currentLevel = 0
     this.setupKeyboardListeners()
   }
 
   setupKeyboardListeners() {
     document.addEventListener("keydown", (e) => {
+      const activeElement = document.activeElement
+      if (activeElement && (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA")) {
+        if (e.key === "Backspace" || e.key === "Delete") {
+          // Permitir que el input maneje el borrado normalmente
+          return
+        }
+      }
+
       this.handleKeyPress(e)
     })
   }
@@ -56,23 +66,43 @@ class TVNavigation {
     }
   }
 
+  setMultiLevelItems(levels) {
+    this.navigationLevels = levels
+    this.currentLevel = 0
+    this.focusedIndex = 0
+    this.items = levels[0] || []
+    this.updateFocus()
+  }
+
   setItems(items, columns = 4, horizontal = false) {
     this.items = items
     this.columns = columns
     this.isHorizontal = horizontal
     this.focusedIndex = 0
+    this.navigationLevels = []
+    this.currentLevel = 0
     this.updateFocus()
   }
 
   moveUp() {
+    if (this.navigationLevels.length > 0) {
+      // Navegación multi-nivel
+      if (this.currentLevel > 0) {
+        // Subir al nivel anterior
+        this.currentLevel--
+        this.items = this.navigationLevels[this.currentLevel]
+        this.focusedIndex = Math.min(this.focusedIndex, this.items.length - 1)
+        this.updateFocus()
+      }
+      return
+    }
+
     if (this.isHorizontal) {
-      // En modo horizontal, no hacer nada o ir al elemento anterior
       if (this.focusedIndex > 0) {
         this.focusedIndex--
         this.updateFocus()
       }
     } else {
-      // En modo grid, moverse una fila arriba
       const currentRow = Math.floor(this.focusedIndex / this.columns)
       const currentCol = this.focusedIndex % this.columns
 
@@ -81,7 +111,6 @@ class TVNavigation {
         if (newIndex < this.items.length) {
           this.focusedIndex = newIndex
         } else {
-          // Si no hay elemento en esa posición, ir al último de la fila anterior
           this.focusedIndex = Math.min((currentRow - 1) * this.columns + this.columns - 1, this.items.length - 1)
         }
         this.updateFocus()
@@ -90,14 +119,24 @@ class TVNavigation {
   }
 
   moveDown() {
+    if (this.navigationLevels.length > 0) {
+      // Navegación multi-nivel
+      if (this.currentLevel < this.navigationLevels.length - 1) {
+        // Bajar al siguiente nivel
+        this.currentLevel++
+        this.items = this.navigationLevels[this.currentLevel]
+        this.focusedIndex = Math.min(this.focusedIndex, this.items.length - 1)
+        this.updateFocus()
+      }
+      return
+    }
+
     if (this.isHorizontal) {
-      // En modo horizontal, ir al siguiente elemento
       if (this.focusedIndex < this.items.length - 1) {
         this.focusedIndex++
         this.updateFocus()
       }
     } else {
-      // En modo grid, moverse una fila abajo
       const currentRow = Math.floor(this.focusedIndex / this.columns)
       const currentCol = this.focusedIndex % this.columns
       const totalRows = Math.ceil(this.items.length / this.columns)
@@ -107,7 +146,6 @@ class TVNavigation {
         if (newIndex < this.items.length) {
           this.focusedIndex = newIndex
         } else {
-          // Si no hay elemento en esa posición, ir al último elemento
           this.focusedIndex = this.items.length - 1
         }
         this.updateFocus()
@@ -130,7 +168,14 @@ class TVNavigation {
   }
 
   updateFocus() {
-    this.items.forEach((item) => item.classList.remove("focused"))
+    // Remover focus de todos los items en todos los niveles
+    if (this.navigationLevels.length > 0) {
+      this.navigationLevels.forEach((level) => {
+        level.forEach((item) => item.classList.remove("focused"))
+      })
+    } else {
+      this.items.forEach((item) => item.classList.remove("focused"))
+    }
 
     if (this.items[this.focusedIndex]) {
       this.items[this.focusedIndex].classList.add("focused")
