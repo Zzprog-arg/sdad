@@ -2,7 +2,7 @@
 import TVNavigation from "./navigation.js"
 import M3UParser from "./m3u-parser.js"
 
-const REMOTE_PLAYLIST_URL = "https://raw.githubusercontent.com/Zzprog-arg/sdad/refs/heads/main/playlist.m3u"
+const REMOTE_PLAYLIST_URL = "./playlist.m3u"
 const PLAYLIST_IDB_KEY = "playlist-local"
 
 class NetflisApp {
@@ -265,6 +265,11 @@ class NetflisApp {
     }
 
     const handleKeyDown = (e) => {
+      const isInput = e.target.tagName === "INPUT"
+      if (isInput && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+        return // Permitir mover el cursor
+      }
+
       if (e.key === "ArrowDown") {
         e.preventDefault()
         currentIndex = (currentIndex + 1) % items.length
