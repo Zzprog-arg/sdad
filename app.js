@@ -170,7 +170,7 @@ class NetflisApp {
       await this.idbDelete(PLAYLIST_IDB_KEY)
       console.log("Playlist local eliminada")
     } catch (e) {
-      console.warn("No se pudo borrar playlist local", e)
+      console.warn("No se pudo borrar playlist local E1", e)
     }
   }
 
