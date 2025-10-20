@@ -39,10 +39,21 @@ class TVNavigation {
   handleKeyPress(e) {
     const key = e.key
 
+    const activeElement = document.activeElement
+    const isInputFocused = activeElement && (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA")
+
     if (this.isBackKey(e)) {
+      // Si un input tiene focus, permitir que Backspace funcione normalmente para borrar
+      if (isInputFocused) {
+        return // No prevenir el comportamiento por defecto
+      }
       e.preventDefault()
       this.back()
       return
+    }
+
+    if (isInputFocused && (key === "ArrowLeft" || key === "ArrowRight")) {
+      return // Permitir mover el cursor dentro del input
     }
 
     switch (key) {
@@ -117,6 +128,12 @@ class TVNavigation {
     // Agregar focus al item actual
     if (this.items[this.focusedIndex]) {
       this.items[this.focusedIndex].classList.add("focused")
+
+      const currentItem = this.items[this.focusedIndex]
+      if (currentItem.tagName === "INPUT" || currentItem.tagName === "TEXTAREA") {
+        currentItem.focus()
+      }
+
       this.scrollIntoView(this.items[this.focusedIndex])
     }
   }
