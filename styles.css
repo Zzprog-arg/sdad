@@ -979,6 +979,7 @@ body {
   transform: scale(1.05);
 }
 
+/* Completando la regla CSS que estaba incompleta */
 #upload-status {
   margin-top: 1.25rem;
   font-size: 1rem;
@@ -1019,6 +1020,82 @@ body {
 
 .carousel-row::-webkit-scrollbar-thumb:hover {
   background: var(--netflix-red-dark);
+}
+
+/* Category Filters Container */
+.category-filters-container {
+  display: none;
+  padding: 0 2rem 1rem;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+  position: sticky;
+  top: 4.5rem;
+  z-index: 90;
+}
+
+.category-filters-container.active {
+  display: block;
+}
+
+.category-filters {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--netflix-red) rgba(255, 255, 255, 0.05);
+}
+
+.category-filters::-webkit-scrollbar {
+  height: 6px;
+}
+
+.category-filters::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.category-filters::-webkit-scrollbar-thumb {
+  background: var(--netflix-red);
+  border-radius: 3px;
+}
+
+.category-filters::-webkit-scrollbar-thumb:hover {
+  background: var(--netflix-red-dark);
+}
+
+.category-filter-btn {
+  background: rgba(47, 47, 47, 0.8);
+  color: var(--text-white);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  letter-spacing: 0.05rem;
+}
+
+.category-filter-btn:hover {
+  background: rgba(229, 9, 20, 0.3);
+  border-color: var(--netflix-red);
+  transform: scale(1.05);
+}
+
+.category-filter-btn.active {
+  background: var(--netflix-red);
+  border-color: var(--netflix-red);
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.6);
+}
+
+.category-filter-btn.focused {
+  background: var(--netflix-red);
+  border-color: var(--text-white);
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.8);
 }
 
 /* Responsive */
