@@ -5,6 +5,10 @@ class TVNavigation {
     this.focusedIndex = 0
     this.items = []
     this.columns = 0
+    this.levels = null
+    this.currentLevel = 0
+    this.currentIndexInLevel = 0
+    this.isMultiLevel = false
     this.setupKeyboardListeners()
   }
 
@@ -93,7 +97,61 @@ class TVNavigation {
     this.updateFocus()
   }
 
+  setMultiLevelItems(levels) {
+    // levels es un array de arrays: [headerItems, categoryRow1, categoryRow2, ...]
+    this.levels = levels
+    this.currentLevel = 0
+    this.currentIndexInLevel = 0
+    this.isMultiLevel = true
+
+    // Aplanar todos los items para compatibilidad con métodos existentes
+    this.items = []
+    levels.forEach((level) => {
+      this.items.push(...level)
+    })
+
+    this.updateMultiLevelFocus()
+  }
+
+  updateMultiLevelFocus() {
+    if (!this.isMultiLevel || !this.levels) {
+      this.updateFocus()
+      return
+    }
+
+    // Remover focus de todos los items
+    this.levels.forEach((level) => {
+      level.forEach((item) => item.classList.remove("focused"))
+    })
+
+    // Agregar focus al item actual
+    const currentLevelItems = this.levels[this.currentLevel]
+    if (currentLevelItems && currentLevelItems[this.currentIndexInLevel]) {
+      const currentItem = currentLevelItems[this.currentIndexInLevel]
+      currentItem.classList.add("focused")
+
+      if (currentItem.tagName === "INPUT" || currentItem.tagName === "TEXTAREA") {
+        currentItem.focus()
+      }
+
+      this.scrollIntoView(currentItem)
+    }
+  }
+
   moveUp() {
+    if (this.isMultiLevel && this.levels) {
+      if (this.currentLevel > 0) {
+        this.currentLevel--
+        // Ajustar el índice si el nivel anterior tiene menos items
+        const prevLevelLength = this.levels[this.currentLevel].length
+        if (this.currentIndexInLevel >= prevLevelLength) {
+          this.currentIndexInLevel = prevLevelLength - 1
+        }
+        this.updateMultiLevelFocus()
+      }
+      return
+    }
+
     if (this.focusedIndex >= this.columns) {
       this.focusedIndex -= this.columns
       this.updateFocus()
@@ -101,6 +159,19 @@ class TVNavigation {
   }
 
   moveDown() {
+    if (this.isMultiLevel && this.levels) {
+      if (this.currentLevel < this.levels.length - 1) {
+        this.currentLevel++
+        // Ajustar el índice si el nivel siguiente tiene menos items
+        const nextLevelLength = this.levels[this.currentLevel].length
+        if (this.currentIndexInLevel >= nextLevelLength) {
+          this.currentIndexInLevel = nextLevelLength - 1
+        }
+        this.updateMultiLevelFocus()
+      }
+      return
+    }
+
     if (this.focusedIndex + this.columns < this.items.length) {
       this.focusedIndex += this.columns
       this.updateFocus()
@@ -108,6 +179,14 @@ class TVNavigation {
   }
 
   moveLeft() {
+    if (this.isMultiLevel && this.levels) {
+      if (this.currentIndexInLevel > 0) {
+        this.currentIndexInLevel--
+        this.updateMultiLevelFocus()
+      }
+      return
+    }
+
     if (this.focusedIndex > 0) {
       this.focusedIndex--
       this.updateFocus()
@@ -115,6 +194,15 @@ class TVNavigation {
   }
 
   moveRight() {
+    if (this.isMultiLevel && this.levels) {
+      const currentLevelLength = this.levels[this.currentLevel].length
+      if (this.currentIndexInLevel < currentLevelLength - 1) {
+        this.currentIndexInLevel++
+        this.updateMultiLevelFocus()
+      }
+      return
+    }
+
     if (this.focusedIndex < this.items.length - 1) {
       this.focusedIndex++
       this.updateFocus()
@@ -146,6 +234,14 @@ class TVNavigation {
   }
 
   select() {
+    if (this.isMultiLevel && this.levels) {
+      const currentLevelItems = this.levels[this.currentLevel]
+      if (currentLevelItems && currentLevelItems[this.currentIndexInLevel]) {
+        currentLevelItems[this.currentIndexInLevel].click()
+      }
+      return
+    }
+
     if (this.items[this.focusedIndex]) {
       this.items[this.focusedIndex].click()
     }
