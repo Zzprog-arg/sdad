@@ -19,6 +19,7 @@ class NetflisApp {
     this.watchProgress = this.loadWatchProgress()
     this.username = ""
     this.currentSearchQuery = ""
+    this.selectedCategoryFilter = null
     this.init()
     this.setupBackHandler()
     this.setupGlobalBackHandler()
@@ -170,7 +171,7 @@ class NetflisApp {
       await this.idbDelete(PLAYLIST_IDB_KEY)
       console.log("Playlist local eliminada")
     } catch (e) {
-      console.warn("No se pudo borrar playlist local E1", e)
+      console.warn("No se pudo borrar playlist local", e)
     }
   }
 
@@ -387,9 +388,10 @@ class NetflisApp {
       searchInput.classList.remove("focused")
     })
 
-    this.currentContentType = "tv"
+    this.currentContentType = "movies"
+    this.selectedCategoryFilter = null
     tabs[0].classList.add("active")
-    this.renderCategoriesForType("tv")
+    this.renderCategoriesForType("movies")
 
     tabs.forEach((tab) => {
       tab.addEventListener("click", () => {
@@ -398,6 +400,7 @@ class NetflisApp {
         tab.classList.add("active")
         this.currentContentType = type
         this.currentSearchQuery = ""
+        this.selectedCategoryFilter = null
         searchInput.value = ""
         this.renderCategoriesForType(type)
       })
@@ -413,9 +416,89 @@ class NetflisApp {
     })
   }
 
+  extractCategoryFilters(type) {
+    const categorySet = new Set()
+
+    this.allCategories.forEach((category) => {
+      category.movies.forEach((movie) => {
+        if (movie.contentType === type && movie.category) {
+          // Extraer palabras clave comunes de las categorías
+          const categoryName = movie.category.toUpperCase()
+
+          // Buscar palabras clave comunes
+          const keywords = ["NETFLIX", "HBO", "DISNEY", "HULU", "AMAZON", "PRIME", "APPLE", "PARAMOUNT", "MAX", "STAR"]
+          keywords.forEach((keyword) => {
+            if (categoryName.includes(keyword)) {
+              categorySet.add(keyword)
+            }
+          })
+        }
+      })
+    })
+
+    return Array.from(categorySet).sort()
+  }
+
+  renderCategoryFilters(type) {
+    const container = document.getElementById("category-filters-container")
+
+    // Solo mostrar filtros para películas y series
+    if (type !== "movies" && type !== "series") {
+      container.classList.remove("active")
+      container.innerHTML = ""
+      return
+    }
+
+    const filters = this.extractCategoryFilters(type)
+
+    if (filters.length === 0) {
+      container.classList.remove("active")
+      container.innerHTML = ""
+      return
+    }
+
+    container.classList.add("active")
+
+    const filtersWrapper = document.createElement("div")
+    filtersWrapper.className = "category-filters"
+
+    // Botón "Todos"
+    const allBtn = document.createElement("button")
+    allBtn.className = "category-filter-btn"
+    if (!this.selectedCategoryFilter) {
+      allBtn.classList.add("active")
+    }
+    allBtn.textContent = "TODOS"
+    allBtn.addEventListener("click", () => {
+      this.selectedCategoryFilter = null
+      this.renderCategoriesForType(this.currentContentType)
+    })
+    filtersWrapper.appendChild(allBtn)
+
+    // Botones de categorías
+    filters.forEach((filter) => {
+      const btn = document.createElement("button")
+      btn.className = "category-filter-btn"
+      if (this.selectedCategoryFilter === filter) {
+        btn.classList.add("active")
+      }
+      btn.textContent = filter
+      btn.addEventListener("click", () => {
+        this.selectedCategoryFilter = filter
+        this.renderCategoriesForType(this.currentContentType)
+      })
+      filtersWrapper.appendChild(btn)
+    })
+
+    container.innerHTML = ""
+    container.appendChild(filtersWrapper)
+  }
+
   renderCategoriesForType(type) {
     const container = document.getElementById("categories-content")
     container.innerHTML = ""
+
+    this.renderCategoryFilters(type)
 
     this.categories = this.allCategories
       .map((category) => {
@@ -424,7 +507,10 @@ class NetflisApp {
           const matchesSearch = this.currentSearchQuery
             ? movie.title.toLowerCase().includes(this.currentSearchQuery)
             : true
-          return matchesType && matchesSearch
+          const matchesCategory = this.selectedCategoryFilter
+            ? movie.category.toUpperCase().includes(this.selectedCategoryFilter)
+            : true
+          return matchesType && matchesSearch && matchesCategory
         })
 
         if (filteredMovies.length === 0) return null
@@ -457,7 +543,15 @@ class NetflisApp {
 
     const headerItems = [...tabs, searchInput, userBtn]
 
+    const categoryFilterBtns = Array.from(document.querySelectorAll(".category-filter-btn"))
+
     const categoryLevels = []
+
+    // Agregar fila de filtros de categorías si existe
+    if (categoryFilterBtns.length > 0) {
+      categoryLevels.push(categoryFilterBtns)
+    }
+
     const categorySections = document.querySelectorAll(".category-section")
 
     categorySections.forEach((section) => {
@@ -472,55 +566,246 @@ class NetflisApp {
     this.navigation.setMultiLevelItems(allLevels)
   }
 
-  showUserProfile() {
-    const modal = document.getElementById("user-profile-modal")
-    modal.classList.add("active")
+  playMovie(movie, startTime = 0) {
+    this.showScreen("player")
 
-    const usernameDisplay = document.getElementById("profile-username")
-    const logoutBtn = document.getElementById("profile-logout-btn")
-    const closeBtn = document.getElementById("close-profile-btn")
-    const refreshBtn = document.getElementById("profile-refresh-btn")
+    const video = document.getElementById("video-player")
+    const playerTitle = document.getElementById("player-title")
+    const playerCategory = document.getElementById("player-category")
+    const closeBtn = document.getElementById("close-player")
 
-    usernameDisplay.textContent = this.username
+    playerTitle.textContent = movie.episodeTitle || movie.title
+    playerCategory.textContent = movie.category
 
-    const handleRefresh = async () => {
-      await this.clearLocalPlaylist()
-      alert("Lista actualizada. Recargando...")
-      location.reload()
+    video.src = movie.url
+    video.load()
+
+    if (startTime > 0) {
+      video.currentTime = startTime
     }
 
-    const handleLogout = () => {
-      const confirmLogout = confirm("¿Deseas cerrar sesión?")
-      if (confirmLogout) {
-        localStorage.removeItem("netflis_logged_in")
-        localStorage.removeItem("netflis_username")
-        this.isLoggedIn = false
-        this.username = ""
-        modal.classList.remove("active")
-        this.showScreen("login")
-        this.setupLoginScreen()
+    video
+      .play()
+      .then(() => {
+        try {
+          if (video.requestFullscreen) video.requestFullscreen()
+          else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen()
+          else if (video.mozRequestFullScreen) video.mozRequestFullScreen()
+          else if (video.msRequestFullscreen) video.msRequestFullscreen()
+        } catch (e) {
+          console.debug("Fullscreen no permitido:", e && e.message)
+        }
+      })
+      .catch((error) => {
+        console.error("Error al reproducir:", error)
+        alert("Error al reproducir el video. Verifica la URL.")
+      })
+
+    let progressInterval
+    if (movie.contentType === "series") {
+      progressInterval = setInterval(() => {
+        if (!video.paused && video.currentTime > 0) {
+          this.updateProgress(movie.seriesName, movie.season, movie.episode, video.currentTime)
+        }
+      }, 10000)
+    }
+
+    closeBtn.onclick = () => {
+      if (progressInterval) clearInterval(progressInterval)
+      this.closePlayer()
+    }
+
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        if (progressInterval) clearInterval(progressInterval)
+        this.closePlayer()
+        window.removeEventListener("keydown", handleEsc)
       }
     }
+    window.addEventListener("keydown", handleEsc)
 
-    const handleClose = () => {
-      modal.classList.remove("active")
+    this.navigation.currentScreen = "player"
+  }
+
+  async closePlayer() {
+    const video = document.getElementById("video-player")
+    await this.exitFullscreenIfNeeded().catch(() => {})
+    video.pause()
+    video.src = ""
+
+    if (this.currentContentType === "series" && this.currentSeries) {
+      this.showEpisodesScreen(this.currentSeries.name, this.currentSeries.episodes)
+    } else if (this.currentCategory) {
+      this.showFullCategoryScreen(this.currentCategory)
+    } else {
       this.showMainScreen()
     }
+  }
 
-    refreshBtn.onclick = handleRefresh
-    logoutBtn.onclick = handleLogout
-    closeBtn.onclick = handleClose
+  handleBack() {
+    const currentScreen = this.navigation.currentScreen
 
-    this.navigation.setItems([refreshBtn, logoutBtn, closeBtn], 3, true)
+    switch (currentScreen) {
+      case "main":
+        break
+      case "movies":
+        this.showMainScreen()
+        break
+      case "episodes":
+        this.showFullCategoryScreen(this.currentCategory)
+        break
+      case "player":
+        this.closePlayer()
+        break
+    }
+  }
 
-    const handleModalKeys = (e) => {
-      if (e.key === "Escape" || e.key === "Backspace" || e.key === "Delete") {
+  showScreen(screenName) {
+    document.querySelectorAll(".screen").forEach((screen) => {
+      screen.classList.remove("active")
+    })
+
+    const screen = document.getElementById(`${screenName}-screen`)
+    if (screen) {
+      screen.classList.add("active")
+      this.navigation.currentScreen = screenName
+    }
+  }
+
+  showLoading(show) {
+    const loading = document.getElementById("loading")
+    loading.classList.toggle("active", show)
+  }
+
+  isInFullscreen() {
+    return !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    )
+  }
+
+  async exitFullscreenIfNeeded() {
+    try {
+      if (this.isInFullscreen()) {
+        if (document.exitFullscreen) await document.exitFullscreen()
+        else if (document.webkitExitFullscreen) await document.webkitExitFullscreen()
+        else if (document.mozCancelFullScreen) await document.mozCancelFullScreen()
+        else if (document.msExitFullscreen) await document.msExitFullscreen()
+        return true
+      }
+    } catch (e) {
+      console.debug("Error al salir de fullscreen:", e && e.message)
+    }
+    return false
+  }
+
+  setupGlobalBackHandler() {
+    window.addEventListener("keydown", async (e) => {
+      const key = e.key
+      const code = e.keyCode || e.which
+      const isBackKey =
+        key === "Back" ||
+        key === "Backspace" ||
+        key === "BrowserBack" ||
+        key === "SoftLeft" ||
+        key === "MediaBack" ||
+        key === "Escape" ||
+        key === "Delete" ||
+        code === 4 ||
+        code === 8 ||
+        code === 27 ||
+        code === 46 ||
+        code === 10009
+
+      if (!isBackKey) return
+
+      const video = document.getElementById("video-player")
+      if (video && !video.paused && this.isInFullscreen()) {
         e.preventDefault()
-        handleClose()
-        window.removeEventListener("keydown", handleModalKeys)
+        const exited = await this.exitFullscreenIfNeeded()
+        if (exited) {
+          return
+        }
+      }
+
+      if (video && !video.paused) {
+        e.preventDefault()
+        this.closePlayer()
+        return
+      }
+
+      e.preventDefault()
+      this.handleBack()
+    })
+  }
+
+  createCategorySection(category) {
+    const section = document.createElement("div")
+    section.className = "category-section"
+
+    const header = document.createElement("div")
+    header.className = "category-header"
+
+    const title = document.createElement("h2")
+    title.className = "category-title"
+
+    const categoryLogo = this.categoryLogos.get(category.name)
+    if (categoryLogo) {
+      const logoImg = document.createElement("img")
+      logoImg.src = categoryLogo
+      logoImg.alt = category.name
+      logoImg.className = "category-logo-inline"
+      title.appendChild(logoImg)
+    }
+
+    const titleText = document.createElement("span")
+    titleText.textContent = category.name
+    title.appendChild(titleText)
+
+    const count = document.createElement("span")
+    count.className = "category-count-inline"
+    count.textContent = ` ${category.count} ${this.getContentLabel()}`
+    title.appendChild(count)
+
+    header.appendChild(title)
+    section.appendChild(header)
+
+    const carousel = document.createElement("div")
+    carousel.className = "category-carousel"
+
+    if (this.currentContentType === "series") {
+      const seriesMap = this.groupSeriesByName(category.movies)
+      const seriesArray = Array.from(seriesMap.entries())
+
+      const limitedSeries = seriesArray.slice(0, 5)
+
+      limitedSeries.forEach(([seriesName, episodes]) => {
+        const card = this.createSeriesCard(seriesName, episodes)
+        carousel.appendChild(card)
+      })
+
+      if (seriesArray.length > 5) {
+        const showAllCard = this.createShowAllCard(category)
+        carousel.appendChild(showAllCard)
+      }
+    } else {
+      const limitedMovies = category.movies.slice(0, 5)
+
+      limitedMovies.forEach((movie) => {
+        const card = this.createMovieCard(movie)
+        carousel.appendChild(card)
+      })
+
+      if (category.movies.length > 5) {
+        const showAllCard = this.createShowAllCard(category)
+        carousel.appendChild(showAllCard)
       }
     }
-    window.addEventListener("keydown", handleModalKeys)
+
+    section.appendChild(carousel)
+    return section
   }
 
   groupSeriesByName(movies) {
@@ -794,248 +1079,6 @@ class NetflisApp {
       searchInput.style.display = "none"
       this.showMainScreen()
     }
-  }
-
-  playMovie(movie, startTime = 0) {
-    this.showScreen("player")
-
-    const video = document.getElementById("video-player")
-    const playerTitle = document.getElementById("player-title")
-    const playerCategory = document.getElementById("player-category")
-    const closeBtn = document.getElementById("close-player")
-
-    playerTitle.textContent = movie.episodeTitle || movie.title
-    playerCategory.textContent = movie.category
-
-    video.src = movie.url
-    video.load()
-
-    if (startTime > 0) {
-      video.currentTime = startTime
-    }
-
-    video
-      .play()
-      .then(() => {
-        try {
-          if (video.requestFullscreen) video.requestFullscreen()
-          else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen()
-          else if (video.mozRequestFullScreen) video.mozRequestFullScreen()
-          else if (video.msRequestFullscreen) video.msRequestFullscreen()
-        } catch (e) {
-          console.debug("Fullscreen no permitido:", e && e.message)
-        }
-      })
-      .catch((error) => {
-        console.error("Error al reproducir:", error)
-        alert("Error al reproducir el video. Verifica la URL.")
-      })
-
-    let progressInterval
-    if (movie.contentType === "series") {
-      progressInterval = setInterval(() => {
-        if (!video.paused && video.currentTime > 0) {
-          this.updateProgress(movie.seriesName, movie.season, movie.episode, video.currentTime)
-        }
-      }, 10000)
-    }
-
-    closeBtn.onclick = () => {
-      if (progressInterval) clearInterval(progressInterval)
-      this.closePlayer()
-    }
-
-    const handleEsc = (e) => {
-      if (e.key === "Escape") {
-        if (progressInterval) clearInterval(progressInterval)
-        this.closePlayer()
-        window.removeEventListener("keydown", handleEsc)
-      }
-    }
-    window.addEventListener("keydown", handleEsc)
-
-    this.navigation.currentScreen = "player"
-  }
-
-  async closePlayer() {
-    const video = document.getElementById("video-player")
-    await this.exitFullscreenIfNeeded().catch(() => {})
-    video.pause()
-    video.src = ""
-
-    if (this.currentContentType === "series" && this.currentSeries) {
-      this.showEpisodesScreen(this.currentSeries.name, this.currentSeries.episodes)
-    } else if (this.currentCategory) {
-      this.showFullCategoryScreen(this.currentCategory)
-    } else {
-      this.showMainScreen()
-    }
-  }
-
-  handleBack() {
-    const currentScreen = this.navigation.currentScreen
-
-    switch (currentScreen) {
-      case "main":
-        break
-      case "movies":
-        this.showMainScreen()
-        break
-      case "episodes":
-        this.showFullCategoryScreen(this.currentCategory)
-        break
-      case "player":
-        this.closePlayer()
-        break
-    }
-  }
-
-  showScreen(screenName) {
-    document.querySelectorAll(".screen").forEach((screen) => {
-      screen.classList.remove("active")
-    })
-
-    const screen = document.getElementById(`${screenName}-screen`)
-    if (screen) {
-      screen.classList.add("active")
-      this.navigation.currentScreen = screenName
-    }
-  }
-
-  showLoading(show) {
-    const loading = document.getElementById("loading")
-    loading.classList.toggle("active", show)
-  }
-
-  isInFullscreen() {
-    return !!(
-      document.fullscreenElement ||
-      document.webkitFullscreenElement ||
-      document.mozFullScreenElement ||
-      document.msFullscreenElement
-    )
-  }
-
-  async exitFullscreenIfNeeded() {
-    try {
-      if (this.isInFullscreen()) {
-        if (document.exitFullscreen) await document.exitFullscreen()
-        else if (document.webkitExitFullscreen) await document.webkitExitFullscreen()
-        else if (document.mozCancelFullScreen) await document.mozCancelFullScreen()
-        else if (document.msExitFullscreen) await document.msExitFullscreen()
-        return true
-      }
-    } catch (e) {
-      console.debug("Error al salir de fullscreen:", e && e.message)
-    }
-    return false
-  }
-
-  setupGlobalBackHandler() {
-    window.addEventListener("keydown", async (e) => {
-      const key = e.key
-      const code = e.keyCode || e.which
-      const isBackKey =
-        key === "Back" ||
-        key === "Backspace" ||
-        key === "BrowserBack" ||
-        key === "SoftLeft" ||
-        key === "MediaBack" ||
-        key === "Escape" ||
-        key === "Delete" ||
-        code === 4 ||
-        code === 8 ||
-        code === 27 ||
-        code === 46 ||
-        code === 10009
-
-      if (!isBackKey) return
-
-      const video = document.getElementById("video-player")
-      if (video && !video.paused && this.isInFullscreen()) {
-        e.preventDefault()
-        const exited = await this.exitFullscreenIfNeeded()
-        if (exited) {
-          return
-        }
-      }
-
-      if (video && !video.paused) {
-        e.preventDefault()
-        this.closePlayer()
-        return
-      }
-
-      e.preventDefault()
-      this.handleBack()
-    })
-  }
-
-  createCategorySection(category) {
-    const section = document.createElement("div")
-    section.className = "category-section"
-
-    const header = document.createElement("div")
-    header.className = "category-header"
-
-    const title = document.createElement("h2")
-    title.className = "category-title"
-
-    const categoryLogo = this.categoryLogos.get(category.name)
-    if (categoryLogo) {
-      const logoImg = document.createElement("img")
-      logoImg.src = categoryLogo
-      logoImg.alt = category.name
-      logoImg.className = "category-logo-inline"
-      title.appendChild(logoImg)
-    }
-
-    const titleText = document.createElement("span")
-    titleText.textContent = category.name
-    title.appendChild(titleText)
-
-    const count = document.createElement("span")
-    count.className = "category-count-inline"
-    count.textContent = ` ${category.count} ${this.getContentLabel()}`
-    title.appendChild(count)
-
-    header.appendChild(title)
-    section.appendChild(header)
-
-    const carousel = document.createElement("div")
-    carousel.className = "category-carousel"
-
-    if (this.currentContentType === "series") {
-      const seriesMap = this.groupSeriesByName(category.movies)
-      const seriesArray = Array.from(seriesMap.entries())
-
-      const limitedSeries = seriesArray.slice(0, 5)
-
-      limitedSeries.forEach(([seriesName, episodes]) => {
-        const card = this.createSeriesCard(seriesName, episodes)
-        carousel.appendChild(card)
-      })
-
-      if (seriesArray.length > 5) {
-        const showAllCard = this.createShowAllCard(category)
-        carousel.appendChild(showAllCard)
-      }
-    } else {
-      const limitedMovies = category.movies.slice(0, 5)
-
-      limitedMovies.forEach((movie) => {
-        const card = this.createMovieCard(movie)
-        carousel.appendChild(card)
-      })
-
-      if (category.movies.length > 5) {
-        const showAllCard = this.createShowAllCard(category)
-        carousel.appendChild(showAllCard)
-      }
-    }
-
-    section.appendChild(carousel)
-    return section
   }
 }
 
